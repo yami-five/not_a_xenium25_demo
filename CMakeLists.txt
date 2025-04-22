@@ -47,21 +47,32 @@ pico_generate_pio_header(not_a_xenium25_demo ${CMAKE_CURRENT_LIST_DIR}/blink.pio
 pico_enable_stdio_uart(not_a_xenium25_demo 0)
 pico_enable_stdio_usb(not_a_xenium25_demo 0)
 
-# Add the standard library to the build
-target_link_libraries(not_a_xenium25_demo
-        pico_stdlib)
+# Add mine libraries
+add_subdirectory(lib/Euzebia3D)
+# include_directories(./lib/Euzebia3D)
 
-# Add the standard include files to the build
-target_include_directories(not_a_xenium25_demo PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+# Add the standard library to the build
+target_link_libraries(
+    not_a_xenium25_demo
+    pico_stdlib
 )
 
+# Add the standard include files to the build
+target_include_directories(
+    not_a_xenium25_demo
+    PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}
+)
+
+
 # Add any user requested libraries
-target_link_libraries(not_a_xenium25_demo 
-        hardware_spi
-        hardware_i2c
-        hardware_pio
-        )
+target_link_libraries(
+    not_a_xenium25_demo 
+    hardware_spi
+    hardware_i2c
+    hardware_pio
+    Euzebia3D
+)
 
 pico_add_extra_outputs(not_a_xenium25_demo)
 
