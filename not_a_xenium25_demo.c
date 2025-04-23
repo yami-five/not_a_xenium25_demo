@@ -27,7 +27,10 @@ int main()
     painter->clear_buffer();
     painter->draw_buffer();
 
+    fileReader->play_wave_file("test.wav");
+
     while (1) {
+        // painter->clear_buffer();
         fileReader->draw_bmp_file("sl_w_p.bmp");
         painter->draw_buffer();
     }

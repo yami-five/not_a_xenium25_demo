@@ -22,6 +22,8 @@ target_link_libraries(
     hardware_pio
     hardware_pwm
     hardware_spi
+    pico_audio
+    pico_audio_i2s
 )
 pico_generate_pio_header(Euzebia3D ${CMAKE_CURRENT_LIST_DIR}/hardware/audio_pio.pio)
 

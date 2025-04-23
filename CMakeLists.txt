@@ -19,6 +19,7 @@ set(sdkVersion 2.1.1)
 set(toolchainVersion 14_2_Rel1)
 set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+set(PICO_EXTRAS_FETCH_FROM_GIT 1)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
@@ -27,6 +28,7 @@ set(PICO_BOARD pico2 CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
+include(pico_extras_import.cmake)
 
 project(not_a_xenium25_demo C CXX ASM)
 

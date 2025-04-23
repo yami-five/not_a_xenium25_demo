@@ -3,6 +3,11 @@
 #include "fatfs/ff.h"
 #include "stdio.h"
 #include "../shared/pins.h"
+#include "hardware/dma.h"
+#include "hardware/pio.h"
+#include "pico/audio.h"
+#include "pico/audio_i2s.h"
+#include "string.h"
 
 static const IHardware *_hardware = NULL;
 static const IPainter *_painter = NULL;
@@ -208,29 +213,36 @@ void draw_bmp_file(char *file_name)
 void play_wave_file(char *file_name)
 {
 	FIL file;
+	uint8_t header[44];
 	f_res = f_open(&file, file_name, FA_READ);
-	int br;
+	uint br;
+	f_lseek(&file, 0); 
+    f_read(&file, header, 44, &br);
 	if (f_res != FR_OK)
 	{
 		printf("Loading file failed :(%d)\r\n", f_res);
 		return;
 	}
-	int32_t buffer[1];
-	for (uint8_t i = 0; i < 11; i++)
-		f_read(&file, buffer, 4, &br);
-	int32_t samplesCount = buffer[0] / 4;
-	int32_t sample = 1;
-	for (int32_t i = 0; i < samplesCount; i++)
+	uint16_t num_channels = header[22] | (header[23] << 8);
+    uint16_t bits_per_sample = header[34] | (header[35] << 8);
+    uint32_t data_size = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
+
+    uint32_t bytes_per_sample = bits_per_sample / 8;
+    uint32_t sample_count = data_size / (num_channels * bytes_per_sample);
+	const int buffer_size = 16;
+    int16_t buffer[buffer_size];
+	while(1)
 	{
-		f_read(&file, buffer, 4, &br);
-		int32_t test_sample = ((int32_t)0x7FFF << 16) | (0x7FFF & 0xFFFF);
-		sample=buffer[0];
-		for(uint32_t j=0;j<10;j++)
-			// pio_sm_put_blocking(audio_format.pio, audio_format.sm,test_sample);
-			pio_sm_put_blocking(_hardware->get_audio_format()->pio, _hardware->get_audio_format()->sm, sample);
-		// sleep_us(23);
-	}
-	f_close(&file);
+        f_read(&file, buffer, sizeof(buffer), &br);
+        if (br == 0) break;
+		struct audio_buffer_pool *audio_buffer_pool = _hardware->get_audio_buffer_pool();
+        struct audio_buffer *audio_buf = take_audio_buffer(audio_buffer_pool, true);
+        memcpy(audio_buf->buffer->bytes, buffer, br);
+        audio_buf->sample_count = br / 2;
+        give_audio_buffer(audio_buffer_pool, audio_buf);
+    }
+
+    f_close(&file);
 }
 
 void init_fileReader(const IHardware *hardware, const IPainter *painter)

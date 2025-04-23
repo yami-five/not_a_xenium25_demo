@@ -1,9 +1,47 @@
 #include "IHardware.h"
 #include "hardware.h"
 #include "../shared/pins.h"
+#include "pico/audio_i2s.h"
 
 volatile bool te_signal_detected = false;
 uint32_t slice_num;
+
+#define SAMPLES_PER_BUFFER 256
+
+void init_audio_i2s()
+{
+    static struct audio_format format = {
+        .sample_freq = 44100,
+        .format = AUDIO_BUFFER_FORMAT_PCM_S16,
+        .channel_count = 2};
+
+    static struct audio_buffer_format producer_format = {
+        .format = &format,
+        .sample_stride = 2};
+
+    struct audio_buffer_pool *producer_pool = audio_new_producer_pool(&producer_format, 3,
+                                                                      SAMPLES_PER_BUFFER);
+    bool __unused ok;
+    const struct audio_format *output_format;
+
+    struct audio_i2s_config config = {
+        .data_pin = PICO_AUDIO_DATA_PIN,
+        .clock_pin_base = PICO_AUDIO_CLOCK_PIN,
+        .dma_channel = 1,
+        .pio_sm = 0};
+
+    output_format = audio_i2s_setup(&format, &config);
+    if (!output_format)
+    {
+        panic("PicoAudio: Unable to open audio device.\n");
+    }
+
+    ok = audio_i2s_connect(producer_pool);
+    assert(ok);
+    audio_i2s_set_enabled(true);
+
+    audio_i2s = producer_pool;
+}
 
 bool get_te_signal_detected()
 {
@@ -91,21 +129,7 @@ static void init_hardware(void)
     gpio_pull_up(LCD_SDA_PIN);
     gpio_pull_up(LCD_SCL_PIN);
 
-    gpio_set_function(audio_format.audio_data, GPIO_FUNC_PIOx);
-    gpio_set_function(audio_format.audio_clock, GPIO_FUNC_PIOx);
-    gpio_set_function(audio_format.audio_clock + 1, GPIO_FUNC_PIOx);
-
-    pio_sm_claim(audio_format.pio, audio_format.sm);
-
-    uint offset = pio_add_program(audio_format.pio, &audio_pio_program);
-
-    audio_pio_program_init(audio_format.pio, audio_format.sm, offset, audio_format.audio_data, audio_format.audio_clock);
-
-    uint32_t system_clock_frequency = clock_get_hz(clk_sys);
-    uint32_t divider = system_clock_frequency * 4 / audio_format.sample_freq; // avoid arithmetic overflow
-    pio_sm_set_clkdiv_int_frac(audio_format.pio, audio_format.sm, divider >> 8u, divider & 0xffu);
-
-    pio_sm_set_enabled(audio_format.pio, audio_format.sm, true);
+    init_audio_i2s();
 
     // GPIO Config
     gpio_mode(LED_PIN, GPIO_OUT);
@@ -130,9 +154,9 @@ spi_inst_t *get_spi_port()
     return SPI_PORT;
 }
 
-audio_format_t *get_audio_format()
+audio_buffer_pool_t *get_audio_buffer_pool()
 {
-    return &audio_format;
+    return audio_i2s;
 }
 
 static IHardware hardware = {
@@ -143,8 +167,7 @@ static IHardware hardware = {
     .delay_ms = delay_ms,
     .set_pwm = set_pwm,
     .get_spi_port = get_spi_port,
-    .get_audio_format = get_audio_format
-};
+    .get_audio_buffer_pool = get_audio_buffer_pool};
 
 const IHardware *get_hardware(void)
 {
