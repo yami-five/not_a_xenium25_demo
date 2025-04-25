@@ -9,6 +9,7 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/sd_driver/sd_driver.c
     ${CMAKE_CURRENT_SOURCE_DIR}/hardware/hardware.c
     ${CMAKE_CURRENT_SOURCE_DIR}/painter/painter.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gfx.c
 )
 
 target_link_libraries(
@@ -35,6 +36,7 @@ target_include_directories(Euzebia3D
     ${CMAKE_CURRENT_SOURCE_DIR}/painter
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/sd_driver
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared
 )
 
 add_library(Euzebia3D_DisplayInterface INTERFACE)

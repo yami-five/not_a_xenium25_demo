@@ -51,12 +51,15 @@ pico_enable_stdio_usb(not_a_xenium25_demo 0)
 
 # Add mine libraries
 add_subdirectory(lib/Euzebia3D)
+add_subdirectory(lib/second_core)
 # include_directories(./lib/Euzebia3D)
+include_directories(./lib/second_core)
 
 # Add the standard library to the build
 target_link_libraries(
     not_a_xenium25_demo
     pico_stdlib
+    pico_multicore
 )
 
 # Add the standard include files to the build
@@ -74,6 +77,7 @@ target_link_libraries(
     hardware_i2c
     hardware_pio
     Euzebia3D
+    SecondCore
 )
 
 pico_add_extra_outputs(not_a_xenium25_demo)

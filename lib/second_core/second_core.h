@@ -1,0 +1,1 @@
+void play_music_on_second_core();

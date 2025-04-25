@@ -8,6 +8,7 @@
 #include "hardware/spi.h"
 #include "string.h"
 #include "../shared/pins.h"
+#include "../shared/gfx.h"
 
 #define WIDTH_DOUBLED 640
 #define HEIGHT_DOUBLED 480

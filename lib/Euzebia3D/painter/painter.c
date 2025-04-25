@@ -1,5 +1,6 @@
 #include "IPainter.h"
 #include "painter.h"
+#include "../shared/gfx.h"
 
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
@@ -60,11 +61,32 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
     buffer[line_adr + y2 +1]=color & 0xff;
 }
 
+void draw_image(uint8_t image_index)
+{
+    int dma_channel_flash = dma_claim_unused_channel(true);
+    dma_channel_config config = dma_channel_get_default_config(dma_channel_flash);
+    channel_config_set_transfer_data_size(&config, DMA_SIZE_8);
+    channel_config_set_read_increment(&config, true);
+    channel_config_set_write_increment(&config, true);
+    dma_channel_configure(
+        dma_channel_flash,
+        &config,
+        buffer,
+        images[image_index].image,
+        BUFFER_SIZE,
+        false
+    );
+    dma_channel_start(dma_channel_flash);
+    dma_channel_wait_for_finish_blocking(dma_channel_flash);
+    dma_channel_unclaim(dma_channel_flash);
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
     .clear_buffer = clear_buffer,
-    .draw_pixel = draw_pixel
+    .draw_pixel = draw_pixel,
+    .draw_image = draw_image
 };
 
 const IPainter *get_painter(void)

@@ -223,12 +223,6 @@ void play_wave_file(char *file_name)
 		printf("Loading file failed :(%d)\r\n", f_res);
 		return;
 	}
-	uint16_t num_channels = header[22] | (header[23] << 8);
-    uint16_t bits_per_sample = header[34] | (header[35] << 8);
-    uint32_t data_size = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
-
-    uint32_t bytes_per_sample = bits_per_sample / 8;
-    uint32_t sample_count = data_size / (num_channels * bytes_per_sample);
 	const int buffer_size = 16;
     int16_t buffer[buffer_size];
 	while(1)
