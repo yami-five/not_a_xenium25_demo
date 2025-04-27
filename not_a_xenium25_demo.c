@@ -20,7 +20,8 @@
 #include "renderer.h"
 #include "mesh.h"
 
-static const IHardware *hardware;
+static const IHardware *hardware_core0;
+static const IHardware *hardware_core1;
 static const IDisplay *display;
 static const IPainter *painter;
 static const IFileReader *fileReader;
@@ -33,20 +34,20 @@ void core1_main();
 
 int main()
 {
-    hardware = get_hardware();
-    hardware->init_hardware();
+    hardware_core0 = get_hardware();
+    hardware_core0->init_hardware();
+    // hardware_core0->set_spi_port(0);
+    spi_inst_t * test = hardware_core0->get_spi_port();
+    printf("%d",test);
 
     display = get_display();
-    display->init_display(hardware);
+    display->init_display(hardware_core0);
 
     painter = get_painter();
-    painter->init_painter(display, hardware);
-
-    fileReader = get_fileReader();
-    fileReader->init_fileReader(hardware, painter);
+    painter->init_painter(display, hardware_core0);
 
     renderer = get_renderer();
-    renderer->init_renderer(hardware, painter);
+    renderer->init_renderer(hardware_core0, painter);
 
     meshFactory = get_meshFactory();
     Mesh *cube = meshFactory->create_colored_mesh(0x00ff00, 0);
@@ -57,20 +58,16 @@ int main()
 
     cameraFactory = get_cameraFactory();
     Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
-    fileReader->play_wave_file("test.wav");
-    // multicore_launch_core1(core1_main);
+    
+    // fileReader->play_wave_file("test.wav");
+    multicore_launch_core1(core1_main);
     painter->clear_buffer();
     painter->draw_buffer();
     uint32_t t = 0;
     while (1)
     {
-        painter->clear_buffer();
         float qt = t * 0.1f;
-        // painter->clear_buffer();
-        // fileReader->draw_bmp_file("sl_w_p.bmp");
-        // painter->draw_image(0);
-        modify_transformation(cube->transformations,qt,qt,qt,0);
+        modify_transformation(cube->transformations, qt, qt, qt, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->draw_buffer();
         t++;
@@ -81,5 +78,10 @@ int main()
 
 void core1_main()
 {
+    hardware_core1 = get_hardware();
+    // hardware_core1->set_spi_port(1);
+    hardware_core1->init_audio_i2s();
+    fileReader = get_fileReader();
+    fileReader->init_fileReader(hardware_core1);
     fileReader->play_wave_file("test.wav");
 }

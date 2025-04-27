@@ -2,6 +2,7 @@
 #include "hardware.h"
 #include "../shared/pins.h"
 #include "pico/audio_i2s.h"
+#include "hardware/dma.h"
 
 volatile bool te_signal_detected = false;
 uint32_t slice_num;
@@ -27,7 +28,7 @@ void init_audio_i2s()
     struct audio_i2s_config config = {
         .data_pin = PICO_AUDIO_DATA_PIN,
         .clock_pin_base = PICO_AUDIO_CLOCK_PIN,
-        .dma_channel = 1,
+        .dma_channel = 10,
         .pio_sm = 0};
 
     output_format = audio_i2s_setup(&format, &config);
@@ -70,7 +71,7 @@ static void spi_write_byte(uint8_t value)
 static uint8_t spi_write_read_byte(uint8_t value)
 {
     uint8_t rxDat;
-    spi_write_read_blocking(spi1, &value, &rxDat, 1);
+    spi_write_read_blocking(SPI_PORT, &value, &rxDat, 1);
     return rxDat;
 }
 
@@ -106,10 +107,12 @@ static void set_pwm(uint8_t value)
 
 static void init_hardware(void)
 {
+
     stdio_init_all();
 
     // SPI Config
-    spi_init(SPI_PORT, 62500 * 1000);
+    spi_init(spi0, 62500 * 1000);
+    spi_init(spi1, 62500 * 1000);
     gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MISO_PIN, GPIO_FUNC_SPI);
@@ -128,8 +131,6 @@ static void init_hardware(void)
     gpio_set_function(LCD_SCL_PIN, GPIO_FUNC_I2C);
     gpio_pull_up(LCD_SDA_PIN);
     gpio_pull_up(LCD_SCL_PIN);
-
-    init_audio_i2s();
 
     // GPIO Config
     gpio_mode(LED_PIN, GPIO_OUT);
@@ -154,6 +155,14 @@ spi_inst_t *get_spi_port()
     return SPI_PORT;
 }
 
+void set_spi_port(uint8_t spiNum)
+{
+    if (spiNum == 0)
+        SPI_PORT = spi0;
+    else
+        SPI_PORT = spi1;
+}
+
 audio_buffer_pool_t *get_audio_buffer_pool()
 {
     return audio_i2s;
@@ -161,12 +170,14 @@ audio_buffer_pool_t *get_audio_buffer_pool()
 
 static IHardware hardware = {
     .init_hardware = init_hardware,
+    .init_audio_i2s = init_audio_i2s,
     .write = write,
     .spi_write_byte = spi_write_byte,
     .spi_write_read_byte = spi_write_read_byte,
     .delay_ms = delay_ms,
     .set_pwm = set_pwm,
     .get_spi_port = get_spi_port,
+    .set_spi_port = set_spi_port,
     .get_audio_buffer_pool = get_audio_buffer_pool};
 
 const IHardware *get_hardware(void)

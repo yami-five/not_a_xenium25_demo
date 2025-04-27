@@ -7,10 +7,7 @@
 
 typedef struct
 {
-    void (*init_fileReader)(const IHardware *hardware, const IPainter *painter);
-    // void (*load_obj_file)(char *file_name);
-    // void (*load_bmp_file)(char *file_name);
-    void (*draw_bmp_file)(char *file_name);
+    void (*init_fileReader)(const IHardware *hardware);
     void (*play_wave_file)(char *file_name);
 } IFileReader;
 

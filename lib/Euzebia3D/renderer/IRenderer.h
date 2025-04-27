@@ -10,7 +10,7 @@
 
 typedef struct
 {
-    void (*init_renderer)(const IHardware * hardware, const IPainter * painter);
+    void (*init_renderer)(volatile const IHardware * hardware, volatile const IPainter * painter);
     void (*draw_model)();
     void (*clear_zbuffer)(void);
 } IRenderer;

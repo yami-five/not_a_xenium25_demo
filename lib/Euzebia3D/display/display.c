@@ -6,7 +6,7 @@ static const uint16_t DISPLAY_WIDTH = 320;
 static const uint16_t DISPLAY_HEIGHT = 240;
 static const uint8_t HORIZONTAL=0;
 static const uint8_t VERTICAL=1;
-static const IHardware *_hardware = NULL;
+static volatile const IHardware *_hardware = NULL;
 
 void set_hardware(IHardware* hardware)
 {
@@ -81,7 +81,7 @@ void set_windows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend)
     send_command(0X2C);
 }
 
-static void init_display(const IHardware* hardware)
+static void init_display(volatile const IHardware* hardware)
 {
 	_hardware=hardware;
     _hardware->set_pwm(100);

@@ -1,8 +1,8 @@
 #include "IRenderer.h"
 #include "renderer.h"
 
-static const IHardware *_hardware = NULL;
-static const IPainter *_painter = NULL;
+static volatile const IHardware *_hardware = NULL;
+static volatile const IPainter *_painter = NULL;
 
 static const uint8_t SCALE = 2;
 static const uint8_t FOCAL_LENGTH = 90;
@@ -23,7 +23,7 @@ static uint16_t zBuffer[19200];
 
 void clear_zbuffuer();
 
-void init_renderer(const IHardware *hardware, const IPainter *painter)
+void init_renderer(volatile const IHardware *hardware, volatile const IPainter *painter)
 {
     _hardware = hardware;
     _painter = painter;
