@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include "fpa.h"
 #include "../shared/gfx.h"
 
 typedef struct
@@ -23,7 +24,7 @@ typedef struct
 typedef struct
 {
     uint8_t transformType;
-    TransformVector* transformVector;
+    TransformVector *transformVector;
 } TransformInfo;
 
 typedef struct
@@ -36,10 +37,11 @@ typedef struct
     uint16_t *uv;
     Material *mat;
     TransformInfo *transformations;
-    int transformationsNum;
+    uint32_t transformationsNum;
 } Mesh;
 
-TransformInfo *addTransformation(TransformInfo *currentTransformations, int *currentTransformationsNum, float x, float y, float z, uint8_t transformationType);
-void freeModel(Mesh* mesh);
+TransformInfo *add_transformation(TransformInfo *currentTransformations, uint32_t *currentTransformationsNum, float x, float y, float z, uint8_t transformationType);
+void modify_transformation(TransformInfo *currentTransformations, float x, float y, float z, uint32_t transformationIndex);
+void free_model(Mesh *mesh);
 
 #endif

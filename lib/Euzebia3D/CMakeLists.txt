@@ -2,6 +2,8 @@ add_library(
     Euzebia3D 
     ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/fpa.c
     ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/vectors.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/cameraFactory/camera.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/cameraFactory/cameraFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/display/display.c
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fileReader.c
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs/ff.c
@@ -10,6 +12,8 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs/ffunicode.c
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/sd_driver/sd_driver.c
     ${CMAKE_CURRENT_SOURCE_DIR}/hardware/hardware.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/lightFactory/light.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/lightFactory/lightFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/mesh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/meshFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/painter/painter.c
@@ -36,9 +40,11 @@ pico_generate_pio_header(Euzebia3D ${CMAKE_CURRENT_LIST_DIR}/hardware/audio_pio.
 target_include_directories(Euzebia3D
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics
+    ${CMAKE_CURRENT_SOURCE_DIR}/cameraFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/display
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader
     ${CMAKE_CURRENT_SOURCE_DIR}/hardware
+    ${CMAKE_CURRENT_SOURCE_DIR}/lightFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/painter
     ${CMAKE_CURRENT_SOURCE_DIR}/renderer
@@ -47,12 +53,20 @@ target_include_directories(Euzebia3D
     ${CMAKE_CURRENT_SOURCE_DIR}/shared
 )
 
+add_library(Euzebia3D_CameraFactoryInterface INTERFACE)
 add_library(Euzebia3D_DisplayInterface INTERFACE)
 add_library(Euzebia3D_FileReaderInterface INTERFACE)
 add_library(Euzebia3D_HardwareInterface INTERFACE)
+add_library(Euzebia3D_LightFactoryInterface INTERFACE)
 add_library(Euzebia3D_MeshFactoryInterface INTERFACE)
 add_library(Euzebia3D_PainterInterface INTERFACE)
 add_library(Euzebia3D_RendererInterface INTERFACE)
+
+target_include_directories(
+    Euzebia3D_CameraFactoryInterface 
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/cameraFactory  
+)
 
 target_include_directories(
     Euzebia3D_DisplayInterface 
@@ -73,9 +87,15 @@ target_include_directories(
 )
 
 target_include_directories(
+    Euzebia3D_LightFactoryInterface
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/lightFactory
+)
+
+target_include_directories(
     Euzebia3D_MeshFactoryInterface
     INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/mesh
+    ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory
 )
 
 target_include_directories(

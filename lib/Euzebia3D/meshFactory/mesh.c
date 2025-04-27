@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-TransformInfo *addTransformation(TransformInfo *currentTransformations, int *currentTransformationsNum, float x, float y, float z, uint8_t transformationType)
+TransformInfo *add_transformation(TransformInfo *currentTransformations, uint32_t *currentTransformationsNum, float x, float y, float z, uint8_t transformationType)
 {
     if (transformationType > 2)
         return currentTransformations;
@@ -16,7 +16,14 @@ TransformInfo *addTransformation(TransformInfo *currentTransformations, int *cur
     return newTransformations;
 }
 
-void freeModel(Mesh* mesh)
+void modify_transformation(TransformInfo *currentTransformations, float x, float y, float z, uint32_t transformationIndex)
+{
+    currentTransformations[transformationIndex].transformVector->x=float_to_fixed(x);
+    currentTransformations[transformationIndex].transformVector->y=float_to_fixed(y);
+    currentTransformations[transformationIndex].transformVector->z=float_to_fixed(z);
+}
+
+void free_model(Mesh* mesh)
 {
     free(mesh->mat);
     free(mesh->faces);
