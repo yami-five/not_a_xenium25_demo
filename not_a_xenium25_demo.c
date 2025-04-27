@@ -4,12 +4,16 @@
 #include "IDisplay.h"
 #include "IFileReader.h"
 #include "IHardware.h"
+#include "IMeshFactory.h"
 #include "IPainter.h"
+#include "IRenderer.h"
 
 #include "display.h"
 #include "fileReader.h"
 #include "hardware.h"
+#include "meshFactory.h"
 #include "painter.h"
+#include "renderer.h"
 
 // #include "second_core.h"
 
@@ -17,6 +21,8 @@ static const IHardware *hardware;
 static const IDisplay *display;
 static const IPainter *painter;
 static const IFileReader *fileReader;
+static const IRenderer *renderer;
+static const IMeshFactory *meshFactory;
 
 void core1_main();
 
@@ -33,6 +39,12 @@ int main()
 
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware, painter);
+
+    renderer = get_renderer();
+    renderer->init_renderer(hardware, painter);
+
+    meshFactory = get_meshFactory();
+    Mesh *cube = meshFactory->create_colored_mesh(0x00ff00,0);                                                                                       
 
     // fileReader->play_wave_file("test.wav");
     // multicore_launch_core1(play_music_on_second_core);

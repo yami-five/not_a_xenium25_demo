@@ -1,5 +1,7 @@
 add_library(
     Euzebia3D 
+    ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/fpa.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/vectors.c
     ${CMAKE_CURRENT_SOURCE_DIR}/display/display.c
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fileReader.c
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs/ff.c
@@ -8,7 +10,10 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs/ffunicode.c
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/sd_driver/sd_driver.c
     ${CMAKE_CURRENT_SOURCE_DIR}/hardware/hardware.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/mesh.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/meshFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/painter/painter.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/renderer/renderer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gfx.c
 )
 
@@ -30,10 +35,13 @@ pico_generate_pio_header(Euzebia3D ${CMAKE_CURRENT_LIST_DIR}/hardware/audio_pio.
 
 target_include_directories(Euzebia3D
     PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics
     ${CMAKE_CURRENT_SOURCE_DIR}/display
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader
     ${CMAKE_CURRENT_SOURCE_DIR}/hardware
+    ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/painter
+    ${CMAKE_CURRENT_SOURCE_DIR}/renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/sd_driver
     ${CMAKE_CURRENT_SOURCE_DIR}/shared
@@ -42,7 +50,9 @@ target_include_directories(Euzebia3D
 add_library(Euzebia3D_DisplayInterface INTERFACE)
 add_library(Euzebia3D_FileReaderInterface INTERFACE)
 add_library(Euzebia3D_HardwareInterface INTERFACE)
+add_library(Euzebia3D_MeshFactoryInterface INTERFACE)
 add_library(Euzebia3D_PainterInterface INTERFACE)
+add_library(Euzebia3D_RendererInterface INTERFACE)
 
 target_include_directories(
     Euzebia3D_DisplayInterface 
@@ -63,7 +73,19 @@ target_include_directories(
 )
 
 target_include_directories(
+    Euzebia3D_MeshFactoryInterface
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/mesh
+)
+
+target_include_directories(
     Euzebia3D_PainterInterface 
     INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/painter  
+)
+
+target_include_directories(
+    Euzebia3D_RendererInterface 
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/renderer  
 )

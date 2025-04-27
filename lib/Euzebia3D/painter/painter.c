@@ -72,7 +72,7 @@ void draw_image(uint8_t image_index)
         dma_channel_flash,
         &config,
         buffer,
-        images[image_index].image,
+        get_image(image_index)->image,
         BUFFER_SIZE,
         false
     );

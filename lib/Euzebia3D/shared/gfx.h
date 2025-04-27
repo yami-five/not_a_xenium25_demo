@@ -3,15 +3,29 @@
 
 #include "stdint.h"
 
-typedef struct 
+typedef struct
 {
-    const uint8_t* image;
-    uint32_t size;
-    uint16_t width;
-    uint16_t heigth;
-}Image;
+    const uint16_t *image;
+    const uint32_t size;
+    const uint16_t width;
+    const uint16_t heigth; 
+} Image;
 
-extern const Image images[];
-extern const uint8_t image1[153600];
+typedef struct
+{
+    const uint16_t verticesCounter;
+    const uint16_t facesCounter;
+    const uint16_t textureCoordsCounter;
+    const float *vertices;
+    const uint16_t *faces;
+    const float *textureCoords;
+    const uint16_t *uv;
+} Model;
+
+// const Image images[];
+// const Model models[];
+
+const Image *get_image(uint8_t image_index);
+const Model *get_model(uint8_t model_index);
 
 #endif

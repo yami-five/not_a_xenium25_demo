@@ -98,9 +98,9 @@ void sd_close()
 // 			// uint32_t *temp = realloc(obj->vertices, obj->verticesCounter * 3 * sizeof(uint32_t));
 // 			// obj->vertices = temp;
 // 			obj->vertices = realloc(obj->vertices, obj->verticesCounter * 3 * sizeof(uint32_t));
-// 			obj->vertices[(obj->verticesCounter - 1) * 3] = floatToFixed(x);
-// 			obj->vertices[(obj->verticesCounter - 1) * 3 + 1] = floatToFixed(y);
-// 			obj->vertices[(obj->verticesCounter - 1) * 3 + 2] = floatToFixed(z);
+// 			obj->vertices[(obj->verticesCounter - 1) * 3] = float_to_fixed(x);
+// 			obj->vertices[(obj->verticesCounter - 1) * 3 + 1] = float_to_fixed(y);
+// 			obj->vertices[(obj->verticesCounter - 1) * 3 + 2] = float_to_fixed(z);
 // 		}
 // 		else if (line[0] == 'v' && line[1] == 't')
 // 		{
@@ -110,8 +110,8 @@ void sd_close()
 // 			obj->textureCoords = realloc(obj->textureCoords, obj->textureCoordsCounter * 2 * sizeof(uint32_t));
 // 			// uint32_t *temp = realloc(obj->textureCoords, obj->textureCoordsCounter * 2 * sizeof(uint32_t));
 // 			// obj->textureCoords = temp;
-// 			obj->textureCoords[(obj->textureCoordsCounter - 1) * 2] = floatToFixed(x);
-// 			obj->textureCoords[(obj->textureCoordsCounter - 1) * 2 + 1] = floatToFixed(y);
+// 			obj->textureCoords[(obj->textureCoordsCounter - 1) * 2] = float_to_fixed(x);
+// 			obj->textureCoords[(obj->textureCoordsCounter - 1) * 2 + 1] = float_to_fixed(y);
 // 		}
 // 		else if (line[0] == 'f' && line[1] == ' ')
 // 		{
