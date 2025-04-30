@@ -5,6 +5,26 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
+volatile bool dma_transfer_done = false;
+static const uint16_t chunk_size = 16;
+static volatile uint32_t current_offset=0;
+
+void display_refresh();
+
+void dma_buffer_irq_handler()
+{
+    dma_hw->ints1 = 1u << dma_channel;
+    // current_offset+=chunk_size;
+    // if(current_offset<BUFFER_SIZE)
+    // {
+    //     dma_channel_transfer_from_buffer_now(dma_channel, buffer+current_offset, chunk_size);
+    //     __wfi();
+    // }
+    // else
+    // {
+    // display_refresh();
+    // _hardware->write(LCD_CS_PIN, 1);
+}
 
 void init_dma()
 {
@@ -20,6 +40,12 @@ void init_dma()
         BUFFER_SIZE,
         false
     );
+    dma_channel_set_irq1_enabled(dma_channel, true);
+    irq_set_exclusive_handler(DMA_IRQ_1, dma_buffer_irq_handler);
+    irq_set_enabled(DMA_IRQ_1, true);
+    channel_config_set_read_increment(&config, true);
+    channel_config_set_write_increment(&config, false);
+
 }
 
 void init_painter(const IDisplay *display, const IHardware *hardware)
@@ -42,8 +68,14 @@ void draw_buffer()
 {
     _hardware->write(LCD_DC_PIN, 1);
     _hardware->write(LCD_CS_PIN, 0);
-    dma_channel_transfer_from_buffer_now(dma_channel, buffer, BUFFER_SIZE);
-    dma_channel_wait_for_finish_blocking(dma_channel);
+    // current_offset=0;
+    for(uint32_t i=0;i<BUFFER_SIZE;i+=chunk_size)
+    {
+        dma_transfer_done=false;
+        dma_channel_transfer_from_buffer_now(dma_channel, buffer+i, chunk_size);
+        __wfi();
+    }
+    // dma_channel_transfer_from_buffer_now(dma_channel, buffer, BUFFER_SIZE);
     display_refresh();
     _hardware->write(LCD_CS_PIN, 1);
 }
