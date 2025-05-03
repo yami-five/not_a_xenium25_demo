@@ -83,5 +83,5 @@ void core1_main()
     hardware_core1->init_audio_i2s();
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware_core1);
-    fileReader->play_wave_file("test.wav");
+    // fileReader->play_wave_file("test.wav");
 }
