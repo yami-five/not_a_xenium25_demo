@@ -66,8 +66,9 @@ void display_refresh()
 
 void draw_buffer()
 {
+    _hardware->write(LCD_DC_PIN, 0);
+    _hardware->spi_write_byte(0x2C);
     _hardware->write(LCD_DC_PIN, 1);
-    _hardware->write(LCD_CS_PIN, 0);
     // current_offset=0;
     for(uint32_t i=0;i<BUFFER_SIZE;i+=chunk_size)
     {
@@ -76,8 +77,6 @@ void draw_buffer()
         __wfi();
     }
     // dma_channel_transfer_from_buffer_now(dma_channel, buffer, BUFFER_SIZE);
-    display_refresh();
-    _hardware->write(LCD_CS_PIN, 1);
 }
 
 void clear_buffer()
