@@ -36,9 +36,6 @@ int main()
 {
     hardware_core0 = get_hardware();
     hardware_core0->init_hardware();
-    // hardware_core0->set_spi_port(0);
-    spi_inst_t * test = hardware_core0->get_spi_port();
-    printf("%d",test);
 
     display = get_display();
     display->init_display(hardware_core0);
@@ -79,7 +76,6 @@ int main()
 void core1_main()
 {
     hardware_core1 = get_hardware();
-    // hardware_core1->set_spi_port(1);
     hardware_core1->init_audio_i2s();
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware_core1);

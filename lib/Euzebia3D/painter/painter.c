@@ -1,29 +1,20 @@
 #include "IPainter.h"
 #include "painter.h"
 #include "../shared/gfx.h"
+#include "hardware/sync/spin_lock.h"
 
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
 volatile bool dma_transfer_done = false;
-static const uint16_t chunk_size = 16;
+static const uint16_t chunk_size = 128;
 static volatile uint32_t current_offset=0;
-
-void display_refresh();
+static spin_lock_t* lcd_spinlock;
 
 void dma_buffer_irq_handler()
 {
     dma_hw->ints1 = 1u << dma_channel;
     // current_offset+=chunk_size;
-    // if(current_offset<BUFFER_SIZE)
-    // {
-    //     dma_channel_transfer_from_buffer_now(dma_channel, buffer+current_offset, chunk_size);
-    //     __wfi();
-    // }
-    // else
-    // {
-    // display_refresh();
-    // _hardware->write(LCD_CS_PIN, 1);
 }
 
 void init_dma()
@@ -36,8 +27,8 @@ void init_dma()
         dma_channel,
         &config,
         &spi_get_hw(_hardware->get_spi_port())->dr,
-        buffer,
-        BUFFER_SIZE,
+        NULL,
+        chunk_size,
         false
     );
     dma_channel_set_irq1_enabled(dma_channel, true);
@@ -53,31 +44,34 @@ void init_painter(const IDisplay *display, const IHardware *hardware)
     _hardware = hardware;
     _display = display;
     init_dma();
-}
-
-void display_refresh()
-{
-    _hardware->write(LCD_CS_PIN, 0);
-    _hardware->write(LCD_DC_PIN, 0);
-    _hardware->spi_write_byte(0x2C);
-    _hardware->write(LCD_DC_PIN, 1);
-    _hardware->write(LCD_CS_PIN, 1);
+	lcd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
 }
 
 void draw_buffer()
 {
+    uint32_t flags = spin_lock_blocking(lcd_spinlock);
+    _hardware->write(LCD_CS_PIN, 0);
+    _hardware->write(LCD_DC_PIN, 0);
+    _hardware->spi_write_byte(0x2C);
+    _hardware->write(LCD_CS_PIN, 1);
+    spin_unlock(lcd_spinlock, flags);
+    // dma_channel_transfer_from_buffer_now(dma_channel, buffer, BUFFER_SIZE);
+    // dma_channel_wait_for_finish_blocking(dma_channel);
+    // __wfi();
     _hardware->write(LCD_DC_PIN, 1);
     _hardware->write(LCD_CS_PIN, 0);
-    // current_offset=0;
-    for(uint32_t i=0;i<BUFFER_SIZE;i+=chunk_size)
+    while(current_offset<BUFFER_SIZE)
     {
-        dma_transfer_done=false;
-        dma_channel_transfer_from_buffer_now(dma_channel, buffer+i, chunk_size);
-        __wfi();
+        flags = spin_lock_blocking(lcd_spinlock);
+        // dma_channel_transfer_from_buffer_now(dma_channel, buffer+current_offset, chunk_size);
+        dma_channel_set_read_addr(dma_channel,buffer+current_offset,true);
+        dma_channel_wait_for_finish_blocking(dma_channel);
+        current_offset+=chunk_size;
+        // __wfi();
+        spin_unlock(lcd_spinlock, flags);
     }
-    // dma_channel_transfer_from_buffer_now(dma_channel, buffer, BUFFER_SIZE);
-    display_refresh();
     _hardware->write(LCD_CS_PIN, 1);
+    current_offset=0;
 }
 
 void clear_buffer()
