@@ -8,10 +8,12 @@
 #include "pico/audio.h"
 #include "pico/audio_i2s.h"
 #include "string.h"
+#include "hardware/sync/spin_lock.h"
 
 static const IHardware *_hardware = NULL;
 static FRESULT f_res;
 static FATFS microSDFatFs;
+static spin_lock_t* sd_spinlock;
 
 uint8_t readline(uint8_t *line, uint8_t length, FIL *file)
 {
@@ -57,6 +59,7 @@ void sd_init()
 	{
 		printf("SD card mount file system success!! \r\n");
 	}
+	sd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
 }
 
 void sd_close()
@@ -78,15 +81,21 @@ void play_wave_file(char *file_name)
 		return;
 	}
 	const int buffer_size = 16;
-	int16_t buffer[buffer_size];
+	int16_t buffer_audio[buffer_size];
+	// for(uint8_t i=0;i<buffer_size;i++)
+	// 	buffer_audio[i]=1000;
 	while (1)
 	{
-		f_read(&file, buffer, sizeof(buffer), &br);
+		uint32_t flags = spin_lock_blocking(sd_spinlock);
+		_hardware->write(LCD_CS_PIN,1);
+		f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
+		_hardware->write(LCD_CS_PIN,0);
+		spin_unlock(sd_spinlock, flags);
 		if (br == 0)
 			break;
 		struct audio_buffer_pool *audio_buffer_pool = _hardware->get_audio_buffer_pool();
 		struct audio_buffer *audio_buf = take_audio_buffer(audio_buffer_pool, true);
-		memcpy(audio_buf->buffer->bytes, buffer, br);
+		memcpy(audio_buf->buffer->bytes, buffer_audio, br);
 		audio_buf->sample_count = br / 2;
 		give_audio_buffer(audio_buffer_pool, audio_buf);
 	}
