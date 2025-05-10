@@ -75,9 +75,9 @@ int main()
 
 void core1_main()
 {
-    hardware_core1 = get_hardware();
-    hardware_core1->init_audio_i2s();
+    // hardware_core1 = get_hardware();
+    hardware_core0->init_audio_i2s();
     fileReader = get_fileReader();
-    fileReader->init_fileReader(hardware_core1);
+    fileReader->init_fileReader(hardware_core0);
     fileReader->play_wave_file("test.wav");
 }

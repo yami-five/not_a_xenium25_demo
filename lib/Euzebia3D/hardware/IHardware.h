@@ -29,6 +29,7 @@ typedef struct
     spi_inst_t *(*get_spi_port)(void);
     void (*set_spi_port)(uint8_t spiNum);
     audio_buffer_pool_t *(*get_audio_buffer_pool)(void);
+    spin_lock_t *(*get_spinlock)(void);
 } IHardware;
 
 #endif

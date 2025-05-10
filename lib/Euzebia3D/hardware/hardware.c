@@ -7,6 +7,8 @@
 volatile bool te_signal_detected = false;
 uint32_t slice_num;
 
+static spin_lock_t *spi_spinlock;
+
 #define SAMPLES_PER_BUFFER 256
 
 void init_audio_i2s()
@@ -148,6 +150,8 @@ static void init_hardware(void)
     write(LCD_CS_PIN, GPIO_OUT);
     write(LCD_BL_PIN, GPIO_OUT);
     write(SD_CS_PIN, GPIO_OUT);
+
+    spi_spinlock = spin_lock_init(spin_lock_claim_unused(true));
 }
 
 spi_inst_t *get_spi_port()
@@ -168,6 +172,11 @@ audio_buffer_pool_t *get_audio_buffer_pool()
     return audio_i2s;
 }
 
+spin_lock_t *get_spinlock()
+{
+    return spi_spinlock;
+}
+
 static IHardware hardware = {
     .init_hardware = init_hardware,
     .init_audio_i2s = init_audio_i2s,
@@ -178,7 +187,8 @@ static IHardware hardware = {
     .set_pwm = set_pwm,
     .get_spi_port = get_spi_port,
     .set_spi_port = set_spi_port,
-    .get_audio_buffer_pool = get_audio_buffer_pool};
+    .get_audio_buffer_pool = get_audio_buffer_pool,
+    .get_spinlock = get_spinlock};
 
 const IHardware *get_hardware(void)
 {

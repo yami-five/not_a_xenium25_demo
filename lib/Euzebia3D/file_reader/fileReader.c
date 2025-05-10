@@ -59,7 +59,7 @@ void sd_init()
 	{
 		printf("SD card mount file system success!! \r\n");
 	}
-	sd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
+	// sd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
 }
 
 void sd_close()
@@ -86,11 +86,12 @@ void play_wave_file(char *file_name)
 	// 	buffer_audio[i]=1000;
 	while (1)
 	{
-		uint32_t flags = spin_lock_blocking(sd_spinlock);
+		spin_lock_t *spi_spinlock = _hardware->get_spinlock();
+		uint32_t flags = spin_lock_blocking(spi_spinlock);
 		_hardware->write(LCD_CS_PIN,1);
 		f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
 		_hardware->write(LCD_CS_PIN,0);
-		spin_unlock(sd_spinlock, flags);
+		spin_unlock(spi_spinlock, flags);
 		if (br == 0)
 			break;
 		struct audio_buffer_pool *audio_buffer_pool = _hardware->get_audio_buffer_pool();
