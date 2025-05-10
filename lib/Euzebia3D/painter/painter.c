@@ -7,7 +7,7 @@ static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
 volatile bool dma_transfer_done = false;
-static const uint16_t chunk_size = 512;
+static const uint16_t chunk_size = 16;
 static volatile uint32_t current_offset=0;
 static spin_lock_t* lcd_spinlock;
 
@@ -60,17 +60,16 @@ void draw_buffer()
     // dma_channel_wait_for_finish_blocking(dma_channel);
     // __wfi();
     _hardware->write(LCD_DC_PIN, 1);
+    _hardware->write(LCD_CS_PIN, 0);
     while(current_offset<BUFFER_SIZE)
     {
         flags = spin_lock_blocking(spi_spinlock);
-        _hardware->write(LCD_CS_PIN, 0);
         // dma_channel_transfer_from_buffer_now(dma_channel, buffer+current_offset, chunk_size);
         dma_channel_set_read_addr(dma_channel,buffer+current_offset,true);
         dma_channel_wait_for_finish_blocking(dma_channel);
-        current_offset+=chunk_size;
         // __wfi();
-        _hardware->write(LCD_CS_PIN, 1);
         spin_unlock(spi_spinlock, flags);
+        current_offset+=chunk_size;
     }
     _hardware->write(LCD_CS_PIN, 1);
     current_offset=0;
