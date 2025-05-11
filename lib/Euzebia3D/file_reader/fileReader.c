@@ -84,13 +84,12 @@ void play_wave_file(char *file_name)
 	int16_t buffer_audio[buffer_size];
 	// for(uint8_t i=0;i<buffer_size;i++)
 	// 	buffer_audio[i]=1000;
+	spin_lock_t *spi_spinlock = _hardware->get_spinlock();
 	while (1)
 	{
-		spin_lock_t *spi_spinlock = _hardware->get_spinlock();
 		uint32_t flags = spin_lock_blocking(spi_spinlock);
 		_hardware->write(LCD_CS_PIN,1);
 		f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
-		_hardware->write(LCD_CS_PIN,0);
 		spin_unlock(spi_spinlock, flags);
 		if (br == 0)
 			break;

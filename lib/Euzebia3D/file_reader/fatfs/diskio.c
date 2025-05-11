@@ -110,11 +110,13 @@ DRESULT disk_ioctl(
 		{
 		case CTRL_SYNC:
 			hardware->write(SD_CS_PIN, 0);
+			hardware->write(LCD_CS_PIN, 1);
 			if (SD_WaitReady() == 0)
 				res = RES_OK;
 			else
 				res = RES_ERROR;
 				hardware->write(SD_CS_PIN, 1);
+				hardware->write(LCD_CS_PIN, 0);
 			break;
 		case GET_SECTOR_SIZE:
 			*(WORD *)buff = 512;

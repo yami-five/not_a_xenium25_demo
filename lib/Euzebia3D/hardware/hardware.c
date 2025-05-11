@@ -6,8 +6,10 @@
 
 volatile bool te_signal_detected = false;
 uint32_t slice_num;
-
 static spin_lock_t *spi_spinlock;
+static uint8_t sio_dma_channel_high;
+static uint8_t sio_dma_channel_low;
+static const uint32_t cs_bit[] = {1 << LCD_CS_PIN};
 
 #define SAMPLES_PER_BUFFER 256
 
@@ -107,6 +109,31 @@ static void set_pwm(uint8_t value)
     }
 }
 
+void init_sio_dma()
+{
+    sio_dma_channel_high = dma_claim_unused_channel(true);
+    dma_channel_config config_high = dma_channel_get_default_config(sio_dma_channel_high);
+    channel_config_set_transfer_data_size(&config_high, DMA_SIZE_32);
+    dma_channel_configure(
+        sio_dma_channel_high,
+        &config_high,
+        &sio_hw->gpio_set,
+        cs_bit,
+        1,
+        false);
+
+    sio_dma_channel_low = dma_claim_unused_channel(true);
+    dma_channel_config config_low = dma_channel_get_default_config(sio_dma_channel_low);
+    channel_config_set_transfer_data_size(&config_low, DMA_SIZE_32);
+    dma_channel_configure(
+        sio_dma_channel_low,
+        &config_low,
+        &sio_hw->gpio_clr,
+        cs_bit,
+        1,
+        false);
+}
+
 static void init_hardware(void)
 {
 
@@ -152,6 +179,7 @@ static void init_hardware(void)
     write(SD_CS_PIN, GPIO_OUT);
 
     spi_spinlock = spin_lock_init(spin_lock_claim_unused(true));
+    init_sio_dma();
 }
 
 spi_inst_t *get_spi_port()
@@ -177,6 +205,16 @@ spin_lock_t *get_spinlock()
     return spi_spinlock;
 }
 
+void set_lcd_cs_pin_high()
+{
+    dma_channel_set_read_addr(sio_dma_channel_high, cs_bit, true);
+}
+
+void set_lcd_cs_pin_low()
+{
+    dma_channel_set_read_addr(sio_dma_channel_low, cs_bit, true);
+}
+
 static IHardware hardware = {
     .init_hardware = init_hardware,
     .init_audio_i2s = init_audio_i2s,
@@ -188,7 +226,9 @@ static IHardware hardware = {
     .get_spi_port = get_spi_port,
     .set_spi_port = set_spi_port,
     .get_audio_buffer_pool = get_audio_buffer_pool,
-    .get_spinlock = get_spinlock};
+    .get_spinlock = get_spinlock,
+    .set_lcd_cs_pin_high = set_lcd_cs_pin_high,
+    .set_lcd_cs_pin_low = set_lcd_cs_pin_low};
 
 const IHardware *get_hardware(void)
 {

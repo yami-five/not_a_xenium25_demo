@@ -42,6 +42,7 @@ void SD_DisSelect(void)
 unsigned char SD_Select(void)
 {
 	_hardware->write(SD_CS_PIN, 0);
+	_hardware->write(LCD_CS_PIN, 1);
 	if (SD_WaitReady() == 0)
 		return 0;
 	SD_DisSelect();
