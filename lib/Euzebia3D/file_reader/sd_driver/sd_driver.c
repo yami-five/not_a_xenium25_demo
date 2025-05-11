@@ -46,6 +46,7 @@ unsigned char SD_Select(void)
 	if (SD_WaitReady() == 0)
 		return 0;
 	SD_DisSelect();
+	// _hardware->write(LCD_CS_PIN, 0);
 	return 1;
 }
 

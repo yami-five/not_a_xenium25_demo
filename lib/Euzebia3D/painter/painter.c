@@ -6,9 +6,7 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-volatile bool dma_transfer_done = false;
-static const uint16_t chunk_size = 1024;
-static volatile uint32_t current_offset=0;
+static const uint16_t chunk_size = 64;
 static spin_lock_t* lcd_spinlock;
 
 void dma_buffer_irq_handler()
@@ -48,25 +46,25 @@ void init_painter(const IDisplay *display, const IHardware *hardware)
 
 void draw_buffer()
 {
+    uint32_t current_offset=0;
     spin_lock_t *spi_spinlock = _hardware->get_spinlock();
     uint32_t flags = spin_lock_blocking(spi_spinlock);
-    _hardware->write(LCD_CS_PIN, 0);
     _hardware->write(SD_CS_PIN, 1);
+    _hardware->write(LCD_CS_PIN, 0);
     _hardware->write(LCD_DC_PIN, 0);
     _hardware->spi_write_byte(0x2C);
-    spin_unlock(spi_spinlock, flags);
     _hardware->write(LCD_DC_PIN, 1);
+    spin_unlock(spi_spinlock, flags);
     while(current_offset<BUFFER_SIZE)
     {
         flags = spin_lock_blocking(spi_spinlock);
-        _hardware->write(LCD_CS_PIN, 0);
         _hardware->write(SD_CS_PIN, 1);
+        _hardware->write(LCD_CS_PIN, 0);
         dma_channel_set_read_addr(dma_channel,buffer+current_offset,true);
         dma_channel_wait_for_finish_blocking(dma_channel);
-        spin_unlock(spi_spinlock, flags);
         current_offset+=chunk_size;
+        spin_unlock(spi_spinlock, flags);
     }
-    current_offset=0;
 }
 
 void clear_buffer()

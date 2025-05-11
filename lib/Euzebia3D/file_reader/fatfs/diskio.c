@@ -118,6 +118,7 @@ DRESULT disk_ioctl(
 				hardware->write(SD_CS_PIN, 1);
 				hardware->write(LCD_CS_PIN, 0);
 			break;
+			// hardware->write(LCD_CS_PIN, 0);
 		case GET_SECTOR_SIZE:
 			*(WORD *)buff = 512;
 			res = RES_OK;
