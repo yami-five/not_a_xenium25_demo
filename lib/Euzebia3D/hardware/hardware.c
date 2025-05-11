@@ -12,6 +12,8 @@ static uint8_t sio_dma_channel_low;
 static const uint32_t cs_bit[] = {1 << LCD_CS_PIN};
 
 #define SAMPLES_PER_BUFFER 256
+#define LCD_CS_MASK (1u << LCD_CS_PIN)
+#define SD_CS_MASK (1u << SD_CS_PIN)
 
 void init_audio_i2s()
 {
@@ -205,16 +207,6 @@ spin_lock_t *get_spinlock()
     return spi_spinlock;
 }
 
-void set_lcd_cs_pin_high()
-{
-    dma_channel_set_read_addr(sio_dma_channel_high, cs_bit, true);
-}
-
-void set_lcd_cs_pin_low()
-{
-    dma_channel_set_read_addr(sio_dma_channel_low, cs_bit, true);
-}
-
 static IHardware hardware = {
     .init_hardware = init_hardware,
     .init_audio_i2s = init_audio_i2s,
@@ -226,9 +218,7 @@ static IHardware hardware = {
     .get_spi_port = get_spi_port,
     .set_spi_port = set_spi_port,
     .get_audio_buffer_pool = get_audio_buffer_pool,
-    .get_spinlock = get_spinlock,
-    .set_lcd_cs_pin_high = set_lcd_cs_pin_high,
-    .set_lcd_cs_pin_low = set_lcd_cs_pin_low};
+    .get_spinlock = get_spinlock};
 
 const IHardware *get_hardware(void)
 {
