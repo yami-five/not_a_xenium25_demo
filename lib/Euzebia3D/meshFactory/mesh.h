@@ -35,6 +35,9 @@ typedef struct
     uint16_t *faces;
     int32_t *textureCoords;
     uint16_t *uv;
+    uint16_t normalsCoordsCounter;
+    int32_t *normalsCoords;
+    uint16_t *normals; 
     Material *mat;
     TransformInfo *transformations;
     uint32_t transformationsNum;

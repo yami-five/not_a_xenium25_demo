@@ -9,37 +9,87 @@
 #include "pico/audio_i2s.h"
 #include "string.h"
 #include "hardware/sync/spin_lock.h"
+#include "../shared/gfx.h"
+#include "fpa.h"
 
 static const IHardware *_hardware = NULL;
 static FRESULT f_res;
 static FATFS microSDFatFs;
-static spin_lock_t* sd_spinlock;
+static spin_lock_t *sd_spinlock;
 
-uint8_t readline(uint8_t *line, uint8_t length, FIL *file)
+LoadedObj *load_obj_file(uint16_t model_index)
 {
-	uint br;
-	uint8_t lineBuffer[1];
-	f_read(file, lineBuffer, 1, &br);
-	if (f_eof(file))
+	uint16_t offset=0;
+	Model *model=get_model(model_index);
+	LoadedObj *obj = (LoadedObj *)malloc(sizeof(LoadedObj));
+	obj->faces = (uint16_t *)malloc(sizeof(uint16_t) * 0);
+	obj->facesCounter = 0;
+	obj->vertices = (uint32_t *)malloc(sizeof(uint32_t) * 0);
+	obj->verticesCounter = 0;
+	obj->textureCoords = (uint32_t *)malloc(sizeof(uint32_t) * 0);
+	obj->uv = (uint16_t *)malloc(sizeof(uint16_t) * 0);
+	obj->textureCoordsCounter = 0;
+	obj->normalsCoords = (int32_t *)malloc(sizeof(int32_t)*0);
+	obj->normals = (uint16_t *)malloc(sizeof(uint16_t)*0);
+	obj->normalsCoordsCounter = 0;
+	while(offset<model->len)
 	{
-		return 1;
-	}
-	line[0] = lineBuffer[0];
-	uint8_t counter = 1;
-	while ((lineBuffer[0] != '\n') && (counter < length - 1))
-	{
-		f_read(file, lineBuffer, 1, &br);
-		line[counter] = lineBuffer[0];
-		counter++;
-	}
-	return 0;
-}
-
-void clearline(uint8_t *line, uint8_t length)
-{
-	for (uint8_t i = 0; i < length; i++)
-	{
-		line[i] = 0;
+		unsigned char line[32];
+		uint8_t i=0;
+		while(model->obj[offset]!="\n")
+		{
+			line[i]=model->obj[offset];
+			offset++;
+			i++;
+		}
+		if (line[0] == 'v' && line[1] == ' ')
+		{
+			float x, y, z;
+			int result = sscanf(line + 2, "%f %f %f", &x, &y, &z);
+			obj->verticesCounter++;
+			obj->vertices = realloc(obj->vertices, obj->verticesCounter * 3 * sizeof(uint32_t));
+			obj->vertices[(obj->verticesCounter - 1) * 3] = float_to_fixed(x);
+			obj->vertices[(obj->verticesCounter - 1) * 3 + 1] = float_to_fixed(y);
+			obj->vertices[(obj->verticesCounter - 1) * 3 + 2] = float_to_fixed(z);
+		}
+		else if (line[0] == 'v' && line[1] == 't')
+		{
+			float x, y;
+			int result = sscanf(line + 3, "%f %f", &x, &y);
+			obj->textureCoordsCounter++;
+			obj->textureCoords = realloc(obj->textureCoords, obj->textureCoordsCounter * 2 * sizeof(uint32_t));
+			obj->textureCoords[(obj->textureCoordsCounter - 1) * 2] = float_to_fixed(x);
+			obj->textureCoords[(obj->textureCoordsCounter - 1) * 2 + 1] = float_to_fixed(y);
+		}
+		else if (line[0] == 'v' && line[1] == 'n')
+		{
+			float x, y, z;
+			int result = sscanf(line + 2, "%f %f %f", &x, &y, &z);
+			obj->normalsCoordsCounter++;
+			obj->normalsCoords = realloc(obj->textureCoords, obj->textureCoordsCounter * 3 * sizeof(uint32_t));
+			obj->normalsCoords[(obj->verticesCounter - 1) * 3] = float_to_fixed(x);
+			obj->normalsCoords[(obj->verticesCounter - 1) * 3 + 1] = float_to_fixed(y);
+			obj->normalsCoords[(obj->verticesCounter - 1) * 3 + 2] = float_to_fixed(z);
+		}
+		else if (line[0] == 'f' && line[1] == ' ')
+		{
+			uint16_t f[3], vt[3], vn[3];
+			int result = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d", &f[0], &vt[0], &vn[0], &f[1], &vt[1], &vn[1], &f[2], &vt[2], &vn[2]);
+			obj->facesCounter++;
+			obj->faces = realloc(obj->faces, obj->facesCounter * 3 * sizeof(uint16_t));
+			obj->faces[(obj->facesCounter - 1) * 3] = (f[0] - 1);
+			obj->faces[(obj->facesCounter - 1) * 3 + 1] = (f[1] - 1);
+			obj->faces[(obj->facesCounter - 1) * 3 + 2] = (f[2] - 1);
+			obj->uv = realloc(obj->uv, obj->facesCounter * 3 * sizeof(uint16_t));
+			obj->uv[(obj->facesCounter - 1) * 3] = (vt[0] - 1);
+			obj->uv[(obj->facesCounter - 1) * 3 + 1] = (vt[1] - 1);
+			obj->uv[(obj->facesCounter - 1) * 3 + 2] = (vt[2] - 1);
+			obj->uv = realloc(obj->normals, obj->facesCounter * 3 * sizeof(uint16_t));
+			obj->uv[(obj->facesCounter - 1) * 3] = (vn[0] - 1);
+			obj->uv[(obj->facesCounter - 1) * 3 + 1] = (vn[1] - 1);
+			obj->uv[(obj->facesCounter - 1) * 3 + 2] = (vn[2] - 1);
+		}
+		offset++;
 	}
 }
 
@@ -107,7 +157,8 @@ void init_fileReader(const IHardware *hardware)
 
 static IFileReader fileReader = {
 	.init_fileReader = init_fileReader,
-	.play_wave_file = play_wave_file};
+	.play_wave_file = play_wave_file,
+	.load_obj_file = load_obj_file};
 
 const IFileReader *get_fileReader(void)
 {

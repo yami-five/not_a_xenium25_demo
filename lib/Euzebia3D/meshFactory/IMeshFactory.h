@@ -8,6 +8,7 @@ typedef struct
 {
     Mesh* (*create_colored_mesh)(uint16_t color, uint8_t meshIndex);
     Mesh* (*create_textured_mesh)(uint8_t imageIndex, uint8_t meshIndex);
+    void (*init)(void);
 } IMeshFactory;
 
 #endif
