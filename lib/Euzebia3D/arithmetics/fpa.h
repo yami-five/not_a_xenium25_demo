@@ -19,7 +19,7 @@ int32_t fixed_sub(int32_t a, int32_t b);
 int64_t fixed_mul(int32_t a, int32_t b);
 int32_t fixed_div(int32_t a, int32_t b);
 int64_t fixed_pow(int32_t a);
-void init_sin_cos();
+// void init_sin_cos();
 int32_t fast_sin(int32_t value);
 int32_t fast_cos(int32_t value);
 int32_t fast_inv_sqrt(int32_t number);

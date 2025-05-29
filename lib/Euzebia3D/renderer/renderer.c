@@ -28,7 +28,7 @@ void init_renderer(volatile const IHardware *hardware, volatile const IPainter *
     _hardware = hardware;
     _painter = painter;
     clear_zbuffuer();
-    init_sin_cos();
+    // init_sin_cos();
 }
 
 void triangle_center(Triangle3D *triangle, int32_t *center)
