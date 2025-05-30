@@ -1,2 +1,4 @@
-const int16_t sin_table[36000];
-const int16_t cos_table[36000];
+#include <stdint.h>
+
+const int16_t get_sin(uint16_t index);
+const int16_t get_cos(uint16_t index);

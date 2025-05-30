@@ -55,20 +55,20 @@ int64_t fixed_pow(int32_t a)
 //     }
 // }
 
-int32_t fast_sin(int32_t value)
-{
-    int32_t index = value % TABLE_SIZE;
+int16_t fast_sin(int32_t value)
+{   
+    int16_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
-    return sin_table[index];
+    return get_sin(index);
 }
 
-int32_t fast_cos(int32_t value)
+int16_t fast_cos(int32_t value)
 {
-    int32_t index = value % TABLE_SIZE;
+    int16_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
-    return cos_table[index];
+    return get_cos(index);
 }
 
 int32_t fast_inv_sqrt(int32_t value)
