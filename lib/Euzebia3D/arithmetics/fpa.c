@@ -1,7 +1,7 @@
 #include "fpa.h"
-
-int32_t sin_table[TABLE_SIZE];
-int32_t cos_table[TABLE_SIZE];
+#include "lookup_tables.h"
+// int32_t sin_table[TABLE_SIZE];
+// int32_t cos_table[TABLE_SIZE];
 
 int32_t float_to_fixed(float value)
 {
@@ -45,30 +45,30 @@ int64_t fixed_pow(int32_t a)
     return fixed_mul(a, a);
 }
 
-void init_sin_cos()
-{
-    for (int32_t i = 0; i < TABLE_SIZE; i++)
-    {
-        float angle = i * RESOLUTION;
-        sin_table[i] = float_to_fixed(sinf(angle));
-        cos_table[i] = float_to_fixed(cosf(angle));
-    }
-}
+// void init_sin_cos()
+// {
+//     for (int32_t i = 0; i < TABLE_SIZE; i++)
+//     {
+//         float angle = i * RESOLUTION;
+//         sin_table[i] = float_to_fixed(sinf(angle));
+//         cos_table[i] = float_to_fixed(cosf(angle));
+//     }
+// }
 
-int32_t fast_sin(int32_t value)
-{
-    int32_t index = value % TABLE_SIZE;
+int16_t fast_sin(int32_t value)
+{   
+    int16_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
-    return sin_table[index];
+    return get_sin(index);
 }
 
-int32_t fast_cos(int32_t value)
+int16_t fast_cos(int32_t value)
 {
-    int32_t index = value % TABLE_SIZE;
+    int16_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
-    return cos_table[index];
+    return get_cos(index);
 }
 
 int32_t fast_inv_sqrt(int32_t value)

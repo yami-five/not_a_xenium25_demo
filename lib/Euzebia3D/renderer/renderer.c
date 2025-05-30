@@ -28,7 +28,7 @@ void init_renderer(volatile const IHardware *hardware, volatile const IPainter *
     _hardware = hardware;
     _painter = painter;
     clear_zbuffuer();
-    init_sin_cos();
+    // init_sin_cos();
 }
 
 void triangle_center(Triangle3D *triangle, int32_t *center)
@@ -332,8 +332,8 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistance, PointLight 
     {
         divider = (triangle->b.y - triangle->c.y) * (triangle->a.x - triangle->c.x) + (triangle->c.x - triangle->b.x) * (triangle->a.y - triangle->c.y);
         divider *= SCALE_FACTOR;
-        if (divider < 0)
-            divider = -divider;
+        // if (divider < 0)
+        //     divider = -divider;
     }
 
     if (triangle->a.y < triangle->b.y)
@@ -457,49 +457,47 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
             continue;
         // normal vector
         int32_t lightDistance = 0;
-        if (SHADING_ENABLED)
-        {
-            int32_t xab = verticesModified[b * 3] - verticesModified[a * 3];
-            int32_t yab = verticesModified[b * 3 + 1] - verticesModified[a * 3 + 1];
-            int32_t zab = verticesModified[b * 3 + 2] - verticesModified[a * 3 + 2];
-            int32_t xac = verticesModified[c * 3] - verticesModified[a * 3];
-            int32_t yac = verticesModified[c * 3 + 1] - verticesModified[a * 3 + 1];
-            int32_t zac = verticesModified[c * 3 + 2] - verticesModified[a * 3 + 2];
-            normalVector.x = (fixed_mul(yab, zac) - fixed_mul(zab, yac)),
-            normalVector.y = (fixed_mul(zab, xac) - fixed_mul(xab, zac));
-            normalVector.z = (fixed_mul(xab, yac) - fixed_mul(yab, xac));
-            norm_vector(&normalVector);
-            int32_t normalVectorLength = len_vector(&normalVector);
-            // light direction
-            Triangle3D triangle3D = {
-                {verticesModified[a * 3],
-                 verticesModified[a * 3 + 1],
-                 verticesModified[a * 3 + 2]},
-                {verticesModified[b * 3],
-                 verticesModified[b * 3 + 1],
-                 verticesModified[b * 3 + 2]},
-                {verticesModified[c * 3],
-                 verticesModified[c * 3 + 1],
-                 verticesModified[c * 3 + 2]}};
-            int32_t center[3];
-            triangle_center(&triangle3D, center);
-            lightDirection.x = pLight->position.x - center[0];
-            lightDirection.y = pLight->position.y - center[1];
-            lightDirection.z = pLight->position.z - center[2];
-            int32_t lightLength = len_vector(&lightDirection);
-            // light distance
-            Vector3 *lmn = sub_vectors(&lightDirection, &normalVector);
-            int64_t lightDirectionMinusNormalVector = len_vector(lmn);
-            free(lmn);
-            int32_t x = fixed_pow(normalVectorLength) + fixed_pow(lightLength) - fixed_pow(lightDirectionMinusNormalVector);
-            int32_t y = fixed_mul(lightLength, normalVectorLength) * 2;
-            lightDistance = fixed_div(x, y);
-            if (lightDistance < 0)
-                lightDistance = 0;
-            if (lightDistance > SCALE_FACTOR)
-                lightDistance = SCALE_FACTOR;
-        }
-
+#ifdef SHADING_ENABLED
+        int32_t xab = verticesModified[b * 3] - verticesModified[a * 3];
+        int32_t yab = verticesModified[b * 3 + 1] - verticesModified[a * 3 + 1];
+        int32_t zab = verticesModified[b * 3 + 2] - verticesModified[a * 3 + 2];
+        int32_t xac = verticesModified[c * 3] - verticesModified[a * 3];
+        int32_t yac = verticesModified[c * 3 + 1] - verticesModified[a * 3 + 1];
+        int32_t zac = verticesModified[c * 3 + 2] - verticesModified[a * 3 + 2];
+        normalVector.x = (fixed_mul(yab, zac) - fixed_mul(zab, yac)),
+        normalVector.y = (fixed_mul(zab, xac) - fixed_mul(xab, zac));
+        normalVector.z = (fixed_mul(xab, yac) - fixed_mul(yab, xac));
+        norm_vector(&normalVector);
+        int32_t normalVectorLength = len_vector(&normalVector);
+        // light direction
+        Triangle3D triangle3D = {
+            {verticesModified[a * 3],
+                verticesModified[a * 3 + 1],
+                verticesModified[a * 3 + 2]},
+            {verticesModified[b * 3],
+                verticesModified[b * 3 + 1],
+                verticesModified[b * 3 + 2]},
+            {verticesModified[c * 3],
+                verticesModified[c * 3 + 1],
+                verticesModified[c * 3 + 2]}};
+        int32_t center[3];
+        triangle_center(&triangle3D, center);
+        lightDirection.x = pLight->position.x - center[0];
+        lightDirection.y = pLight->position.y - center[1];
+        lightDirection.z = pLight->position.z - center[2];
+        int32_t lightLength = len_vector(&lightDirection);
+        // light distance
+        Vector3 *lmn = sub_vectors(&lightDirection, &normalVector);
+        int64_t lightDirectionMinusNormalVector = len_vector(lmn);
+        free(lmn);
+        int32_t x = fixed_pow(normalVectorLength) + fixed_pow(lightLength) - fixed_pow(lightDirectionMinusNormalVector);
+        int32_t y = fixed_mul(lightLength, normalVectorLength) * 2;
+        lightDistance = fixed_div(x, y);
+        if (lightDistance < 0)
+            lightDistance = 0;
+        if (lightDistance > SCALE_FACTOR)
+            lightDistance = SCALE_FACTOR;
+#endif
         tri(&triangle, mesh->mat, lightDistance, pLight);
     }
     // free(normalVector);

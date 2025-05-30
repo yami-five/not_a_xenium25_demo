@@ -2,6 +2,7 @@ add_library(
     Euzebia3D 
     ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/fpa.c
     ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/vectors.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/arithmetics/lookup_tables.c
     ${CMAKE_CURRENT_SOURCE_DIR}/cameraFactory/camera.c
     ${CMAKE_CURRENT_SOURCE_DIR}/cameraFactory/cameraFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/display/display.c
