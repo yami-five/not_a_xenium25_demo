@@ -428,8 +428,8 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         int32_t zn = mesh->normals[i + 2];
         for (int j = 0; j < mesh->transformationsNum; j++)
         {
-            // if (&mesh->transformations[j].transformType == 0)
-            //     transform(&xn, &yn, &zn, &mesh->transformations[j]);
+            if (&mesh->transformations[j].transformType == 0)
+                transform(&xn, &yn, &zn, &mesh->transformations[j]);
         }
         normalsModified[i] = xn;
         normalsModified[i + 1] = yn;
