@@ -423,9 +423,9 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         verticesOnScreen[i] = fixed_div(x, w) + WIDTH_HALF;
         verticesOnScreen[i + 1] = fixed_div(y, w) + HEIGHT_HALF;
         verticesOnScreen[i + 2] = z;
-        int32_t xn = mesh->normals[i];
-        int32_t yn = mesh->normals[i + 1];
-        int32_t zn = mesh->normals[i + 2];
+        int32_t xn = mesh->vn[i];
+        int32_t yn = mesh->vn[i + 1];
+        int32_t zn = mesh->vn[i + 2];
         for (int j = 0; j < mesh->transformationsNum; j++)
         {
             if (&mesh->transformations[j].transformType == 0)
@@ -485,6 +485,10 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         normalVectorC.x = normalsModified[c * 3];
         normalVectorC.y = normalsModified[c * 3 + 1];
         normalVectorC.z = normalsModified[c * 3 + 2];
+
+        norm_vector(&normalVectorA);
+        norm_vector(&normalVectorB);
+        norm_vector(&normalVectorC);
 
         int32_t normalVectorALength = len_vector(&normalVectorA);
         int32_t normalVectorBLength = len_vector(&normalVectorB);
