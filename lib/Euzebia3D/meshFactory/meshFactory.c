@@ -11,35 +11,39 @@ Mesh *createMesh(Material *mat, uint8_t meshIndex)
     Mesh *mesh = (Mesh *)malloc(sizeof(Mesh));
     mesh->verticesCounter = obj->verticesCounter;
     mesh->facesCounter = obj->facesCounter;
-    mesh->vertices = (int32_t *)malloc(sizeof(int32_t) * obj->verticesCounter*3);
-    mesh->faces = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter*3);
-    mesh->textureCoords = (int32_t *)malloc(sizeof(int32_t) * obj->textureCoordsCounter*2);
-    mesh->uv = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter*3);
+    mesh->vertices = (int32_t *)malloc(sizeof(int32_t) * obj->verticesCounter * 3);
+    mesh->faces = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter * 3);
+    mesh->textureCoords = (int32_t *)malloc(sizeof(int32_t) * obj->textureCoordsCounter * 2);
+    mesh->uv = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter * 3);
+    mesh->vn = (int32_t *)malloc(sizeof(int32_t) * obj->verticesCounter * 3);
+    mesh->normals = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter * 3);
     mesh->mat = mat;
     mesh->transformations = NULL;
     mesh->transformationsNum = 0;
 
-    for(uint16_t i=0;i<obj->facesCounter*3;i++)
+    for (uint16_t i = 0; i < obj->facesCounter * 3; i++)
     {
-        mesh->faces[i]=obj->faces[i];
-        mesh->uv[i]=obj->uv[i];
-    }
-    
-    for(uint16_t i=0;i<obj->verticesCounter*3;i++)
-    {
-        mesh->vertices[i]=float_to_fixed(obj->vertices[i]);
+        mesh->faces[i] = obj->faces[i];
+        mesh->uv[i] = obj->uv[i];
+        mesh->normals[i] = obj->normals[i];
     }
 
-    for(uint16_t i=0;i<obj->textureCoordsCounter*2;i++)
+    for (uint16_t i = 0; i < obj->verticesCounter * 3; i++)
     {
-        mesh->textureCoords[i]=float_to_fixed(obj->textureCoords[i]);
+        mesh->vertices[i] = float_to_fixed(obj->vertices[i]);
+        mesh->vn[i] = float_to_fixed(obj->vn[i]);
+    }
+
+    for (uint16_t i = 0; i < obj->textureCoordsCounter * 2; i++)
+    {
+        mesh->textureCoords[i] = float_to_fixed(obj->textureCoords[i]);
     }
 
     // free((void *)obj);
     return mesh;
 }
 
-Mesh* create_colored_mesh(uint16_t color, uint8_t meshIndex)
+Mesh *create_colored_mesh(uint16_t color, uint8_t meshIndex)
 {
     Material *material = (Material *)malloc(sizeof(Material));
     material->diffuse = color;
@@ -48,7 +52,7 @@ Mesh* create_colored_mesh(uint16_t color, uint8_t meshIndex)
     return createMesh(material, meshIndex);
 }
 
-Mesh* create_textured_mesh(uint8_t imageIndex, uint8_t meshIndex)
+Mesh *create_textured_mesh(uint8_t imageIndex, uint8_t meshIndex)
 {
     Material *material = (Material *)malloc(sizeof(Material));
     material->diffuse = 0;
@@ -59,8 +63,7 @@ Mesh* create_textured_mesh(uint8_t imageIndex, uint8_t meshIndex)
 
 static IMeshFactory renderer = {
     .create_colored_mesh = create_colored_mesh,
-    .create_textured_mesh = create_textured_mesh
-};
+    .create_textured_mesh = create_textured_mesh};
 
 const IMeshFactory *get_meshFactory(void)
 {

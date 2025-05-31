@@ -20,6 +20,9 @@ typedef struct
     const uint16_t *faces;
     const float *textureCoords;
     const uint16_t *uv;
+    const float *vn;
+    const uint16_t *normals;
+    const uint16_t nn;
 } Model;
 
 // const Image images[];
