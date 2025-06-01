@@ -552,25 +552,28 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         free(lmnB);
         free(lmnC);
 
-        int32_t x = fixed_pow(normalVectorALength) + fixed_pow(lightLengthA) - fixed_pow(lightDirectionMinusNormalVectorA);
-        int32_t y = fixed_mul(lightLengthA, normalVectorALength) * 2;
-        lightDistances[0] = fixed_div(x, y);
+        // int32_t x = fixed_pow(normalVectorALength) + fixed_pow(lightLengthA) - fixed_pow(lightDirectionMinusNormalVectorA);
+        // int32_t y = fixed_mul(lightLengthA, normalVectorALength) * 2;
+        // lightDistances[0] = fixed_div(x, y);
+        lightDistances[0]=mul_vectors_scalar(&normalVectorA,&lightDirectionA);
         if (lightDistances[0] < 0)
             lightDistances[0] = 0;
         if (lightDistances[0] > SCALE_FACTOR)
             lightDistances[0] = SCALE_FACTOR;
 
-        x = fixed_pow(normalVectorBLength) + fixed_pow(lightLengthB) - fixed_pow(lightDirectionMinusNormalVectorB);
-        y = fixed_mul(lightLengthB, normalVectorBLength) * 2;
-        lightDistances[1] = fixed_div(x, y);
+        // x = fixed_pow(normalVectorBLength) + fixed_pow(lightLengthB) - fixed_pow(lightDirectionMinusNormalVectorB);
+        // y = fixed_mul(lightLengthB, normalVectorBLength) * 2;
+        // lightDistances[1] = fixed_div(x, y);
+        lightDistances[1]=mul_vectors_scalar(&normalVectorB,&lightDirectionB);
         if (lightDistances[1] < 0)
             lightDistances[1] = 0;
         if (lightDistances[1] > SCALE_FACTOR)
             lightDistances[1] = SCALE_FACTOR;
 
-        x = fixed_pow(normalVectorCLength) + fixed_pow(lightLengthC) - fixed_pow(lightDirectionMinusNormalVectorC);
-        y = fixed_mul(lightLengthC, normalVectorCLength) * 2;
-        lightDistances[2] = fixed_div(x, y);
+        // x = fixed_pow(normalVectorCLength) + fixed_pow(lightLengthC) - fixed_pow(lightDirectionMinusNormalVectorC);
+        // y = fixed_mul(lightLengthC, normalVectorCLength) * 2;
+        // lightDistances[2] = fixed_div(x, y);
+        lightDistances[2]=mul_vectors_scalar(&normalVectorC,&lightDirectionC);
         if (lightDistances[2] < 0)
             lightDistances[2] = 0;
         if (lightDistances[2] > SCALE_FACTOR)
