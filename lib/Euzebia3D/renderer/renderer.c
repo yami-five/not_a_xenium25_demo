@@ -134,7 +134,7 @@ void shading(uint16_t *color, int32_t lightDistances[], PointLight *light, int B
 
     int32_t lightDistance = (fixed_mul(Ba, lightDistances[0]) + fixed_mul(Bb, lightDistances[1]) + fixed_mul(Bc, lightDistances[2]));
     if (lightDistance < 0)
-        lightDistance = 0;
+        lightDistance = 0;  
 
     fixedR = fixed_mul(fixedR, lightDistance);
     fixedG = fixed_mul(fixedG, lightDistance);
@@ -515,6 +515,10 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         lightDirectionC.y = pLight->position.y - normalVectorC.y;
         lightDirectionC.z = pLight->position.z - normalVectorC.z;
 
+        norm_vector(&lightDirectionA);
+        norm_vector(&lightDirectionB);
+        norm_vector(&lightDirectionC);
+
         int32_t lightLengthA = len_vector(&lightDirectionA);
         int32_t lightLengthB = len_vector(&lightDirectionB);
         int32_t lightLengthC = len_vector(&lightDirectionC);
@@ -523,6 +527,10 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         Vector3 *lmnA = sub_vectors(&lightDirectionA, &normalVectorA);
         Vector3 *lmnB = sub_vectors(&lightDirectionB, &normalVectorB);
         Vector3 *lmnC = sub_vectors(&lightDirectionC, &normalVectorC);
+
+        norm_vector(lmnA);
+        norm_vector(lmnB);
+        norm_vector(lmnC);
 
         int64_t lightDirectionMinusNormalVectorA = len_vector(lmnA);
         int64_t lightDirectionMinusNormalVectorB = len_vector(lmnB);
