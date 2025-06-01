@@ -447,17 +447,12 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         normalsModified[i + 1] = yn;
         normalsModified[i + 2] = zn;
     }
-    // flat shading
     Vector3 normalVectorA;
     Vector3 normalVectorB;
     Vector3 normalVectorC;
     Vector3 lightDirectionA;
     Vector3 lightDirectionB;
     Vector3 lightDirectionC;
-    // Vector3 lmn;
-    // Vector3 *normalVector = (Vector3 *)malloc(sizeof(Vector3));
-    // Vector3 *lightDirection = (Vector3 *)malloc(sizeof(Vector3));
-    // Vector3 *lmn = (Vector3 *)malloc(sizeof(Vector3));
     for (uint16_t i = 0; i < mesh->facesCounter * 3; i += 3)
     {
         uint16_t a = mesh->faces[i];
@@ -501,10 +496,7 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         norm_vector(&normalVectorA);
         norm_vector(&normalVectorB);
         norm_vector(&normalVectorC);
-
-        int32_t normalVectorALength = len_vector(&normalVectorA);
-        int32_t normalVectorBLength = len_vector(&normalVectorB);
-        int32_t normalVectorCLength = len_vector(&normalVectorC);
+        
         // light direction
         Triangle3D triangle3D = {
             {verticesModified[a * 3],
@@ -529,50 +521,19 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
 
         norm_vector(&lightDirectionA);
         norm_vector(&lightDirectionB);
-        norm_vector(&lightDirectionC);
-
-        int32_t lightLengthA = len_vector(&lightDirectionA);
-        int32_t lightLengthB = len_vector(&lightDirectionB);
-        int32_t lightLengthC = len_vector(&lightDirectionC);
-
-        // light distance
-        Vector3 *lmnA = sub_vectors(&lightDirectionA, &normalVectorA);
-        Vector3 *lmnB = sub_vectors(&lightDirectionB, &normalVectorB);
-        Vector3 *lmnC = sub_vectors(&lightDirectionC, &normalVectorC);
-
-        norm_vector(lmnA);
-        norm_vector(lmnB);
-        norm_vector(lmnC);
-
-        int64_t lightDirectionMinusNormalVectorA = len_vector(lmnA);
-        int64_t lightDirectionMinusNormalVectorB = len_vector(lmnB);
-        int64_t lightDirectionMinusNormalVectorC = len_vector(lmnC);
-
-        free(lmnA);
-        free(lmnB);
-        free(lmnC);
-
-        // int32_t x = fixed_pow(normalVectorALength) + fixed_pow(lightLengthA) - fixed_pow(lightDirectionMinusNormalVectorA);
-        // int32_t y = fixed_mul(lightLengthA, normalVectorALength) * 2;
-        // lightDistances[0] = fixed_div(x, y);
+        norm_vector(&lightDirectionC);        
+        
         lightDistances[0]=mul_vectors_scalar(&normalVectorA,&lightDirectionA);
         if (lightDistances[0] < 0)
             lightDistances[0] = 0;
         if (lightDistances[0] > SCALE_FACTOR)
             lightDistances[0] = SCALE_FACTOR;
 
-        // x = fixed_pow(normalVectorBLength) + fixed_pow(lightLengthB) - fixed_pow(lightDirectionMinusNormalVectorB);
-        // y = fixed_mul(lightLengthB, normalVectorBLength) * 2;
-        // lightDistances[1] = fixed_div(x, y);
         lightDistances[1]=mul_vectors_scalar(&normalVectorB,&lightDirectionB);
         if (lightDistances[1] < 0)
             lightDistances[1] = 0;
         if (lightDistances[1] > SCALE_FACTOR)
             lightDistances[1] = SCALE_FACTOR;
-
-        // x = fixed_pow(normalVectorCLength) + fixed_pow(lightLengthC) - fixed_pow(lightDirectionMinusNormalVectorC);
-        // y = fixed_mul(lightLengthC, normalVectorCLength) * 2;
-        // lightDistances[2] = fixed_div(x, y);
         lightDistances[2]=mul_vectors_scalar(&normalVectorC,&lightDirectionC);
         if (lightDistances[2] < 0)
             lightDistances[2] = 0;
