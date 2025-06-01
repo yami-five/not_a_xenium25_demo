@@ -250,7 +250,7 @@ void rasterize(int y, int x0, int x1, Triangle2D *triangle, Material *mat, int32
 
 void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLight *light)
 {
-    int x, y, z, uv;
+    int x, y, z, uv, l;
     if (triangle->a.y > triangle->b.y)
     {
         z = triangle->a.z;
@@ -269,6 +269,10 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLig
         uv = triangle->uvA.y;
         triangle->uvA.y = triangle->uvB.y;
         triangle->uvB.y = uv;
+
+        l=lightDistances[0];
+        lightDistances[0]=lightDistances[1];
+        lightDistances[1]=l;
     }
     if (triangle->a.y > triangle->c.y)
     {
@@ -288,6 +292,10 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLig
         uv = triangle->uvA.y;
         triangle->uvA.y = triangle->uvC.y;
         triangle->uvC.y = uv;
+
+        l=lightDistances[0];
+        lightDistances[0]=lightDistances[2];
+        lightDistances[2]=l;
     }
     if (triangle->b.y > triangle->c.y)
     {
@@ -307,6 +315,10 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLig
         uv = triangle->uvB.y;
         triangle->uvB.y = triangle->uvC.y;
         triangle->uvC.y = uv;
+
+        l=lightDistances[1];
+        lightDistances[1]=lightDistances[2];
+        lightDistances[2]=l;
     }
     if (triangle->c.y < 0 || triangle->a.y > HEIGHT_DISPLAY)
         return;
