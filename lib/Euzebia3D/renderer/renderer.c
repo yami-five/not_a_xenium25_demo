@@ -517,15 +517,15 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
              verticesModified[c * 3 + 1],
              verticesModified[c * 3 + 2]}};
 
-        lightDirectionA.x = pLight->position.x - normalVectorA.x;
-        lightDirectionA.y = pLight->position.y - normalVectorA.y;
-        lightDirectionA.z = pLight->position.z - normalVectorA.z;
-        lightDirectionB.x = pLight->position.x - normalVectorB.x;
-        lightDirectionB.y = pLight->position.y - normalVectorB.y;
-        lightDirectionB.z = pLight->position.z - normalVectorB.z;
-        lightDirectionC.x = pLight->position.x - normalVectorC.x;
-        lightDirectionC.y = pLight->position.y - normalVectorC.y;
-        lightDirectionC.z = pLight->position.z - normalVectorC.z;
+        lightDirectionA.x = pLight->position.x - triangle3D.a.x;
+        lightDirectionA.y = pLight->position.y - triangle3D.a.y;
+        lightDirectionA.z = pLight->position.z - triangle3D.a.z;
+        lightDirectionB.x = pLight->position.x - triangle3D.b.x;
+        lightDirectionB.y = pLight->position.y - triangle3D.b.y;
+        lightDirectionB.z = pLight->position.z - triangle3D.b.z;
+        lightDirectionC.x = pLight->position.x - triangle3D.c.x;
+        lightDirectionC.y = pLight->position.y - triangle3D.c.y;
+        lightDirectionC.z = pLight->position.z - triangle3D.c.z;
 
         norm_vector(&lightDirectionA);
         norm_vector(&lightDirectionB);
