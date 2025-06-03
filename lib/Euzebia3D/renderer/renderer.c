@@ -38,62 +38,75 @@ void triangle_center(Triangle3D *triangle, int32_t *center)
     center[2] = fixed_div((triangle->a.z + triangle->b.z + triangle->c.z), TRIANGLE_CENTER_DIVIDER);
 }
 
-void rotate(int32_t *x, int32_t *y, int32_t *z, TransformVector *vector)
+void rotate(int *vertices, uint16_t verticesCounter, TransformVector *vector)
 {
-    if (vector->x != 0)
+    int32_t qt_rad = fixed_mul(vector->w, PI2_FIXED);
+    int32_t c = fast_cos(qt_rad / 2);
+    int32_t s = fast_sin(qt_rad / 2);
+    Vector3 qVec = {
+        .x = vector->x,
+        .y = vector->y,
+        .z = vector->z};
+    Quaternion q = {
+        .w = c,
+        .vec = &qVec};
+    norm_vector(q.vec);
+    mul_vec_scalar(q.vec, s);
+    Vector3 qVecInv = {
+        .x = -q.vec->x,
+        .y = -q.vec->y,
+        .z = -q.vec->z};
+    Quaternion qInv = {
+        .w = c,
+        .vec = &qVecInv};
+    for (uint16_t i = 0; i < verticesCounter; i++)
     {
-        int32_t qt_rad = fixed_mul(vector->x, PI2_FIXED);
-        int32_t c = fast_cos(qt_rad);
-        int32_t s = fast_sin(qt_rad);
-        int32_t temp_x = fixed_mul(c, *y) - fixed_mul(s, *z);
-        int32_t temp_y = fixed_mul(s, *y) + fixed_mul(c, *z);
-        *y = temp_x;
-        *z = temp_y;
-    }
-    if (vector->y != 0)
-    {
-        int32_t qt_rad = fixed_mul(vector->y, PI2_FIXED);
-        int32_t c = fast_cos(qt_rad);
-        int32_t s = fast_sin(qt_rad);
-        int32_t temp_x = fixed_mul(c, *x) - fixed_mul(s, *z);
-        int32_t temp_y = fixed_mul(s, *x) + fixed_mul(c, *z);
-        *x = temp_x;
-        *z = temp_y;
-    }
-    if (vector->z != 0)
-    {
-        int32_t qt_rad = fixed_mul(vector->z, PI2_FIXED);
-        int32_t c = fast_cos(qt_rad);
-        int32_t s = fast_sin(qt_rad);
-        int32_t temp_x = fixed_mul(c, *x) - fixed_mul(s, *y);
-        int32_t temp_y = fixed_mul(s, *x) + fixed_mul(c, *y);
-        *x = temp_x;
-        *y = temp_y;
+        Vector3 vec_vertex =
+            {
+                .x = vertices[i * 3],
+                .y = vertices[i * 3 + 1],
+                .z = vertices[i * 3 + 2]};
+        Quaternion q_vertex = {
+            .w = 0,
+            .vec = &vec_vertex};
+
+        Quaternion *result=mul_quaternion(&q,&q_vertex);
+        result=mul_quaternion(result,&qInv);
+        vertices[i*3]=result->vec->x;
+        vertices[i*3+1]=result->vec->y;
+        vertices[i*3+2]=result->vec->z;
+        free(result);
     }
 }
 
-void translate(int32_t *x, int32_t *y, int32_t *z, TransformVector *vector)
+void translate(int *vertices, uint16_t verticesCounter, TransformVector *vector)
 {
-    *x += vector->x;
-    *y += vector->y;
-    *z += vector->z;
+    for (uint16_t i = 0; i < verticesCounter; i++)
+    {
+        vertices[i * 3] += vector->x;
+        vertices[i * 3 + 1] += vector->y;
+        vertices[i * 3 + 2] += vector->z;
+    }
 }
 
-void scale(int32_t *x, int32_t *y, int32_t *z, TransformVector *vector)
+void scale(int *vertices, uint16_t verticesCounter, TransformVector *vector)
 {
-    *x = fixed_mul(*x, vector->x);
-    *y = fixed_mul(*y, vector->y);
-    *z = fixed_mul(*z, vector->z);
+    for (uint16_t i = 0; i < verticesCounter; i++)
+    {
+        vertices[i * 3] = fixed_mul(vertices[i * 3], vector->x);
+        vertices[i * 3 + 1] = fixed_mul(vertices[i * 3 + 1], vector->y);
+        vertices[i * 3 + 2] = fixed_mul(vertices[i * 3 + 2], vector->z);
+    }
 }
 
-void transform(int32_t *x, int32_t *y, int32_t *z, TransformInfo *transformInfo)
+void transform(int *vertices, uint16_t verticesCounter, TransformInfo *transformInfo)
 {
     if (transformInfo->transformType == 0)
-        rotate(x, y, z, transformInfo->transformVector);
+        rotate(vertices, verticesCounter, transformInfo->transformVector);
     if (transformInfo->transformType == 1)
-        translate(x, y, z, transformInfo->transformVector);
+        translate(vertices, verticesCounter, transformInfo->transformVector);
     if (transformInfo->transformType == 2)
-        scale(x, y, z, transformInfo->transformVector);
+        scale(vertices, verticesCounter, transformInfo->transformVector);
 }
 
 void inf(float *x, float *y, float qt)
@@ -134,7 +147,7 @@ void shading(uint16_t *color, int32_t lightDistances[], PointLight *light, int B
 
     int32_t lightDistance = (fixed_mul(Ba, lightDistances[0]) + fixed_mul(Bb, lightDistances[1]) + fixed_mul(Bc, lightDistances[2]));
     if (lightDistance < 0)
-        lightDistance = 0;  
+        lightDistance = 0;
 
     fixedR = fixed_mul(fixedR, lightDistance);
     fixedG = fixed_mul(fixedG, lightDistance);
@@ -270,9 +283,9 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLig
         triangle->uvA.y = triangle->uvB.y;
         triangle->uvB.y = uv;
 
-        l=lightDistances[0];
-        lightDistances[0]=lightDistances[1];
-        lightDistances[1]=l;
+        l = lightDistances[0];
+        lightDistances[0] = lightDistances[1];
+        lightDistances[1] = l;
     }
     if (triangle->a.y > triangle->c.y)
     {
@@ -293,9 +306,9 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLig
         triangle->uvA.y = triangle->uvC.y;
         triangle->uvC.y = uv;
 
-        l=lightDistances[0];
-        lightDistances[0]=lightDistances[2];
-        lightDistances[2]=l;
+        l = lightDistances[0];
+        lightDistances[0] = lightDistances[2];
+        lightDistances[2] = l;
     }
     if (triangle->b.y > triangle->c.y)
     {
@@ -316,9 +329,9 @@ void tri(Triangle2D *triangle, Material *mat, int32_t lightDistances[], PointLig
         triangle->uvB.y = triangle->uvC.y;
         triangle->uvC.y = uv;
 
-        l=lightDistances[1];
-        lightDistances[1]=lightDistances[2];
-        lightDistances[2]=l;
+        l = lightDistances[1];
+        lightDistances[1] = lightDistances[2];
+        lightDistances[2] = l;
     }
     if (triangle->c.y < 0 || triangle->a.y > HEIGHT_DISPLAY)
         return;
@@ -409,20 +422,33 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
     int verticesModified[verticesCounter * 3];
     int verticesOnScreen[verticesCounter * 3];
     int normalsModified[verticesCounter * 3];
+
+    memcpy(verticesModified, mesh->vertices, verticesCounter * 3 * sizeof(int));
+    for (int i = 0; i < mesh->transformationsNum; i++)
+    {
+        transform(verticesModified, verticesCounter, &mesh->transformations[i]);
+    }
+    memcpy(normalsModified, mesh->vn, verticesCounter * 3 * sizeof(int));
+    for (int j = 0; j < mesh->transformationsNum; j++)
+    {
+        if (&mesh->transformations[j].transformType == 0)
+            transform(normalsModified, verticesCounter, &mesh->transformations[j]);
+    }
+
     for (uint16_t i = 0; i < verticesCounter * 3; i += 3)
     {
         // calculates vertex coords in 3D space
-        int32_t x = mesh->vertices[i];
-        int32_t y = mesh->vertices[i + 1];
-        int32_t z = mesh->vertices[i + 2];
-        for (int j = 0; j < mesh->transformationsNum; j++)
-        {
-            transform(&x, &y, &z, &mesh->transformations[j]);
-        }
+        int32_t x = verticesModified[i];
+        int32_t y = verticesModified[i + 1];
+        int32_t z = verticesModified[i + 2];
+        // for (int j = 0; j < mesh->transformationsNum; j++)
+        // {
+        //     transform(&x, &y, &z, &mesh->transformations[j]);
+        // }
         // calculates vertex coords on the screen
-        verticesModified[i] = x;
-        verticesModified[i + 1] = y;
-        verticesModified[i + 2] = z;
+        // verticesModified[i] = x;
+        // verticesModified[i + 1] = y;
+        // verticesModified[i + 2] = z;
         int32_t w = SCALE_FACTOR;
         z -= (5 * SCALE_FACTOR * 5);
         fixed_mul_matrix_vector(&x, &y, &z, &w, camera->vMatrix);
@@ -435,17 +461,17 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         verticesOnScreen[i] = fixed_div(x, w) + WIDTH_HALF;
         verticesOnScreen[i + 1] = fixed_div(y, w) + HEIGHT_HALF;
         verticesOnScreen[i + 2] = z;
-        int32_t xn = mesh->vn[i];
-        int32_t yn = mesh->vn[i + 1];
-        int32_t zn = mesh->vn[i + 2];
-        for (int j = 0; j < mesh->transformationsNum; j++)
-        {
-            if (&mesh->transformations[j].transformType == 0)
-                transform(&xn, &yn, &zn, &mesh->transformations[j]);
-        }
-        normalsModified[i] = xn;
-        normalsModified[i + 1] = yn;
-        normalsModified[i + 2] = zn;
+        // int32_t xn = mesh->vn[i];
+        // int32_t yn = mesh->vn[i + 1];
+        // int32_t zn = mesh->vn[i + 2];
+        // for (int j = 0; j < mesh->transformationsNum; j++)
+        // {
+        //     if (&mesh->transformations[j].transformType == 0)
+        //         transform(&xn, &yn, &zn, &mesh->transformations[j]);
+        // }
+        // normalsModified[i] = xn;
+        // normalsModified[i + 1] = yn;
+        // normalsModified[i + 2] = zn;
     }
     Vector3 normalVectorA;
     Vector3 normalVectorB;
@@ -496,7 +522,7 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         norm_vector(&normalVectorA);
         norm_vector(&normalVectorB);
         norm_vector(&normalVectorC);
-        
+
         // light direction
         Triangle3D triangle3D = {
             {verticesModified[a * 3],
@@ -521,20 +547,20 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
 
         norm_vector(&lightDirectionA);
         norm_vector(&lightDirectionB);
-        norm_vector(&lightDirectionC);        
-        
-        lightDistances[0]=mul_vectors_scalar(&normalVectorA,&lightDirectionA);
+        norm_vector(&lightDirectionC);
+
+        lightDistances[0] = dot_product(&normalVectorA, &lightDirectionA);
         if (lightDistances[0] < 0)
             lightDistances[0] = 0;
         if (lightDistances[0] > SCALE_FACTOR)
             lightDistances[0] = SCALE_FACTOR;
 
-        lightDistances[1]=mul_vectors_scalar(&normalVectorB,&lightDirectionB);
+        lightDistances[1] = dot_product(&normalVectorB, &lightDirectionB);
         if (lightDistances[1] < 0)
             lightDistances[1] = 0;
         if (lightDistances[1] > SCALE_FACTOR)
             lightDistances[1] = SCALE_FACTOR;
-        lightDistances[2]=mul_vectors_scalar(&normalVectorC,&lightDirectionC);
+        lightDistances[2] = dot_product(&normalVectorC, &lightDirectionC);
         if (lightDistances[2] < 0)
             lightDistances[2] = 0;
         if (lightDistances[2] > SCALE_FACTOR)
