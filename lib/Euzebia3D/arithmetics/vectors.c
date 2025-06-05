@@ -5,13 +5,19 @@
 Quaternion *mul_quaternion(Quaternion *q1,Quaternion *q2)
 {
     Quaternion *result = (Quaternion *)malloc(sizeof(Quaternion));
-    result->w=q1->w*q2->w - q1->vec->x*q2->vec->x - q1->vec->y*q2->vec->y - q1->vec->z*q2->vec->z;
+    result->w = q1->w*q2->w-dot_product(q1->vec,q2->vec);
+    result->vec=mul_vectors(q1->vec,q2->vec);
+    mul_vec_scalar(q1->vec,q2->w);
+    mul_vec_scalar(q2->vec,q1->w);
+    result->vec=add_vectors(add_vectors(q1->vec,q2->vec),result->vec);
+    // result->w=q1->w*q2->w - q1->vec->x*q2->vec->x - q1->vec->y*q2->vec->y - q1->vec->z*q2->vec->z;
 
-    result->vec->x=q1->w*q2->vec->x + q1->vec->x*q2->w - q1->vec->y*q2->vec->z + q1->vec->z*q2->vec->y;
+    // result->vec->x=q1->w*q2->vec->x + q1->vec->x*q2->w - q1->vec->y*q2->vec->z + q1->vec->z*q2->vec->y;
 
-    result->vec->y=q1->w*q2->vec->y + q1->vec->x*q2->vec->z + q1->vec->y*q2->w - q1->vec->z*q2->vec->x;
+    // result->vec->y=q1->w*q2->vec->y + q1->vec->x*q2->vec->z + q1->vec->y*q2->w - q1->vec->z*q2->vec->x;
 
-    result->vec->z=q1->w*q2->vec->z - q1->vec->x*q2->vec->y + q1->vec->y*q2->vec->x + q1->vec->z*q2->w;
+    // result->vec->z=q1->w*q2->vec->z - q1->vec->x*q2->vec->y + q1->vec->y*q2->vec->x + q1->vec->z*q2->w;
+
     return result;
 }
 
