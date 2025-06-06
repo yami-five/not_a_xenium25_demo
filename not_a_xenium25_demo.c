@@ -48,7 +48,7 @@ int main()
     meshFactory = get_meshFactory();
     // Mesh *cube = meshFactory->create_colored_mesh(0xff00, 0);
     Mesh *cube = meshFactory->create_textured_mesh(1, 0);
-    cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 0, 0, 0);
+    cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
 
     lightFactory = get_lightFactory();
     PointLight *pointLight = lightFactory->create_point_light(0.0f, 50.0f, 50.0f, 5.0f, 0xffff);
@@ -63,7 +63,7 @@ int main()
     while (1)
     {
         float qt = t * 0.1f;
-        modify_transformation(cube->transformations, qt, qt, qt, 0);
+        modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->draw_buffer();
         t++;

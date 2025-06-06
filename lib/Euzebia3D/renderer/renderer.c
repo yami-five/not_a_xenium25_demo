@@ -75,6 +75,7 @@ void rotate(int *vertices, uint16_t verticesCounter, TransformVector *vector)
         vertices[i*3]=result->vec->x;
         vertices[i*3+1]=result->vec->y;
         vertices[i*3+2]=result->vec->z;
+        free(result->vec);
         free(result);
     }
 }
@@ -424,54 +425,25 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
     int normalsModified[verticesCounter * 3];
 
     memcpy(verticesModified, mesh->vertices, verticesCounter * 3 * sizeof(int));
+    memcpy(normalsModified, mesh->vn, verticesCounter * 3 * sizeof(int));
     for (int i = 0; i < mesh->transformationsNum; i++)
     {
         transform(verticesModified, verticesCounter, &mesh->transformations[i]);
-    }
-    memcpy(normalsModified, mesh->vn, verticesCounter * 3 * sizeof(int));
-    for (int j = 0; j < mesh->transformationsNum; j++)
-    {
-        if (&mesh->transformations[j].transformType == 0)
-            transform(normalsModified, verticesCounter, &mesh->transformations[j]);
+        transform(normalsModified, verticesCounter, &mesh->transformations[i]);
     }
 
     for (uint16_t i = 0; i < verticesCounter * 3; i += 3)
     {
-        // calculates vertex coords in 3D space
         int32_t x = verticesModified[i];
         int32_t y = verticesModified[i + 1];
         int32_t z = verticesModified[i + 2];
-        // for (int j = 0; j < mesh->transformationsNum; j++)
-        // {
-        //     transform(&x, &y, &z, &mesh->transformations[j]);
-        // }
-        // calculates vertex coords on the screen
-        // verticesModified[i] = x;
-        // verticesModified[i + 1] = y;
-        // verticesModified[i + 2] = z;
         int32_t w = SCALE_FACTOR;
         z -= (5 * SCALE_FACTOR * 5);
         fixed_mul_matrix_vector(&x, &y, &z, &w, camera->vMatrix);
         fixed_mul_matrix_vector(&x, &y, &z, &w, camera->pMatrix);
-        // z += (5 * SCALE_FACTOR);
-        // x = (x * FIXED_FOCAL_LENGTH / z) + (SCALE_FACTOR * WIDTH_HALF);
-        // y = (y * FIXED_FOCAL_LENGTH / z) + (SCALE_FACTOR * HEIGHT_HALF);
-        // verticesOnScreen[vsc] = x / SCALE_FACTOR;
-        // verticesOnScreen[vsc + 1] = y / SCALE_FACTOR;
         verticesOnScreen[i] = fixed_div(x, w) + WIDTH_HALF;
         verticesOnScreen[i + 1] = fixed_div(y, w) + HEIGHT_HALF;
         verticesOnScreen[i + 2] = z;
-        // int32_t xn = mesh->vn[i];
-        // int32_t yn = mesh->vn[i + 1];
-        // int32_t zn = mesh->vn[i + 2];
-        // for (int j = 0; j < mesh->transformationsNum; j++)
-        // {
-        //     if (&mesh->transformations[j].transformType == 0)
-        //         transform(&xn, &yn, &zn, &mesh->transformations[j]);
-        // }
-        // normalsModified[i] = xn;
-        // normalsModified[i + 1] = yn;
-        // normalsModified[i + 2] = zn;
     }
     Vector3 normalVectorA;
     Vector3 normalVectorB;
@@ -569,9 +541,6 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
 #endif
         tri(&triangle, mesh->mat, lightDistances, pLight);
     }
-    // free(normalVector);
-    // free(lightDirection);
-    // free(lmn);
 }
 
 static IRenderer renderer = {
