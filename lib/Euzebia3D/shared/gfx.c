@@ -8,6 +8,8 @@ const float cubeVertices[24] = {1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0
 const uint16_t cubeFaces[36] = {4, 2, 0, 2, 7, 3, 6, 5, 7, 1, 7, 5, 0, 3, 1, 4, 1, 5, 4, 6, 2, 2, 6, 7, 6, 4, 5, 1, 3, 7, 0, 2, 3, 4, 0, 1};
 const uint16_t cubeUV[36] = {0, 1, 2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2, 4, 8, 11, 8, 6, 0, 12, 1, 1, 13, 3, 5, 11, 6, 8, 4, 9, 2, 1, 4, 11, 2, 8};
 const float cubeTextureCoords[28] = {0.88f, 0.5f, 0.62f, 0.75f, 0.62f, 0.5f, 0.38f, 1.0f, 0.38f, 0.75f, 0.62f, 0.0f, 0.38f, 0.25f, 0.38f, 0.0f, 0.38f, 0.5f, 0.12f, 0.75f, 0.12f, 0.5f, 0.62f, 0.25f, 0.88f, 0.75f, 0.62f, 1.0f};
+const uint16_t cubeNormals[36] = {0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5};
+const float cubeVN[24] = {0.58f,0.58f,-0.58f,0.58f,-0.58f,-0.58f,0.58f,0.58f,0.58f,0.58f,-0.58f,0.58f,-0.58f,0.58f,-0.58f,-0.58f,-0.58f,-0.58f,-0.58f,0.58f,0.58f,-0.58f,-0.58f,0.58f};
 
 static const Model models[] = {
     {.vertices = cubeVertices,
@@ -16,7 +18,9 @@ static const Model models[] = {
      .facesCounter = 12,
      .uv = cubeUV,
      .textureCoords = cubeTextureCoords,
-     .textureCoordsCounter = 14}};
+     .textureCoordsCounter = 14,
+     .normals = cubeNormals,
+     .vn = cubeVN}};
 
 static const Image images[] = {
     {image1, sizeof(image1), 320, 240},
