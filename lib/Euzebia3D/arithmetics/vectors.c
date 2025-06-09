@@ -6,24 +6,11 @@
 Quaternion *mul_quaternion(Quaternion *q1, Quaternion *q2)
 {
     Quaternion *result = (Quaternion *)malloc(sizeof(Quaternion));
-    // result->w = q1->w*q2->w-dot_product(q1->vec,q2->vec);
-    // result->vec=mul_vectors(q1->vec,q2->vec);
-    // mul_vec_scalar(q1->vec,q2->w);
-    // mul_vec_scalar(q2->vec,q1->w);
-    // result->vec=add_vectors(add_vectors(q1->vec,q2->vec),result->vec);
-    int32_t a=fixed_mul(q1->w, q2->vec->x);
-    int32_t b=fixed_mul(q1->vec->x, q2->w);
-    int32_t c=fixed_mul(q1->vec->y, q2->vec->z);
-    int32_t d=fixed_mul(q1->vec->z, q2->vec->y);
     result->vec=(Vector3 *)malloc(sizeof(Vector3));
     result->w = fixed_mul(q1->w, q2->w) - fixed_mul(q1->vec->x, q2->vec->x) - fixed_mul(q1->vec->y, q2->vec->y) - fixed_mul(q1->vec->z, q2->vec->z);
-
     result->vec->x = fixed_mul(q1->w, q2->vec->x) + fixed_mul(q1->vec->x, q2->w) - fixed_mul(q1->vec->y, q2->vec->z) + fixed_mul(q1->vec->z, q2->vec->y);
-
     result->vec->y = fixed_mul(q1->w, q2->vec->y) + fixed_mul(q1->vec->x, q2->vec->z) + fixed_mul(q1->vec->y, q2->w) - fixed_mul(q1->vec->z, q2->vec->x);
-
     result->vec->z = fixed_mul(q1->w, q2->vec->z) - fixed_mul(q1->vec->x, q2->vec->y) + fixed_mul(q1->vec->y, q2->vec->x) + fixed_mul(q1->vec->z, q2->w);
-
     return result;
 }
 
