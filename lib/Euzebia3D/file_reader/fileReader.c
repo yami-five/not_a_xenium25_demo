@@ -97,6 +97,8 @@ void play_wave_file(char *file_name)
 			memcpy(audio_buf->buffer->bytes, buffer_audio + buffer_size * i, buffer_size);
 			audio_buf->sample_count = buffer_size;
 			give_audio_buffer(audio_buffer_pool, audio_buf);
+			if (br == 0)
+				break;
 		}
 	}
 
