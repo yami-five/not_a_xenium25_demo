@@ -6,7 +6,7 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-static const uint16_t chunk_size = 480;
+static const uint16_t chunk_size = 480 * 80;
 static spin_lock_t* lcd_spinlock;
 
 void dma_buffer_irq_handler()
