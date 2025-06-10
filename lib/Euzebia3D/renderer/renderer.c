@@ -18,7 +18,6 @@ static const uint32_t FIXED_FOCAL_LENGTH = 90 * SCALE_FACTOR;
 static const uint32_t TRIANGLE_CENTER_DIVIDER = 3 * SCALE_FACTOR;
 static const uint16_t ZBUFFERSIZE = 19200; // 160*120
 static uint16_t zBuffer[19200];
-
 #define SHADING_ENABLED 1
 
 void clear_zbuffuer();
@@ -69,14 +68,15 @@ void rotate(int *vertices, uint16_t verticesCounter, TransformVector *vector)
         Quaternion q_vertex = {
             .w = 0,
             .vec = &vec_vertex};
-
         Quaternion *result=mul_quaternion(&q,&q_vertex);
-        result=mul_quaternion(result,&qInv);
-        vertices[i*3]=result->vec->x;
-        vertices[i*3+1]=result->vec->y;
-        vertices[i*3+2]=result->vec->z;
+        Quaternion *result2=mul_quaternion(result,&qInv);
+        vertices[i*3]=result2->vec->x;
+        vertices[i*3+1]=result2->vec->y;
+        vertices[i*3+2]=result2->vec->z;
         free(result->vec);
         free(result);
+        free(result2->vec);
+        free(result2);
     }
 }
 
