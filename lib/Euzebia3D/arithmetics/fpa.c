@@ -57,7 +57,7 @@ int64_t fixed_pow(int32_t a)
 
 int16_t fast_sin(int32_t value)
 {   
-    int16_t index = value % TABLE_SIZE;
+    int32_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
     return get_sin(index);
@@ -65,7 +65,7 @@ int16_t fast_sin(int32_t value)
 
 int16_t fast_cos(int32_t value)
 {
-    int16_t index = value % TABLE_SIZE;
+    int32_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
     return get_cos(index);
