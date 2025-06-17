@@ -12,6 +12,7 @@ typedef struct
     uint16_t diffuse;
     const uint16_t *texture;
     int textureSize;
+    uint8_t isSkyBox;
 } Material;
 
 typedef struct

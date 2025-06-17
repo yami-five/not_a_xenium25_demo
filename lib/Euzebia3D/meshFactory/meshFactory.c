@@ -49,6 +49,7 @@ Mesh *create_colored_mesh(uint16_t color, uint8_t meshIndex)
     material->diffuse = color;
     material->texture = 0;
     material->textureSize = 0;
+    material->isSkyBox = 0;
     return createMesh(material, meshIndex);
 }
 
@@ -58,6 +59,7 @@ Mesh *create_textured_mesh(uint8_t imageIndex, uint8_t meshIndex)
     material->diffuse = 0;
     material->texture = get_image(imageIndex)->image;
     material->textureSize = get_image(imageIndex)->heigth;
+    material->isSkyBox = 0;
     return createMesh(material, meshIndex);
 }
 
