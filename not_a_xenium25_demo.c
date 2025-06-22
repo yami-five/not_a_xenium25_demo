@@ -47,7 +47,7 @@ int main()
 
     meshFactory = get_meshFactory();
     // Mesh *cube = meshFactory->create_colored_mesh(0xff00, 0);
-    Mesh *cube = meshFactory->create_textured_mesh(1, 1);
+    Mesh *cube = meshFactory->create_textured_mesh(1, 2);
     cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
 
     lightFactory = get_lightFactory();
@@ -55,20 +55,23 @@ int main()
 
     cameraFactory = get_cameraFactory();
     Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+    Mesh *skybox = meshFactory->create_textured_skybox(2);
     
     multicore_launch_core1(core1_main);
-    painter->clear_buffer();
+    painter->clear_buffer(0x56fb);
     painter->draw_buffer();
     uint32_t t = 0;
     while (1)
     {
         float qt = t * 0.1f;
+        renderer->draw_model(skybox, pointLight, camera);
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();
-        painter->clear_buffer();
+        painter->clear_buffer(0x56fb);
     }
 }
 

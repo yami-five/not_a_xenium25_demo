@@ -67,9 +67,9 @@ void draw_buffer()
     }
 }
 
-void clear_buffer()
+void clear_buffer(uint16_t color)
 {
-    memset(buffer, 0, sizeof(buffer));
+    memset(buffer, color, sizeof(buffer));
 }
 
 void draw_pixel(uint16_t x, uint16_t y, uint16_t color)

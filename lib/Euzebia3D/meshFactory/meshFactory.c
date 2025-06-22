@@ -63,9 +63,31 @@ Mesh *create_textured_mesh(uint8_t imageIndex, uint8_t meshIndex)
     return createMesh(material, meshIndex);
 }
 
+Mesh *create_colored_skybox(uint16_t color)
+{
+    Material *material = (Material *)malloc(sizeof(Material));
+    material->diffuse = color;
+    material->texture = 0;
+    material->textureSize = 0;
+    material->isSkyBox = 1;
+    return createMesh(material, 0);
+}
+
+Mesh *create_textured_skybox(uint8_t imageIndex)
+{
+    Material *material = (Material *)malloc(sizeof(Material));
+    material->diffuse = 0;
+    material->texture = get_image(imageIndex)->image;
+    material->textureSize = get_image(imageIndex)->heigth;
+    material->isSkyBox = 1;
+    return createMesh(material, 0);
+}
+
 static IMeshFactory renderer = {
     .create_colored_mesh = create_colored_mesh,
-    .create_textured_mesh = create_textured_mesh};
+    .create_textured_mesh = create_textured_mesh,
+    .create_colored_skybox = create_colored_skybox,
+    .create_textured_skybox = create_textured_skybox};
 
 const IMeshFactory *get_meshFactory(void)
 {

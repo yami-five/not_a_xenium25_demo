@@ -239,20 +239,41 @@ void rasterize(int y, int x0, int x1, Triangle2D *triangle, Material *mat, int32
         x0 = 0;
     if (x1 > WIDTH_DISPLAY)
         x1 = WIDTH_DISPLAY;
-    for (int x = x0; x < x1; x++)
+    if (mat->isSkyBox==0)
     {
-        uint16_t color = 0;
-        int Ba, Bb, Bc;
-        calc_bar_coords(triangle, &Ba, &Bb, &Bc, divider, x, y);
-        int z = calc_pixel_depth(Ba, Bb, Bc, triangle->a.z, triangle->b.z, triangle->c.z);
-        if (check_zbuffer(x, y, z))
+        for (int x = x0; x < x1; x++)
         {
+            uint16_t color = 0;
+            int Ba, Bb, Bc;
+            calc_bar_coords(triangle, &Ba, &Bb, &Bc, divider, x, y);
+            int z = calc_pixel_depth(Ba, Bb, Bc, triangle->a.z, triangle->b.z, triangle->c.z);
+            if (check_zbuffer(x, y, z))
+            {
+                if (mat->textureSize == 0)
+                    color = mat->diffuse;
+                else
+                    color = texturing(triangle, mat, Ba, Bb, Bc);
+                if (SHADING_ENABLED)
+                    shading(&color, lightDistances, light, Ba, Bb, Bc);
+                _painter->draw_pixel(x * 2, y * 2, color);
+                _painter->draw_pixel(x * 2 + 1, y * 2, color);
+                _painter->draw_pixel(x * 2, y * 2 + 1, color);
+                _painter->draw_pixel(x * 2 + 1, y * 2 + 1, color);
+                // draw_pixel(x, y, color);
+            }
+        }
+    }
+    else
+    {
+        for (int x = x0; x < x1; x++)
+        {
+            uint16_t color = 0;
+            int Ba, Bb, Bc;
+            calc_bar_coords(triangle, &Ba, &Bb, &Bc, divider, x, y);
             if (mat->textureSize == 0)
                 color = mat->diffuse;
             else
                 color = texturing(triangle, mat, Ba, Bb, Bc);
-            if (SHADING_ENABLED)
-                shading(&color, lightDistances, light, Ba, Bb, Bc);
             _painter->draw_pixel(x * 2, y * 2, color);
             _painter->draw_pixel(x * 2 + 1, y * 2, color);
             _painter->draw_pixel(x * 2, y * 2 + 1, color);
@@ -481,63 +502,64 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         // normal vector
         int32_t lightDistances[3] = {0, 0, 0};
 #ifdef SHADING_ENABLED
-        normalVectorA.x = normalsModified[a * 3];
-        normalVectorA.y = normalsModified[a * 3 + 1];
-        normalVectorA.z = normalsModified[a * 3 + 2];
-        normalVectorB.x = normalsModified[b * 3];
-        normalVectorB.y = normalsModified[b * 3 + 1];
-        normalVectorB.z = normalsModified[b * 3 + 2];
-        normalVectorC.x = normalsModified[c * 3];
-        normalVectorC.y = normalsModified[c * 3 + 1];
-        normalVectorC.z = normalsModified[c * 3 + 2];
+        if(mesh->mat->isSkyBox==0){
+            normalVectorA.x = normalsModified[a * 3];
+            normalVectorA.y = normalsModified[a * 3 + 1];
+            normalVectorA.z = normalsModified[a * 3 + 2];
+            normalVectorB.x = normalsModified[b * 3];
+            normalVectorB.y = normalsModified[b * 3 + 1];
+            normalVectorB.z = normalsModified[b * 3 + 2];
+            normalVectorC.x = normalsModified[c * 3];
+            normalVectorC.y = normalsModified[c * 3 + 1];
+            normalVectorC.z = normalsModified[c * 3 + 2];
 
-        norm_vector(&normalVectorA);
-        norm_vector(&normalVectorB);
-        norm_vector(&normalVectorC);
+            norm_vector(&normalVectorA);
+            norm_vector(&normalVectorB);
+            norm_vector(&normalVectorC);
 
-        // light direction
-        Triangle3D triangle3D = {
-            {verticesModified[a * 3],
-             verticesModified[a * 3 + 1],
-             verticesModified[a * 3 + 2]},
-            {verticesModified[b * 3],
-             verticesModified[b * 3 + 1],
-             verticesModified[b * 3 + 2]},
-            {verticesModified[c * 3],
-             verticesModified[c * 3 + 1],
-             verticesModified[c * 3 + 2]}};
+            // light direction
+            Triangle3D triangle3D = {
+                {verticesModified[a * 3],
+                verticesModified[a * 3 + 1],
+                verticesModified[a * 3 + 2]},
+                {verticesModified[b * 3],
+                verticesModified[b * 3 + 1],
+                verticesModified[b * 3 + 2]},
+                {verticesModified[c * 3],
+                verticesModified[c * 3 + 1],
+                verticesModified[c * 3 + 2]}};
 
-        lightDirectionA.x = pLight->position.x - triangle3D.a.x;
-        lightDirectionA.y = pLight->position.y - triangle3D.a.y;
-        lightDirectionA.z = pLight->position.z - triangle3D.a.z;
-        lightDirectionB.x = pLight->position.x - triangle3D.b.x;
-        lightDirectionB.y = pLight->position.y - triangle3D.b.y;
-        lightDirectionB.z = pLight->position.z - triangle3D.b.z;
-        lightDirectionC.x = pLight->position.x - triangle3D.c.x;
-        lightDirectionC.y = pLight->position.y - triangle3D.c.y;
-        lightDirectionC.z = pLight->position.z - triangle3D.c.z;
+            lightDirectionA.x = pLight->position.x - triangle3D.a.x;
+            lightDirectionA.y = pLight->position.y - triangle3D.a.y;
+            lightDirectionA.z = pLight->position.z - triangle3D.a.z;
+            lightDirectionB.x = pLight->position.x - triangle3D.b.x;
+            lightDirectionB.y = pLight->position.y - triangle3D.b.y;
+            lightDirectionB.z = pLight->position.z - triangle3D.b.z;
+            lightDirectionC.x = pLight->position.x - triangle3D.c.x;
+            lightDirectionC.y = pLight->position.y - triangle3D.c.y;
+            lightDirectionC.z = pLight->position.z - triangle3D.c.z;
 
-        norm_vector(&lightDirectionA);
-        norm_vector(&lightDirectionB);
-        norm_vector(&lightDirectionC);
+            norm_vector(&lightDirectionA);
+            norm_vector(&lightDirectionB);
+            norm_vector(&lightDirectionC);
 
-        lightDistances[0] = dot_product(&normalVectorA, &lightDirectionA);
-        if (lightDistances[0] < 0)
-            lightDistances[0] = 0;
-        if (lightDistances[0] > SCALE_FACTOR)
-            lightDistances[0] = SCALE_FACTOR;
+            lightDistances[0] = dot_product(&normalVectorA, &lightDirectionA);
+            if (lightDistances[0] < 0)
+                lightDistances[0] = 0;
+            if (lightDistances[0] > SCALE_FACTOR)
+                lightDistances[0] = SCALE_FACTOR;
 
-        lightDistances[1] = dot_product(&normalVectorB, &lightDirectionB);
-        if (lightDistances[1] < 0)
-            lightDistances[1] = 0;
-        if (lightDistances[1] > SCALE_FACTOR)
-            lightDistances[1] = SCALE_FACTOR;
-        lightDistances[2] = dot_product(&normalVectorC, &lightDirectionC);
-        if (lightDistances[2] < 0)
-            lightDistances[2] = 0;
-        if (lightDistances[2] > SCALE_FACTOR)
-            lightDistances[2] = SCALE_FACTOR;
-
+            lightDistances[1] = dot_product(&normalVectorB, &lightDirectionB);
+            if (lightDistances[1] < 0)
+                lightDistances[1] = 0;
+            if (lightDistances[1] > SCALE_FACTOR)
+                lightDistances[1] = SCALE_FACTOR;
+            lightDistances[2] = dot_product(&normalVectorC, &lightDirectionC);
+            if (lightDistances[2] < 0)
+                lightDistances[2] = 0;
+            if (lightDistances[2] > SCALE_FACTOR)
+                lightDistances[2] = SCALE_FACTOR;
+        }
 #endif
         tri(&triangle, mesh->mat, lightDistances, pLight);
     }
