@@ -12,6 +12,7 @@ typedef struct
     void (*clear_buffer)(uint16_t color);
     void (*draw_pixel)(uint16_t x, uint16_t y, uint16_t color);
     void (*draw_image)(uint8_t image_index);
+    void (*apply_post_process_effect)(uint8_t effect_index);
 } IPainter;
 
 #endif

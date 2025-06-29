@@ -20,6 +20,7 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/painter/painter.c
     ${CMAKE_CURRENT_SOURCE_DIR}/renderer/renderer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gfx.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/post_processing.c
 )
 
 target_link_libraries(
