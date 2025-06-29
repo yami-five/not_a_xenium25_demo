@@ -69,6 +69,9 @@ int main()
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->apply_post_process_effect(0);
+        painter->draw_sprite(0,200,300);
+        painter->draw_sprite(0,5,30);
+        painter->draw_sprite(0,15,5);
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();
