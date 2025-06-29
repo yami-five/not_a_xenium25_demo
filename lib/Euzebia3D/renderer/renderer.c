@@ -459,7 +459,6 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         int32_t y = verticesModified[i + 1];
         int32_t z = verticesModified[i + 2];
         int32_t w = SCALE_FACTOR;
-        z -= (5 * SCALE_FACTOR * 5);
         fixed_mul_matrix_vector(&x, &y, &z, &w, camera->vMatrix);
         fixed_mul_matrix_vector(&x, &y, &z, &w, camera->pMatrix);
         verticesOnScreen[i] = fixed_div(x, w) + WIDTH_HALF;

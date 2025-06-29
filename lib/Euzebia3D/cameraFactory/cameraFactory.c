@@ -5,7 +5,7 @@
 #include "../shared/gfx.h"
 #include <stdlib.h>
 
-#define ZNEAR 1024        // floatToFixed(1.0f)
+#define ZNEAR 1024       // floatToFixed(1.0f)
 #define ZFAR 102400      // floatToFixed(100.0f)
 #define ASPECTRATIO 1024 // 1:1
 #define TANFOV2 1658     // tan(fov/2)
@@ -74,15 +74,15 @@ void calculatePerspectiveMatrix(Camera *camera)
 Camera *create_camera(float camX, float camY, float camZ, float targetX, float targetY, float targetZ, float upX, float upY, float upZ)
 {
     Camera *cam = (Camera *)malloc(sizeof(Camera));
-    cam->pos=(Vector3 *)malloc(sizeof(Vector3));
+    cam->pos = (Vector3 *)malloc(sizeof(Vector3));
     cam->pos->x = float_to_fixed(camX);
     cam->pos->y = float_to_fixed(camY);
     cam->pos->z = float_to_fixed(camZ);
-    cam->target=(Vector3 *)malloc(sizeof(Vector3));
+    cam->target = (Vector3 *)malloc(sizeof(Vector3));
     cam->target->x = float_to_fixed(targetX);
     cam->target->y = float_to_fixed(targetY);
     cam->target->z = float_to_fixed(targetZ);
-    cam->up=(Vector3 *)malloc(sizeof(Vector3));
+    cam->up = (Vector3 *)malloc(sizeof(Vector3));
     cam->up->x = float_to_fixed(upX);
     cam->up->y = float_to_fixed(upY);
     cam->up->z = float_to_fixed(upZ);

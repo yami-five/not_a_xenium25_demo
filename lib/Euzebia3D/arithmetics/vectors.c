@@ -35,9 +35,9 @@ Vector3 *sub_vectors(Vector3 *vecA, Vector3 *vecB)
 Vector3 *mul_vectors(Vector3 *vecA, Vector3 *vecB)
 {
     Vector3 *result = (Vector3 *)malloc(sizeof(Vector3));
-    result->x = fixed_mul(vecA->y, vecB->z) + fixed_mul(vecA->z, vecB->y);
-    result->y = fixed_mul(vecA->z, vecB->x) + fixed_mul(vecA->x, vecB->z);
-    result->z = fixed_mul(vecA->x, vecB->y) + fixed_mul(vecA->y, vecB->x);
+    result->x = fixed_mul(vecA->y, vecB->z) - fixed_mul(vecA->z, vecB->y);
+    result->y = fixed_mul(vecA->z, vecB->x) - fixed_mul(vecA->x, vecB->z);
+    result->z = fixed_mul(vecA->x, vecB->y) - fixed_mul(vecA->y, vecB->x);
     return result;
 }
 

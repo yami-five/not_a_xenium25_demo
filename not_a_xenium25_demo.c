@@ -54,9 +54,9 @@ int main()
     PointLight *pointLight = lightFactory->create_point_light(0.0f, 0.0f, 50.0f, 5.0f, 0xffaa);
 
     cameraFactory = get_cameraFactory();
-    Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-    Mesh *skybox = meshFactory->create_textured_skybox(2);
+    // Mesh *skybox = meshFactory->create_textured_skybox(2);
     
     multicore_launch_core1(core1_main);
     painter->clear_buffer(0x56fb);
@@ -65,7 +65,7 @@ int main()
     while (1)
     {
         float qt = t * 0.1f;
-        renderer->draw_model(skybox, pointLight, camera);
+        // renderer->draw_model(skybox, pointLight, camera);
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->draw_buffer();
