@@ -1,13 +1,15 @@
 #include "IPainter.h"
 #include "painter.h"
 #include "../shared/gfx.h"
+#include "../shared/post_processing.h"
 #include "hardware/sync/spin_lock.h"
 
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
 static const uint16_t chunk_size = 480 * 80;
-static spin_lock_t* lcd_spinlock;
+static spin_lock_t *lcd_spinlock;
+static uint8_t scanline_offset = 0;
 
 void dma_buffer_irq_handler()
 {
@@ -26,14 +28,12 @@ void init_dma()
         &spi_get_hw(_hardware->get_spi_port())->dr,
         NULL,
         chunk_size,
-        false
-    );
+        false);
     dma_channel_set_irq1_enabled(dma_channel, true);
     irq_set_exclusive_handler(DMA_IRQ_1, dma_buffer_irq_handler);
     irq_set_enabled(DMA_IRQ_1, true);
     channel_config_set_read_increment(&config, true);
     channel_config_set_write_increment(&config, false);
-
 }
 
 void init_painter(const IDisplay *display, const IHardware *hardware)
@@ -41,12 +41,12 @@ void init_painter(const IDisplay *display, const IHardware *hardware)
     _hardware = hardware;
     _display = display;
     init_dma();
-	// lcd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
+    // lcd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
 }
 
 void draw_buffer()
 {
-    uint32_t current_offset=0;
+    uint32_t current_offset = 0;
     spin_lock_t *spi_spinlock = _hardware->get_spinlock();
     uint32_t flags = spin_lock_blocking(spi_spinlock);
     _hardware->write(SD_CS_PIN, 1);
@@ -55,14 +55,14 @@ void draw_buffer()
     _hardware->spi_write_byte(0x2C);
     _hardware->write(LCD_DC_PIN, 1);
     spin_unlock(spi_spinlock, flags);
-    while(current_offset<BUFFER_SIZE)
+    while (current_offset < BUFFER_SIZE)
     {
         flags = spin_lock_blocking(spi_spinlock);
         _hardware->write(SD_CS_PIN, 1);
         _hardware->write(LCD_CS_PIN, 0);
-        dma_channel_set_read_addr(dma_channel,buffer+current_offset,true);
+        dma_channel_set_read_addr(dma_channel, buffer + current_offset, true);
         dma_channel_wait_for_finish_blocking(dma_channel);
-        current_offset+=chunk_size;
+        current_offset += chunk_size;
         spin_unlock(spi_spinlock, flags);
     }
 }
@@ -74,10 +74,9 @@ void clear_buffer(uint16_t color)
 
 void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
 {
-    uint32_t line_adr = x* HEIGHT_DOUBLED;
-    uint16_t y2=y*2;
-    buffer[line_adr + y2]=(color >> 8) & 0xff;
-    buffer[line_adr + y2 +1]=color & 0xff;
+    uint32_t line_adr = (x * HEIGHT_DOUBLED) + (y * 2);
+    buffer[line_adr] = (color >> 8) & 0xff;
+    buffer[line_adr + 1] = color & 0xff;
 }
 
 void draw_image(uint8_t image_index)
@@ -93,11 +92,109 @@ void draw_image(uint8_t image_index)
         buffer,
         get_image(image_index)->image,
         BUFFER_SIZE,
-        false
-    );
+        false);
     dma_channel_start(dma_channel_flash);
     dma_channel_wait_for_finish_blocking(dma_channel_flash);
     dma_channel_unclaim(dma_channel_flash);
+}
+
+static inline uint8_t get_r(uint16_t c) { return (c >> 11) & 0x1F; }
+static inline uint8_t get_g(uint16_t c) { return (c >> 5) & 0x3F; }
+static inline uint8_t get_b(uint16_t c) { return c & 0x1F; }
+
+static inline uint16_t make_rgb565(uint8_t r, uint8_t g, uint8_t b)
+{
+    return ((r & 0x1F) << 11) | ((g & 0x3F) << 5) | (b & 0x1F);
+}
+
+void crt_disp_effect()
+{
+    // barrel distortion
+    uint8_t *framebuffer = (uint8_t *)malloc(sizeof(uint8_t) * BUFFER_SIZE);
+    for (uint32_t i = 0; i < BUFFER_SIZE_HALF; i++)
+    {
+        uint32_t index = get_effect_table_element(0, i);
+        framebuffer[i * 2] = buffer[index * 2];
+        framebuffer[i * 2 + 1] = buffer[index * 2 + 1];
+    }
+    memcpy(buffer, framebuffer, BUFFER_SIZE);
+    // chromatic aberration
+    for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    {
+        for (int x = 0; x < DISPLAY_WIDTH; x++)
+        {
+            uint32_t i = y * DISPLAY_WIDTH + x;
+
+            uint16_t xr = (x > 0) ? x - 2 : x;
+            uint16_t xg = (x < DISPLAY_WIDTH - 1) ? x + 2 : x;
+
+            uint16_t ir = y * DISPLAY_WIDTH + xr;
+            uint16_t ig = y * DISPLAY_WIDTH + xg;
+
+            uint16_t c_r = buffer[ir * 2] | (buffer[ir * 2 + 1] << 8);
+            uint16_t c_g = buffer[ig * 2] | (buffer[ig * 2 + 1] << 8);
+            uint16_t c_b = buffer[i * 2] | (buffer[i * 2 + 1] << 8);
+
+            uint8_t r = get_r(c_r);
+            uint8_t g = get_g(c_g);
+            uint8_t b = get_b(c_b);
+            uint16_t result = make_rgb565(r, g, b);
+
+            framebuffer[i * 2] = result & 0xFF;
+            framebuffer[i * 2 + 1] = result >> 8;
+        }
+    }
+    //broken chromatic abberration - looks interesting
+    // for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    // {
+    //     uint16_t yr = (y > 0) ? y - 2 : y;
+    //     uint16_t yg = (y < DISPLAY_HEIGHT - 1) ? y + 2 : y;
+    //     for (int x = 0; x < DISPLAY_WIDTH; x++)
+    //     {
+    //         uint32_t i = y * DISPLAY_WIDTH + x;
+
+    //         uint16_t xr = (x > 0) ? x - 2 : x;
+    //         uint16_t xg = (x < DISPLAY_WIDTH - 1) ? x + 2 : x;
+
+    //         uint16_t ir = yr * DISPLAY_WIDTH + xr;
+    //         uint16_t ig = yg * DISPLAY_WIDTH + xg;
+
+    //         uint16_t c_r = buffer[ir * 2] | (buffer[ir * 2 + 1] << 8);
+    //         uint16_t c_g = buffer[ig * 2] | (buffer[ig * 2 + 1] << 8);
+    //         uint16_t c_b = buffer[i * 2] | (buffer[i * 2 + 1] << 8);
+
+    //         uint8_t r = get_r(c_r);
+    //         uint8_t g = get_g(c_g);
+    //         uint8_t b = get_b(c_b);
+    //         uint16_t result = make_rgb565(r, g, b);
+
+    //         framebuffer[i * 2] = result & 0xFF;
+    //         framebuffer[i * 2 + 1] = result >> 8;
+    //     }
+    // }
+    memcpy(buffer, framebuffer, BUFFER_SIZE);
+    free(framebuffer);
+    // scanline
+    for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
+    {
+        for (uint16_t x = scanline_offset; x < DISPLAY_WIDTH; x += 2)
+        {
+            draw_pixel(x, y, 0);
+        }
+    }
+    scanline_offset = !scanline_offset;
+}
+
+void apply_post_process_effect(uint8_t effect_index)
+{
+    switch (effect_index)
+    {
+    case 0:
+        crt_disp_effect();
+        break;
+    default:
+        return;
+    }
 }
 
 static IPainter painter = {
@@ -105,8 +202,8 @@ static IPainter painter = {
     .draw_buffer = draw_buffer,
     .clear_buffer = clear_buffer,
     .draw_pixel = draw_pixel,
-    .draw_image = draw_image
-};
+    .draw_image = draw_image,
+    .apply_post_process_effect = apply_post_process_effect};
 
 const IPainter *get_painter(void)
 {

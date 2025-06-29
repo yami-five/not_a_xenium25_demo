@@ -68,6 +68,7 @@ int main()
         // renderer->draw_model(skybox, pointLight, camera);
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
+        painter->apply_post_process_effect(0);
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();
