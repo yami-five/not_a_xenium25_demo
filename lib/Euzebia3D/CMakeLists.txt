@@ -21,6 +21,7 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/renderer/renderer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gfx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/post_processing.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/sprites.c
 )
 
 target_link_libraries(
