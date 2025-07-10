@@ -4,6 +4,7 @@
 #include "../shared/post_processing.h"
 #include "../shared/sprites.h"
 #include "hardware/sync/spin_lock.h"
+#include "../arithmetics/fpa.h"
 
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
@@ -199,7 +200,7 @@ void apply_post_process_effect(uint8_t effect_index)
     }
 }
 
-void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y)
+void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, int32_t angle)
 {
     Sprite *sprite = get_sprite(sprite_index);
     for (uint16_t y = 0; y < sprite->size; y++)
@@ -207,13 +208,15 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y)
         int16_t new_y = y + pos_y;
         if (new_y >= 0 || new_y < DISPLAY_WIDTH)
         {
-            uint32_t ydw = y * sprite->size;
             for (uint16_t x = 0; x < sprite->size; x++)
             {
-                uint16_t pixel = sprite->pixels[ydw + x];
+                int16_t new_x = x + pos_x;
+                // int16_t xr = x * fast_cos(angle) - y * fast_sin(angle);
+                // int16_t yr = x * fast_sin(angle) - y * fast_cos(angle);
+
+                uint16_t pixel = sprite->pixels[y * sprite->size + x];
                 if (pixel != 63519)
                 {
-                    int16_t new_x = x + pos_x;
                     if (new_x >= 0 || new_x < DISPLAY_HEIGHT)
                         draw_pixel(new_x, new_y, pixel);
                 }

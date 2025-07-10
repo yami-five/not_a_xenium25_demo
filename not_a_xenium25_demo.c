@@ -65,13 +65,14 @@ int main()
     while (1)
     {
         float qt = t * 0.1f;
+        int32_t angle = float_to_fixed(qt);
         // renderer->draw_model(skybox, pointLight, camera);
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->apply_post_process_effect(0);
-        painter->draw_sprite(0,200,300);
-        painter->draw_sprite(0,5,30);
-        painter->draw_sprite(0,15,5);
+        painter->draw_sprite(0,200,300,0);
+        painter->draw_sprite(0,5,30,0);
+        painter->draw_sprite(0,15,5,0);
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();
