@@ -18,10 +18,13 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/mesh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/meshFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/painter/painter.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory/puppet.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory/puppetFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/renderer/renderer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gfx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/post_processing.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/sprites.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/rawPuppets.c
 )
 
 target_link_libraries(
@@ -50,6 +53,7 @@ target_include_directories(Euzebia3D
     ${CMAKE_CURRENT_SOURCE_DIR}/lightFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/painter
+    ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory
     ${CMAKE_CURRENT_SOURCE_DIR}/renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/fatfs
     ${CMAKE_CURRENT_SOURCE_DIR}/file_reader/sd_driver
@@ -63,6 +67,7 @@ add_library(Euzebia3D_HardwareInterface INTERFACE)
 add_library(Euzebia3D_LightFactoryInterface INTERFACE)
 add_library(Euzebia3D_MeshFactoryInterface INTERFACE)
 add_library(Euzebia3D_PainterInterface INTERFACE)
+add_library(Euzebia3D_PuppetFactoryInterface INTERFACE)
 add_library(Euzebia3D_RendererInterface INTERFACE)
 
 target_include_directories(
@@ -105,6 +110,12 @@ target_include_directories(
     Euzebia3D_PainterInterface 
     INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/painter  
+)
+
+target_include_directories(
+    Euzebia3D_PuppetFactoryInterface 
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory  
 )
 
 target_include_directories(

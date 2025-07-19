@@ -79,7 +79,7 @@ void play_wave_file(char *file_name)
 		printf("Loading file failed :(%d)\r\n", f_res);
 		return;
 	}
-	uint16_t samples_num = 150;
+	uint16_t samples_num = 240;
 	uint8_t buffer_size = 16;
 	int16_t buffer_audio[buffer_size * samples_num];
 	spin_lock_t *spi_spinlock = _hardware->get_spinlock();

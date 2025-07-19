@@ -9,7 +9,7 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-static const uint16_t chunk_size = 480 * 80;
+static const uint16_t chunk_size = 240 * 16;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
 
@@ -204,6 +204,8 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
 {
     Sprite *sprite = get_sprite(sprite_index);
     int32_t fixed_angle = float_to_fixed(angle);
+    int16_t cos=fast_cos(-fixed_angle);
+    int16_t sin=fast_sin(-fixed_angle);
     if (fixed_angle != 0)
     {
         int8_t middle=sprite->size>>1;
