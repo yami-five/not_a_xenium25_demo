@@ -212,7 +212,7 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
         for (uint16_t y = 0; y < sprite->size; y++)
         {
             int16_t new_y = y + pos_y;
-            if (new_y >= 0 || new_y < DISPLAY_WIDTH)
+            if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
             {
                 for (uint16_t x = 0; x < sprite->size; x++)
                 {
@@ -224,7 +224,7 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
                         uint16_t pixel = sprite->pixels[yr * sprite->size + xr];
                         if (pixel != 63519)
                         {
-                            if (new_x >= 0 || new_x < DISPLAY_HEIGHT)
+                            if (new_x >= 0 && new_x < DISPLAY_WIDTH)
                                 draw_pixel(new_x, new_y, pixel);
                         }
                     }
@@ -237,7 +237,7 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
         for (uint16_t y = 0; y < sprite->size; y++)
         {
             int16_t new_y = y + pos_y;
-            if (new_y >= 0 || new_y < DISPLAY_WIDTH)
+            if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
             {
                 uint32_t ydw = y * sprite->size;
                 for (uint16_t x = 0; x < sprite->size; x++)
@@ -246,7 +246,7 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
                     if (pixel != 63519)
                     {
                         int16_t new_x = x + pos_x;
-                        if (new_x >= 0 || new_x < DISPLAY_HEIGHT)
+                        if (new_x >= 0 && new_x < DISPLAY_WIDTH)
                             draw_pixel(new_x, new_y, pixel);
                     }
                 }
