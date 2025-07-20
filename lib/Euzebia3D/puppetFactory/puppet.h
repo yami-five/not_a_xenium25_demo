@@ -12,6 +12,7 @@ typedef struct Bone Bone;
 
 typedef struct Bone
 {
+    const char* label;
     int16_t x;
     int16_t y;
     uint8_t spriteIndex;

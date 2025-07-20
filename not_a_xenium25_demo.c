@@ -63,7 +63,7 @@ int main()
     // Mesh *skybox = meshFactory->create_textured_skybox(2);
 
     multicore_launch_core1(core1_main);
-    painter->clear_buffer(0x56fb);
+    painter->clear_buffer(0x1100);
     painter->draw_buffer();
     uint32_t t = 0;
 
@@ -79,15 +79,15 @@ int main()
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         painter->apply_post_process_effect(0);
-        painter->draw_sprite(0,200,300,qt*2);
-        painter->draw_sprite(0,5,30,-qt);
-        painter->draw_sprite(0,15,5,qt);
+        // painter->draw_sprite(0,200,300,qt*2);
+        // painter->draw_sprite(0,5,30,-qt);
+        // painter->draw_sprite(0,15,5,qt);
         painter->draw_puppet(mascot);
 
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();
-        painter->clear_buffer(0x56fb);
+        painter->clear_buffer(0x1100);
     }
 }
 

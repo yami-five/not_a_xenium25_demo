@@ -8,10 +8,12 @@ Bone *create_bones(const RawBone *rawBones, const uint8_t bonesNum)
     Bone *newBones = (Bone *)malloc(sizeof(Bone) * bonesNum);
     for (uint8_t i = 0; i < bonesNum; i++)
     {
+        newBones[i].label = rawBones[i].label;
         newBones[i].x = rawBones[i].x;
         newBones[i].y = rawBones[i].y;
         newBones[i].spriteIndex = rawBones[i].spriteIndex;
         newBones[i].childBonesNumLayer1 = rawBones[i].childBonesNumLayer1;
+        newBones[i].childBonesNumLayer2 = rawBones[i].childBonesNumLayer2;
         if (rawBones[i].childBonesNumLayer1 != 0)
             newBones[i].childBonesLayer1 = create_bones(rawBones[i].childBonesLayer1, rawBones[i].childBonesNumLayer1);
         if (rawBones[i].childBonesNumLayer2 != 0)
