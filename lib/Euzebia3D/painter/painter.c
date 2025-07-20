@@ -204,11 +204,11 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
 {
     Sprite *sprite = get_sprite(sprite_index);
     int32_t fixed_angle = float_to_fixed(angle);
-    int16_t cos=fast_cos(-fixed_angle);
-    int16_t sin=fast_sin(-fixed_angle);
+    int16_t cos = fast_cos(-fixed_angle);
+    int16_t sin = fast_sin(-fixed_angle);
     if (fixed_angle != 0)
     {
-        int8_t middle=sprite->size>>1;
+        int8_t middle = sprite->size >> 1;
         for (uint16_t y = 0; y < sprite->size; y++)
         {
             int16_t new_y = y + pos_y;
@@ -217,9 +217,9 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
                 for (uint16_t x = 0; x < sprite->size; x++)
                 {
                     int16_t new_x = x + pos_x;
-                    int16_t xr = (((x-middle) * fast_cos(-fixed_angle) - (y-middle) * fast_sin(-fixed_angle)) >> SHIFT_FACTOR) + middle;
-                    int16_t yr = (((x-middle) * fast_sin(-fixed_angle) + (y-middle) * fast_cos(-fixed_angle)) >> SHIFT_FACTOR) + middle;
-                    if((uint16_t)xr<sprite->size && (uint16_t)yr<sprite->size)
+                    int16_t xr = (((x - middle) * fast_cos(-fixed_angle) - (y - middle) * fast_sin(-fixed_angle)) >> SHIFT_FACTOR) + middle;
+                    int16_t yr = (((x - middle) * fast_sin(-fixed_angle) + (y - middle) * fast_cos(-fixed_angle)) >> SHIFT_FACTOR) + middle;
+                    if ((uint16_t)xr < sprite->size && (uint16_t)yr < sprite->size)
                     {
                         uint16_t pixel = sprite->pixels[yr * sprite->size + xr];
                         if (pixel != 63519)
@@ -255,6 +255,30 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
     }
 }
 
+void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
+{
+    int16_t x = bone->x + parentX;
+    int16_t y = bone->y + parentY;
+    draw_sprite(bone->spriteIndex, x, y, 0.0f);
+    if (bone->childBonesNum == 0)
+        return;
+    for (uint8_t i = 0; i < bone->childBonesNum; i++)
+    {
+        draw_bone(&bone->childBones[i], x, y);
+    }
+}
+
+void draw_puppet(Puppet *puppet)
+{
+    int16_t x = puppet->bones[0].x + puppet->x;
+    int16_t y = puppet->bones[0].y + puppet->y;
+    // draw_sprite(puppet->bones[0].spriteIndex, x, y, 0.0f);
+    for (uint8_t i = 0; i < puppet->bonesNum; i++)
+    {
+        draw_bone(&puppet->bones[i], x, y);
+    }
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -262,7 +286,8 @@ static IPainter painter = {
     .draw_pixel = draw_pixel,
     .draw_image = draw_image,
     .apply_post_process_effect = apply_post_process_effect,
-    .draw_sprite = draw_sprite};
+    .draw_sprite = draw_sprite,
+    .draw_puppet = draw_puppet};
 
 const IPainter *get_painter(void)
 {

@@ -14,7 +14,7 @@ typedef struct Bone
 {
     int16_t x;
     int16_t y;
-    Sprite *sprite;
+    uint8_t spriteIndex;
     Bone *childBones;
     uint8_t childBonesNum;
 } Bone;
@@ -27,7 +27,6 @@ typedef struct
     uint8_t bonesNum;
 } Puppet;
 
-void draw_puppet(Puppet *puppet);
 void move_puppet(Puppet *puppet, int16_t newX, int16_t newY);
 
 #endif
