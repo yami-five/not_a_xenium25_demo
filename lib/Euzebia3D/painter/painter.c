@@ -259,12 +259,14 @@ void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
 {
     int16_t x = bone->x + parentX;
     int16_t y = bone->y + parentY;
-    draw_sprite(bone->spriteIndex, x, y, 0.0f);
-    if (bone->childBonesNum == 0)
-        return;
-    for (uint8_t i = 0; i < bone->childBonesNum; i++)
+    for (uint8_t i = 0; i < bone->childBonesNumLayer2; i++)
     {
-        draw_bone(&bone->childBones[i], x, y);
+        draw_bone(&bone->childBonesLayer2[i], x, y);
+    }
+    draw_sprite(bone->spriteIndex, x, y, 0.0f);
+    for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
+    {
+        draw_bone(&bone->childBonesLayer1[i], x, y);
     }
 }
 
@@ -272,7 +274,6 @@ void draw_puppet(Puppet *puppet)
 {
     int16_t x = puppet->bones[0].x + puppet->x;
     int16_t y = puppet->bones[0].y + puppet->y;
-    // draw_sprite(puppet->bones[0].spriteIndex, x, y, 0.0f);
     for (uint8_t i = 0; i < puppet->bonesNum; i++)
     {
         draw_bone(&puppet->bones[i], x, y);

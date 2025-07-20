@@ -16,8 +16,10 @@ typedef struct RawBone
     const int16_t x;
     const int16_t y;
     const uint8_t spriteIndex;
-    const RawBone *childBones;
-    const uint8_t childBonesNum;
+    const RawBone *childBonesLayer1;
+    const uint8_t childBonesNumLayer1;
+    const RawBone *childBonesLayer2;
+    const uint8_t childBonesNumLayer2;
 } RawBone;
 
 typedef struct

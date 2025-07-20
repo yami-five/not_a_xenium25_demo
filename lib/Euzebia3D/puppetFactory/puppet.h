@@ -15,8 +15,10 @@ typedef struct Bone
     int16_t x;
     int16_t y;
     uint8_t spriteIndex;
-    Bone *childBones;
-    uint8_t childBonesNum;
+    Bone *childBonesLayer1;
+    uint8_t childBonesNumLayer1;
+    Bone *childBonesLayer2;
+    uint8_t childBonesNumLayer2;
 } Bone;
 
 typedef struct
