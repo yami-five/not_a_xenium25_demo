@@ -59,6 +59,8 @@ DRESULT disk_read(
 	switch (drv)
 	{
 	case SD_CARD:
+        hardware->write(SD_CS_PIN, 0);
+        hardware->write(LCD_CS_PIN, 1);
 		res = SD_ReadDisk(buff, sector, count);
 		if (res)
 			SD_SPI_ReadWriteByte(0xff);

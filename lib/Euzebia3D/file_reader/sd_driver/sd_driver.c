@@ -33,7 +33,7 @@ void SD_SPI_SpeedHigh(void)
 // released spi bus
 void SD_DisSelect(void)
 {
-	_hardware->write(SD_CS_PIN, 1);
+	// _hardware->write(SD_CS_PIN, 1);
 	SD_SPI_ReadWriteByte(0xff); // providing extra 8 clocks
 }
 

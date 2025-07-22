@@ -9,7 +9,7 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-static const uint16_t chunk_size = 240 * 16;
+static const uint16_t chunk_size = 480;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
 
@@ -33,7 +33,7 @@ void init_dma()
         false);
     dma_channel_set_irq1_enabled(dma_channel, true);
     irq_set_exclusive_handler(DMA_IRQ_1, dma_buffer_irq_handler);
-    irq_set_enabled(DMA_IRQ_1, true);
+    irq_set_enabled(DMA_IRQ_1, false);
     channel_config_set_read_increment(&config, true);
     channel_config_set_write_increment(&config, false);
 }
@@ -78,7 +78,7 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
 {
     uint32_t line_adr = (x * HEIGHT_DOUBLED) + (y * 2);
     buffer[line_adr] = (color >> 8) & 0xff;
-    buffer[line_adr + 1] = color & 0xff;
+    buffer[line_adr + 1] = color & 0xff;; 
 }
 
 void draw_image(uint8_t image_index)
@@ -113,13 +113,13 @@ void crt_disp_effect()
 {
     // barrel distortion
     uint8_t *framebuffer = (uint8_t *)malloc(sizeof(uint8_t) * BUFFER_SIZE);
-    for (uint32_t i = 0; i < BUFFER_SIZE_HALF; i++)
-    {
-        uint32_t index = get_effect_table_element(0, i);
-        framebuffer[i * 2] = buffer[index * 2];
-        framebuffer[i * 2 + 1] = buffer[index * 2 + 1];
-    }
-    memcpy(buffer, framebuffer, BUFFER_SIZE);
+    // for (uint32_t i = 0; i < BUFFER_SIZE_HALF; i++)
+    // {
+    //     uint32_t index = get_effect_table_element(0, i);
+    //     framebuffer[i * 2] = buffer[index * 2];
+    //     framebuffer[i * 2 + 1] = buffer[index * 2 + 1];
+    // }
+    // memcpy(buffer, framebuffer, BUFFER_SIZE);
     // chromatic aberration
     for (int y = 0; y < DISPLAY_HEIGHT; y++)
     {
@@ -200,6 +200,12 @@ void apply_post_process_effect(uint8_t effect_index)
     }
 }
 
+void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+{
+    *x=x1+((x2-x1)>>1);
+    *y=y1+((y2-y1)>>1);
+}
+
 void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle)
 {
     Sprite *sprite = get_sprite(sprite_index);
@@ -255,6 +261,17 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
     }
 }
 
+void draw_bone_sprite(Bone *bone, int16_t parentX, int16_t parentY)
+{
+    int16_t x = bone->x + parentX;
+    int16_t y = bone->y + parentY;
+    int16_t middleX, middleY;
+    middle_point(&middleX,&middleY,x,y,parentX,parentY);
+    Sprite *sprite = get_sprite(bone->spriteIndex);
+    int8_t middle = sprite->size >> 1;
+    draw_sprite(bone->spriteIndex, middleX+middle, middleY+middle, 0.0f);
+}
+
 void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
 {
     int16_t x = bone->x + parentX;
@@ -263,6 +280,7 @@ void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
     {
         draw_bone(&bone->childBonesLayer2[i], x, y);
     }
+    // draw_bone_sprite(bone, parentX, parentY);
     draw_sprite(bone->spriteIndex, x, y, 0.0f);
     for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
     {

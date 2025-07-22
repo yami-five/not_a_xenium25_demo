@@ -37,6 +37,8 @@ void core1_main();
 
 int main()
 {
+    set_sys_clock_khz(200000, true);
+    
     hardware_core = get_hardware();
     hardware_core->init_hardware();
 

@@ -111,31 +111,6 @@ static void set_pwm(uint8_t value)
     }
 }
 
-void init_sio_dma()
-{
-    sio_dma_channel_high = dma_claim_unused_channel(true);
-    dma_channel_config config_high = dma_channel_get_default_config(sio_dma_channel_high);
-    channel_config_set_transfer_data_size(&config_high, DMA_SIZE_32);
-    dma_channel_configure(
-        sio_dma_channel_high,
-        &config_high,
-        &sio_hw->gpio_set,
-        cs_bit,
-        1,
-        false);
-
-    sio_dma_channel_low = dma_claim_unused_channel(true);
-    dma_channel_config config_low = dma_channel_get_default_config(sio_dma_channel_low);
-    channel_config_set_transfer_data_size(&config_low, DMA_SIZE_32);
-    dma_channel_configure(
-        sio_dma_channel_low,
-        &config_low,
-        &sio_hw->gpio_clr,
-        cs_bit,
-        1,
-        false);
-}
-
 static void init_hardware(void)
 {
 
@@ -181,7 +156,6 @@ static void init_hardware(void)
     write(SD_CS_PIN, GPIO_OUT);
 
     spi_spinlock = spin_lock_init(spin_lock_claim_unused(true));
-    init_sio_dma();
 }
 
 spi_inst_t *get_spi_port()
