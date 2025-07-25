@@ -12,10 +12,10 @@ typedef struct Bone Bone;
 
 typedef struct Bone
 {
-    const char* label;
+    const char *label;
     int16_t x;
     int16_t y;
-    uint8_t spriteIndex;
+    Sprite *sprite;
     Bone *childBonesLayer1;
     uint8_t childBonesNumLayer1;
     Bone *childBonesLayer2;

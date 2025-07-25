@@ -121,18 +121,18 @@ void crt_disp_effect()
     // }
     // memcpy(buffer, framebuffer, BUFFER_SIZE);
     // chromatic aberration
-    for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    for (uint16_t y = 0; y < DISPLAY_WIDTH; y++)
     {
-        uint32_t ydw = y * DISPLAY_WIDTH;
-        for (int x = 0; x < DISPLAY_WIDTH; x++)
+        uint ydh = y * DISPLAY_HEIGHT;
+        for (uint16_t x = 0; x < DISPLAY_HEIGHT; x++)
         {
-            uint32_t i = ydw + x;
+            uint i = ydh + x;
 
-            uint16_t xr = (x > 0) ? x - 2 : x;
-            uint16_t xg = (x < DISPLAY_WIDTH - 1) ? x + 2 : x;
+            uint xr = (x > 1) ? x - 2 : x;
+            uint xg = (x < DISPLAY_HEIGHT) ? x + 2 : x;
 
-            uint16_t ir = ydw + xr;
-            uint16_t ig = ydw + xg;
+            uint ir = ydh + xr;
+            uint ig = ydh + xg;
 
             uint16_t c_r = buffer[ir * 2] | (buffer[ir * 2 + 1] << 8);
             uint16_t c_g = buffer[ig * 2] | (buffer[ig * 2 + 1] << 8);
@@ -178,14 +178,14 @@ void crt_disp_effect()
     memcpy(buffer, framebuffer, BUFFER_SIZE);
     free(framebuffer);
     // scanline
-    for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
-    {
-        for (uint16_t x = scanline_offset; x < DISPLAY_WIDTH; x += 2)
-        {
-            draw_pixel(x, y, 0);
-        }
-    }
-    scanline_offset = !scanline_offset;
+    // for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
+    // {
+    //     for (uint16_t x = scanline_offset; x < DISPLAY_WIDTH; x += 4)
+    //     {
+    //         draw_pixel(x, y, 0);
+    //     }
+    // }
+    // scanline_offset = !scanline_offset;
 }
 
 void apply_post_process_effect(uint8_t effect_index)
@@ -206,9 +206,8 @@ void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, in
     *y=y1+((y2-y1)>>1);
 }
 
-void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle)
+void draw_sprite(Sprite *sprite, int16_t pos_x, int16_t pos_y, float angle)
 {
-    Sprite *sprite = get_sprite(sprite_index);
     int32_t fixed_angle = float_to_fixed(angle);
     int16_t cos = fast_cos(-fixed_angle);
     int16_t sin = fast_sin(-fixed_angle);
@@ -245,10 +244,10 @@ void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y, float angle
             int16_t new_y = y + pos_y;
             if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
             {
-                uint32_t ydw = y * sprite->size;
+                uint32_t ydh = y * sprite->size;
                 for (uint16_t x = 0; x < sprite->size; x++)
                 {
-                    uint16_t pixel = sprite->pixels[ydw + x];
+                    uint16_t pixel = sprite->pixels[ydh + x];
                     if (pixel != 63519)
                     {
                         int16_t new_x = x + pos_x;
@@ -267,9 +266,8 @@ void draw_bone_sprite(Bone *bone, int16_t parentX, int16_t parentY)
     int16_t y = bone->y + parentY;
     int16_t middleX, middleY;
     middle_point(&middleX,&middleY,x,y,parentX,parentY);
-    Sprite *sprite = get_sprite(bone->spriteIndex);
-    int8_t middle = sprite->size >> 1;
-    draw_sprite(bone->spriteIndex, middleX+middle, middleY+middle, 0.0f);
+    uint16_t spriteSizeHalf = bone->sprite->size >> 1;
+    draw_sprite(bone->sprite, middleX-spriteSizeHalf, middleY-spriteSizeHalf, 0.0f);
 }
 
 void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
@@ -280,8 +278,9 @@ void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
     {
         draw_bone(&bone->childBonesLayer2[i], x, y);
     }
-    // draw_bone_sprite(bone, parentX, parentY);
-    draw_sprite(bone->spriteIndex, x, y, 0.0f);
+    if(bone->sprite!=NULL)
+        draw_bone_sprite(bone, parentX, parentY);
+    // draw_sprite(bone->sprite, x, y, 0.0f);
     for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
     {
         draw_bone(&bone->childBonesLayer1[i], x, y);

@@ -3,8 +3,8 @@
 static const RawBone mascotSkullChildren[4] = {
     {
         .label = "mascotSkullJaw",
-        .x = 28,
-        .y = 9,
+        .x = 38,
+        .y = 0,
         .spriteIndex = 7,
         .childBonesNumLayer1 = 0,
         .childBonesLayer1 = NULL,
@@ -14,7 +14,7 @@ static const RawBone mascotSkullChildren[4] = {
     {
         .label = "mascotSkullEyesBack",
         .x = 10,
-        .y = 10,
+        .y = 0,
         .spriteIndex = 8,
         .childBonesNumLayer1 = 0,
         .childBonesLayer1 = NULL,
@@ -23,8 +23,8 @@ static const RawBone mascotSkullChildren[4] = {
     },
     {
         .label = "mascotSkullLeftEye",
-        .x = 20,
-        .y = 25,
+        .x = 6,
+        .y = 0,
         .spriteIndex = 9,
         .childBonesNumLayer1 = 0,
         .childBonesLayer1 = NULL,
@@ -33,8 +33,8 @@ static const RawBone mascotSkullChildren[4] = {
     },
     {
         .label = "mascotSkullRightEye",
-        .x = 17,
-        .y = 12,
+        .x = 12,
+        .y = 20,
         .spriteIndex = 10,
         .childBonesNumLayer1 = 0,
         .childBonesLayer1 = NULL,
@@ -46,8 +46,8 @@ static const RawBone mascotSkullChildren[4] = {
 static const RawBone mascotHand1[1] = {
     {
         .label = "mascotHand1",
-        .x = 8,
-        .y = 45,
+        .x = 0,
+        .y = 50,
         .spriteIndex = 3,
         .childBonesNumLayer1 = 0,
         .childBonesLayer1 = NULL,
@@ -59,8 +59,8 @@ static const RawBone mascotHand1[1] = {
 static const RawBone mascotArmChildren[1] = {
     {
         .label = "mascotArm2",
-        .x = 11,
-        .y = 48,
+        .x = 5,
+        .y = 25,
         .spriteIndex = 1,
         .childBonesNumLayer1 = 0,
         .childBonesLayer1 = NULL,
@@ -69,21 +69,34 @@ static const RawBone mascotArmChildren[1] = {
     },
 };
 
-static const RawBone mascotBodyChildrenLayer1[2] = {
+static const RawBone mascotSkullMain[1] = {
     {
         .label = "mascotSkull",
-        .x = 13,
-        .y = 90,
+        .x = 0,
+        .y = 0,
         .spriteIndex = 6,
         .childBonesLayer1 = NULL,
         .childBonesNumLayer1 = 0,
         .childBonesLayer2 = mascotSkullChildren,
         .childBonesNumLayer2 = 4,
     },
+};
+
+static const RawBone mascotBodyChildrenLayer1[2] = {
+    {
+        .label = "mascotSkullHelper",
+        .x = -75,
+        .y = 0,
+        .spriteIndex = 255,
+        .childBonesLayer1 = NULL,
+        .childBonesNumLayer1 = 0,
+        .childBonesLayer2 = mascotSkullMain,
+        .childBonesNumLayer2 = 1,
+    },
     {
         .label = "mascotReflection",
-        .x = 15,
-        .y = 100,
+        .x = -150,
+        .y = 27,
         .spriteIndex = 5,
         .childBonesLayer1 = NULL,
         .childBonesNumLayer1 = 0,
@@ -92,15 +105,28 @@ static const RawBone mascotBodyChildrenLayer1[2] = {
     },
 };
 
-static const RawBone mascotBodyChildrenLayer2[1] = {
+static const RawBone mascotArmMain[1] = {
     {
         .label = "mascotArm1",
-        .x = 53,
-        .y = 117,
+        .x = 0,
+        .y = 66,
         .spriteIndex = 2,
         .childBonesLayer1 = NULL,
         .childBonesNumLayer1 = 0,
         .childBonesLayer2 = mascotArmChildren,
+        .childBonesNumLayer2 = 1,
+    },
+};
+
+static const RawBone mascotBodyChildrenLayer2[1] = {
+    {
+        .label = "mascotArmHelper",
+        .x = -30,
+        .y = 5,
+        .spriteIndex = 255,
+        .childBonesLayer1 = NULL,
+        .childBonesNumLayer1 = 0,
+        .childBonesLayer2 = mascotArmMain,
         .childBonesNumLayer2 = 1,
     },
 };

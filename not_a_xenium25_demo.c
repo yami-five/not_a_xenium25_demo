@@ -71,7 +71,7 @@ int main()
 
     puppetFactory = get_puppetFactory();
     Puppet *mascot = puppetFactory->create_puppet(0);
-    move_puppet(mascot,110,0);
+    move_puppet(mascot,220,120);
 
     while (1)
     {
@@ -80,11 +80,11 @@ int main()
 
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
+        painter->draw_puppet(mascot);
         painter->apply_post_process_effect(0);
         // painter->draw_sprite(0,200,300,qt*2);
         // painter->draw_sprite(0,5,30,-qt);
         // painter->draw_sprite(0,15,5,qt);
-        painter->draw_puppet(mascot);
 
         painter->draw_buffer();
         t++;
@@ -98,5 +98,5 @@ void core1_main()
     hardware_core->init_audio_i2s();
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware_core);
-    fileReader->play_wave_file("test.wav");
+    fileReader->play_wave_file("music.wav");
 }

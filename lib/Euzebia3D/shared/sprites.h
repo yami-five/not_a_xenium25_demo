@@ -2,6 +2,7 @@
 #define SPRITES_H
 
 #include "stdint.h"
+#include "stddef.h"
 
 typedef struct
 {

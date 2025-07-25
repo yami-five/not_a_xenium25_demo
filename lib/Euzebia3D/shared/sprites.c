@@ -48,5 +48,7 @@ const Sprite spriteSheet[] = {
 
 const Sprite *get_sprite(uint8_t sprite_index)
 {
-    return &spriteSheet[sprite_index];
+    if(sprite_index<255)
+        return &spriteSheet[sprite_index];
+    else return NULL;
 }
