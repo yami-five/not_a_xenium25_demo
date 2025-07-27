@@ -270,20 +270,18 @@ void draw_bone_sprite(Bone *bone, int16_t parentX, int16_t parentY)
     draw_sprite(bone->sprite, middleX-spriteSizeHalf, middleY-spriteSizeHalf, 0.0f);
 }
 
-void draw_bone(Bone *bone, int16_t parentX, int16_t parentY)
+void draw_bone(Bone *bone, int32_t *parentWorldMatrix)
 {
-    int16_t x = bone->x + parentX;
-    int16_t y = bone->y + parentY;
     for (uint8_t i = 0; i < bone->childBonesNumLayer2; i++)
     {
-        draw_bone(&bone->childBonesLayer2[i], x, y);
+        draw_bone(&bone->childBonesLayer2[i], bone->worldMatrix);
     }
     if(bone->sprite!=NULL)
-        draw_bone_sprite(bone, parentX, parentY);
+        draw_bone_sprite(bone, parentWorldMatrix[2]/SCALE_FACTOR, parentWorldMatrix[5]/SCALE_FACTOR);
     // draw_sprite(bone->sprite, x, y, 0.0f);
     for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
     {
-        draw_bone(&bone->childBonesLayer1[i], x, y);
+        draw_bone(&bone->childBonesLayer1[i], bone->worldMatrix);
     }
 }
 
@@ -293,7 +291,7 @@ void draw_puppet(Puppet *puppet)
     int16_t y = puppet->bones[0].y + puppet->y;
     for (uint8_t i = 0; i < puppet->bonesNum; i++)
     {
-        draw_bone(&puppet->bones[i], x, y);
+        draw_bone(&puppet->bones[i], puppet->bones[i].worldMatrix);
     }
 }
 

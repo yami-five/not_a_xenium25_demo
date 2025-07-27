@@ -38,7 +38,7 @@ void core1_main();
 int main()
 {
     set_sys_clock_khz(200000, true);
-    
+
     hardware_core = get_hardware();
     hardware_core->init_hardware();
 
@@ -71,7 +71,9 @@ int main()
 
     puppetFactory = get_puppetFactory();
     Puppet *mascot = puppetFactory->create_puppet(0);
-    move_puppet(mascot,220,120);
+    move_puppet(mascot, 220, 120);
+    Bone *mascotSkull = get_bone_by_name(&mascot->bones[0], "mascotSkull");
+    Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArm1");
 
     while (1)
     {
@@ -80,6 +82,8 @@ int main()
 
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
+        // transform_bone(mascotSkull, 0, 0, 1.0f);
+        update_world_matrices(mascot);
         painter->draw_puppet(mascot);
         painter->apply_post_process_effect(0);
         // painter->draw_sprite(0,200,300,qt*2);

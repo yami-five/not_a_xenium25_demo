@@ -6,7 +6,7 @@
 Quaternion *mul_quaternion(Quaternion *q1, Quaternion *q2)
 {
     Quaternion *result = (Quaternion *)malloc(sizeof(Quaternion));
-    result->vec=(Vector3 *)malloc(sizeof(Vector3));
+    result->vec = (Vector3 *)malloc(sizeof(Vector3));
     result->w = fixed_mul(q1->w, q2->w) - fixed_mul(q1->vec->x, q2->vec->x) - fixed_mul(q1->vec->y, q2->vec->y) - fixed_mul(q1->vec->z, q2->vec->z);
     result->vec->x = fixed_mul(q1->w, q2->vec->x) + fixed_mul(q1->vec->x, q2->w) - fixed_mul(q1->vec->y, q2->vec->z) + fixed_mul(q1->vec->z, q2->vec->y);
     result->vec->y = fixed_mul(q1->w, q2->vec->y) + fixed_mul(q1->vec->x, q2->vec->z) + fixed_mul(q1->vec->y, q2->w) - fixed_mul(q1->vec->z, q2->vec->x);
@@ -95,4 +95,22 @@ void fixed_mul_matrix_vector(int32_t *x, int32_t *y, int32_t *z, int32_t *w, int
     *y = resultY;
     *z = resultZ;
     *w = resultW;
+}
+
+int32_t *mul_matrices(int32_t *matrix1, int32_t *matrix2, uint8_t w, uint8_t h)
+{
+    int32_t *result = (int32_t *)malloc(sizeof(int32_t) * w * h);
+    for (uint8_t i = 0; i < h; i++)
+    {
+        for (uint8_t j = 0; j < w; j++)
+        {
+            int32_t sum = 0;
+            for (uint8_t k=0; k<w; k++)
+            {
+                sum += fixed_mul(matrix1[i*w+k],matrix2[k*w+j]);
+            }
+            result[i*w+j]=sum;
+        }
+    }
+    return result;
 }

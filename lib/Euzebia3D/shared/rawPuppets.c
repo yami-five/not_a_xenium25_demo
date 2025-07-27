@@ -137,9 +137,9 @@ static const RawBone mascotBodyBone[1] = {
      .y = 0,
      .spriteIndex = 4,
      .childBonesLayer1 = mascotBodyChildrenLayer1,
-     .childBonesNumLayer1 = 2,
+     .childBonesNumLayer1 = 0,
      .childBonesLayer2 = mascotBodyChildrenLayer2,
-     .childBonesNumLayer2 = 1},
+     .childBonesNumLayer2 = 0},
 };
 
 static const RawPuppet rawPuppets[] = {
