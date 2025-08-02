@@ -78,7 +78,8 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
 {
     uint32_t line_adr = (x * HEIGHT_DOUBLED) + (y * 2);
     buffer[line_adr] = (color >> 8) & 0xff;
-    buffer[line_adr + 1] = color & 0xff;; 
+    buffer[line_adr + 1] = color & 0xff;
+    ;
 }
 
 void draw_image(uint8_t image_index)
@@ -202,11 +203,11 @@ void apply_post_process_effect(uint8_t effect_index)
 
 void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-    *x=x1+((x2-x1)>>1);
-    *y=y1+((y2-y1)>>1);
+    *x = x1 + ((x2 - x1) >> 1);
+    *y = y1 + ((y2 - y1) >> 1);
 }
 
-void draw_sprite(Sprite *sprite, int16_t pos_x, int16_t pos_y, float angle)
+void draw_sprite(const Sprite *sprite, int16_t pos_x, int16_t pos_y, float angle)
 {
     int32_t fixed_angle = float_to_fixed(angle);
     int16_t cos = fast_cos(-fixed_angle);
@@ -260,24 +261,22 @@ void draw_sprite(Sprite *sprite, int16_t pos_x, int16_t pos_y, float angle)
     }
 }
 
-void draw_bone_sprite(Bone *bone, int16_t parentX, int16_t parentY)
-{
-    int16_t x = bone->x + parentX;
-    int16_t y = bone->y + parentY;
-    int16_t middleX, middleY;
-    middle_point(&middleX,&middleY,x,y,parentX,parentY);
-    uint16_t spriteSizeHalf = bone->sprite->size >> 1;
-    draw_sprite(bone->sprite, middleX-spriteSizeHalf, middleY-spriteSizeHalf, 0.0f);
-}
-
-void draw_bone(Bone *bone, int32_t *parentWorldMatrix)
+void draw_bone(Bone *bone, int *parentWorldMatrix)
 {
     for (uint8_t i = 0; i < bone->childBonesNumLayer2; i++)
     {
         draw_bone(&bone->childBonesLayer2[i], bone->worldMatrix);
     }
-    if(bone->sprite!=NULL)
-        draw_bone_sprite(bone, parentWorldMatrix[2]/SCALE_FACTOR, parentWorldMatrix[5]/SCALE_FACTOR);
+    if (bone->sprite != NULL)
+    {
+        uint8_t spriteSizeHalved = bone->sprite->size >> 1;
+        int16_t startX = bone->worldMatrix[2] >> SHIFT_FACTOR;
+        int16_t startY = bone->worldMatrix[5] >> SHIFT_FACTOR;
+        startX += (((parentWorldMatrix[2] >> SHIFT_FACTOR) - startX) >> 1) - spriteSizeHalved;
+        startY += (((parentWorldMatrix[5] >> SHIFT_FACTOR) - startY) >> 1) - spriteSizeHalved;
+
+        draw_sprite(bone->sprite, startX, startY, 0.0f);
+    }
     // draw_sprite(bone->sprite, x, y, 0.0f);
     for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
     {
@@ -287,11 +286,9 @@ void draw_bone(Bone *bone, int32_t *parentWorldMatrix)
 
 void draw_puppet(Puppet *puppet)
 {
-    int16_t x = puppet->bones[0].x + puppet->x;
-    int16_t y = puppet->bones[0].y + puppet->y;
     for (uint8_t i = 0; i < puppet->bonesNum; i++)
     {
-        draw_bone(&puppet->bones[i], puppet->bones[i].worldMatrix);
+        draw_bone(&puppet->bones[i], puppet->worldMatrix);
     }
 }
 

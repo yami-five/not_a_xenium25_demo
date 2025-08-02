@@ -15,7 +15,9 @@ typedef struct RawBone
     const char *label;
     const int16_t x;
     const int16_t y;
+    const float angle;
     const uint8_t spriteIndex;
+    const float baseSpriteAngle;
     const RawBone *childBonesLayer1;
     const uint8_t childBonesNumLayer1;
     const RawBone *childBonesLayer2;
@@ -24,8 +26,10 @@ typedef struct RawBone
 
 typedef struct
 {
+    const char* label;
     const int16_t x;
     const int16_t y;
+    const float angle;
     const RawBone *bones;
     const uint8_t bonesNum;
 } RawPuppet;

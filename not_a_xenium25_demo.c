@@ -53,37 +53,37 @@ int main()
 
     meshFactory = get_meshFactory();
     // Mesh *cube = meshFactory->create_colored_mesh(0xff00, 0);
-    Mesh *cube = meshFactory->create_textured_mesh(1, 2);
+    Mesh *cube = meshFactory->create_textured_mesh(3, 3);
     cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
 
     lightFactory = get_lightFactory();
-    PointLight *pointLight = lightFactory->create_point_light(0.0f, 0.0f, 50.0f, 5.0f, 0xffaa);
+    PointLight *pointLight = lightFactory->create_point_light(0.0f, 0.0f, 50.0f, 1.5f, 0xffff);
 
     cameraFactory = get_cameraFactory();
     Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
     // Mesh *skybox = meshFactory->create_textured_skybox(2);
 
-    multicore_launch_core1(core1_main);
     painter->clear_buffer(0x1100);
     painter->draw_buffer();
     uint32_t t = 0;
 
     puppetFactory = get_puppetFactory();
     Puppet *mascot = puppetFactory->create_puppet(0);
-    move_puppet(mascot, 220, 120);
+    move_puppet(mascot, 330, 120);
     Bone *mascotSkull = get_bone_by_name(&mascot->bones[0], "mascotSkull");
     Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArm1");
+    multicore_launch_core1(core1_main);
 
     while (1)
     {
-        float qt = t * 0.1f;
+        float qt = t * 0.2f;
         // renderer->draw_model(skybox, pointLight, camera);
 
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         renderer->draw_model(cube, pointLight, camera);
         // transform_bone(mascotSkull, 0, 0, 1.0f);
-        update_world_matrices(mascot);
+        // update_world_matrices(mascot);
         painter->draw_puppet(mascot);
         painter->apply_post_process_effect(0);
         // painter->draw_sprite(0,200,300,qt*2);

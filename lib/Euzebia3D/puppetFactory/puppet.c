@@ -6,66 +6,65 @@ void make_local_matrix(Bone *bone)
     int32_t fixedAngle = float_to_fixed(bone->angle);
     int16_t sin = fast_sin(fixedAngle);
     int16_t cos = fast_cos(fixedAngle);
-    bone->localMatrix[0]=cos;
-    bone->localMatrix[1]=-sin;
-    bone->localMatrix[2]=bone->x*SCALE_FACTOR;
-    bone->localMatrix[3]=sin;
-    bone->localMatrix[4]=cos;
-    bone->localMatrix[5]=bone->y*SCALE_FACTOR;
-    bone->localMatrix[6]=0;
-    bone->localMatrix[7]=0;
-    bone->localMatrix[0]=1024;
+    bone->localMatrix[0] = cos;
+    bone->localMatrix[1] = -sin;
+    bone->localMatrix[2] = bone->x * SCALE_FACTOR;
+    bone->localMatrix[3] = sin;
+    bone->localMatrix[4] = cos;
+    bone->localMatrix[5] = bone->y * SCALE_FACTOR;
+    bone->localMatrix[6] = 0;
+    bone->localMatrix[7] = 0;
+    bone->localMatrix[8] = SCALE_FACTOR;
 }
 
-void make_world_matrix(Bone *bone, int32_t *parentWorldMatrix)
+void make_world_matrix(Bone *bone, int *parentWorldMatrix)
 {
-    int32_t *result=mul_matrices(parentWorldMatrix,bone->localMatrix,3,3);
-    for(uint8_t i=0;i<9;i++)
+    int *result = mul_matrices(parentWorldMatrix, bone->localMatrix, 3, 3);
+    for (uint8_t i = 0; i < 9; i++)
     {
-        bone->worldMatrix[i]=result[i];
+        bone->worldMatrix[i] = result[i];
     }
     free(result);
 }
 
-void update_children_world_matrices(Bone *bone)
+void update_bones_world_matrices(Bone *bone, int *parentWorldMatrix)
 {
-    for(uint8_t i=0;i<bone->childBonesNumLayer1;i++)
+    make_local_matrix(bone);
+    make_world_matrix(bone, parentWorldMatrix);
+    for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
     {
-        make_local_matrix(&bone->childBonesLayer1[i]);
-        make_world_matrix(&bone->childBonesLayer1[i],bone->worldMatrix);
-        update_children_world_matrices(&bone->childBonesLayer1[i]);
-        bone->childBonesLayer1[i].x=bone->childBonesLayer1[i].localMatrix[2];
-        bone->childBonesLayer1[i].y=bone->childBonesLayer1[i].localMatrix[5];
+        update_bones_world_matrices(&bone->childBonesLayer1[i], bone->worldMatrix);
     }
-    for(uint8_t i=0;i<bone->childBonesNumLayer2;i++)
+    for (uint8_t i = 0; i < bone->childBonesNumLayer2; i++)
     {
-        make_local_matrix(&bone->childBonesLayer2[i]);
-        make_world_matrix(&bone->childBonesLayer2[i],bone->worldMatrix);
-        update_children_world_matrices(&bone->childBonesLayer2[i]);
+        update_bones_world_matrices(&bone->childBonesLayer2[i], bone->worldMatrix);
     }
 }
 
 void update_world_matrices(Puppet *puppet)
 {
-    int32_t parentWorldMatrix[9]={
-        1024, 0, puppet->x*SCALE_FACTOR,
-        0, 1024, puppet->y*SCALE_FACTOR,
-        0,0,1024
-    };
-    for(uint8_t i=0;i<puppet->bonesNum;i++)
+    int32_t angleFixed = float_to_fixed(puppet->angle);
+    int16_t sin = fast_sin(angleFixed);
+    int16_t cos = fast_cos(angleFixed);
+    puppet->localMatrix[0] = cos;
+    puppet->localMatrix[1] = -sin;
+    puppet->localMatrix[2] = puppet->x * SCALE_FACTOR;
+    puppet->localMatrix[3] = sin;
+    puppet->localMatrix[4] = cos;
+    puppet->localMatrix[5] = puppet->y * SCALE_FACTOR;
+    puppet->localMatrix[6] = puppet->localMatrix[7] = 0;
+    puppet->localMatrix[8] = SCALE_FACTOR;
+    memcpy(puppet->worldMatrix, puppet->localMatrix, sizeof(puppet->localMatrix));
+    for (uint8_t i = 0; i < puppet->bonesNum; i++)
     {
-        make_local_matrix(&puppet->bones[i]);
-        make_world_matrix(&puppet->bones[i],parentWorldMatrix);
-        update_children_world_matrices(&puppet->bones[i]);
-        puppet->bones[i].x=puppet->bones[i].worldMatrix[2];
-        puppet->bones[i].y=puppet->bones[i].worldMatrix[5];
+        update_bones_world_matrices(&puppet->bones[i], puppet->worldMatrix);
     }
 }
 
 void move_puppet(Puppet *puppet, int16_t newX, int16_t newY)
 {
-    puppet->x = newX;
-    puppet->y = newY;
+    puppet->x += newX;
+    puppet->y += newY;
     update_world_matrices(puppet);
 }
 
@@ -94,7 +93,7 @@ void transform_bone(Bone *bone, int16_t x, int16_t y, float angle)
 {
     if (!bone)
         return;
-    bone->x+=x;
-    bone->y+=y;
-    bone->angle+=angle;
+    bone->x += x;
+    bone->y += y;
+    bone->angle += angle;
 }

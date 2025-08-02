@@ -97,17 +97,17 @@ void fixed_mul_matrix_vector(int32_t *x, int32_t *y, int32_t *z, int32_t *w, int
     *w = resultW;
 }
 
-int32_t *mul_matrices(int32_t *matrix1, int32_t *matrix2, uint8_t w, uint8_t h)
+int *mul_matrices(int *matrix1, int *matrix2, uint8_t w, uint8_t h)
 {
-    int32_t *result = (int32_t *)malloc(sizeof(int32_t) * w * h);
+    int *result = (int *)malloc(sizeof(int) * w * h);
     for (uint8_t i = 0; i < h; i++)
     {
         for (uint8_t j = 0; j < w; j++)
         {
-            int32_t sum = 0;
+            int sum = 0;
             for (uint8_t k=0; k<w; k++)
             {
-                sum += fixed_mul(matrix1[i*w+k],matrix2[k*w+j]);
+                sum += fixed_mul(matrix2[i*w+k],matrix1[k*w+j]);
             }
             result[i*w+j]=sum;
         }

@@ -199,7 +199,7 @@ void calc_bar_coords(Triangle2D *triangle, int *Ba, int *Bb, int *Bc, int32_t di
 
 void clear_zbuffuer()
 {
-    memset(zBuffer, 36865, sizeof(zBuffer));
+    memset(zBuffer, 65535, sizeof(zBuffer));
 }
 
 void set_zbuffer(uint16_t addr, int z)
