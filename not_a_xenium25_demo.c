@@ -70,7 +70,7 @@ int main()
 
     puppetFactory = get_puppetFactory();
     Puppet *mascot = puppetFactory->create_puppet(0);
-    move_puppet(mascot, 330, 120);
+    move_puppet(mascot, 120, 330);
     Bone *mascotSkull = get_bone_by_name(&mascot->bones[0], "mascotSkull");
     Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArm1");
     multicore_launch_core1(core1_main);

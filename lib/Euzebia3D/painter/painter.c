@@ -207,7 +207,7 @@ void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, in
     *y = y1 + ((y2 - y1) >> 1);
 }
 
-void draw_sprite(const Sprite *sprite, int16_t pos_x, int16_t pos_y, float angle)
+void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, float angle)
 {
     int32_t fixed_angle = float_to_fixed(angle);
     int16_t cos = fast_cos(-fixed_angle);
