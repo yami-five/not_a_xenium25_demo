@@ -71,6 +71,12 @@ int16_t fast_cos(int32_t value)
     return get_cos(index);
 }
 
+int16_t fast_atan2(int16_t y, int16_t x)
+{
+    int32_t index=(y+50)*100+x+50;
+    return get_atan(index);
+}
+
 int32_t fast_inv_sqrt(int32_t value)
 {
     int32_t x2, y;

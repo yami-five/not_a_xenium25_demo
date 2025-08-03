@@ -22,5 +22,6 @@ int64_t fixed_pow(int32_t a);
 // void init_sin_cos();
 int16_t fast_sin(int32_t value);
 int16_t fast_cos(int32_t value);
+int16_t fast_atan2(int16_t y, int16_t x);
 int32_t fast_inv_sqrt(int32_t number);
 int32_t fast_sqrt(int64_t number);

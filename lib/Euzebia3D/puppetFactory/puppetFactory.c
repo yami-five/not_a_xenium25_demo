@@ -14,7 +14,7 @@ Bone *create_bones(const RawBone *rawBones, const uint8_t bonesNum, int *parentW
         newBones[i].y = rawBones[i].y;
         newBones[i].angle = rawBones[i].angle;
         newBones[i].sprite = get_sprite(rawBones[i].spriteIndex);
-        newBones[i].baseSpriteAngle = rawBones[i].baseSpriteAngle;
+        newBones[i].baseSpriteAngle = float_to_fixed(rawBones[i].baseSpriteAngle);
         make_local_matrix(&newBones[i]);
         make_world_matrix(&newBones[i], parentWorldMatrix);
         newBones[i].childBonesNumLayer1 = rawBones[i].childBonesNumLayer1;

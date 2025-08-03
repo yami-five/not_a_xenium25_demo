@@ -17,7 +17,7 @@ typedef struct Bone
     int16_t y;
     float angle;
     const Sprite *sprite;
-    float baseSpriteAngle;
+    int16_t baseSpriteAngle;
     int worldMatrix[9];
     int localMatrix[9];
     Bone *childBonesLayer1;

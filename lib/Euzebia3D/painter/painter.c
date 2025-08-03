@@ -207,12 +207,11 @@ void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, in
     *y = y1 + ((y2 - y1) >> 1);
 }
 
-void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, float angle)
+void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int16_t angle)
 {
-    int32_t fixed_angle = float_to_fixed(angle);
-    int16_t cos = fast_cos(-fixed_angle);
-    int16_t sin = fast_sin(-fixed_angle);
-    if (fixed_angle != 0)
+    int16_t cos = fast_cos(-angle);
+    int16_t sin = fast_sin(-angle);
+    if (angle != 0 && sprite->canRotate)
     {
         int8_t middle = sprite->size >> 1;
         for (uint16_t y = 0; y < sprite->size; y++)
@@ -223,8 +222,8 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, float angle
                 for (uint16_t x = 0; x < sprite->size; x++)
                 {
                     int16_t new_x = x + pos_x;
-                    int16_t xr = (((x - middle) * fast_cos(-fixed_angle) - (y - middle) * fast_sin(-fixed_angle)) >> SHIFT_FACTOR) + middle;
-                    int16_t yr = (((x - middle) * fast_sin(-fixed_angle) + (y - middle) * fast_cos(-fixed_angle)) >> SHIFT_FACTOR) + middle;
+                    int16_t xr = (((x - middle) * cos - (y - middle) * sin) >> SHIFT_FACTOR) + middle;
+                    int16_t yr = (((x - middle) * sin + (y - middle) * cos) >> SHIFT_FACTOR) + middle;
                     if ((uint16_t)xr < sprite->size && (uint16_t)yr < sprite->size)
                     {
                         uint16_t pixel = sprite->pixels[yr * sprite->size + xr];
@@ -272,10 +271,14 @@ void draw_bone(Bone *bone, int *parentWorldMatrix)
         uint8_t spriteSizeHalved = bone->sprite->size >> 1;
         int16_t startX = bone->worldMatrix[2] >> SHIFT_FACTOR;
         int16_t startY = bone->worldMatrix[5] >> SHIFT_FACTOR;
-        startX += (((parentWorldMatrix[2] >> SHIFT_FACTOR) - startX) >> 1) - spriteSizeHalved;
-        startY += (((parentWorldMatrix[5] >> SHIFT_FACTOR) - startY) >> 1) - spriteSizeHalved;
-
-        draw_sprite(bone->sprite, startX, startY, 0.0f);
+        int16_t parentX = parentWorldMatrix[2] >> SHIFT_FACTOR;
+        int16_t parentY = parentWorldMatrix[5] >> SHIFT_FACTOR;
+        int16_t angle = 0;
+        if(bone->sprite->canRotate)
+            angle = fast_atan2(startY - parentY, startX - parentX) + bone->baseSpriteAngle;
+        startX += ((parentX - startX) >> 1) - spriteSizeHalved;
+        startY += ((parentY - startY) >> 1) - spriteSizeHalved;
+        draw_sprite(bone->sprite, startX, startY, angle);
     }
     // draw_sprite(bone->sprite, x, y, 0.0f);
     for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
