@@ -12,6 +12,5 @@ const uint32_t *get_effect_table(uint8_t effect_index)
 
 const uint32_t get_effect_table_element(uint8_t effect_index, uint32_t e_index)
 {
-    uint32_t test = effects[effect_index][e_index];
     return effects[effect_index][e_index];
 }

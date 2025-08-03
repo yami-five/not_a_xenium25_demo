@@ -56,7 +56,7 @@ int64_t fixed_pow(int32_t a)
 // }
 
 int16_t fast_sin(int32_t value)
-{   
+{
     int32_t index = value % TABLE_SIZE;
     if (index < 0)
         index += TABLE_SIZE;
@@ -69,6 +69,12 @@ int16_t fast_cos(int32_t value)
     if (index < 0)
         index += TABLE_SIZE;
     return get_cos(index);
+}
+
+int16_t fast_atan2(int16_t y, int16_t x)
+{
+    int32_t index = (y + 70) * 141 + x + 70;
+    return get_atan(index);
 }
 
 int32_t fast_inv_sqrt(int32_t value)
@@ -97,4 +103,13 @@ int32_t fast_sqrt(int64_t value)
         x = (x + fixed_div(value, x)) >> 1;
     }
     return x;
+}
+
+int32_t radian_to_index(int32_t radian)
+{
+    while (radian < 0)
+        radian += PI2;
+    while (radian >= PI2)
+        radian -= PI2;
+    return (radian * RADIAN_INDEX_FACTOR) >> SHIFT_FACTOR;
 }

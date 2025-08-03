@@ -4,11 +4,12 @@
 #include "../shared/post_processing.h"
 #include "../shared/sprites.h"
 #include "hardware/sync/spin_lock.h"
+#include "../arithmetics/fpa.h"
 
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-static const uint16_t chunk_size = 480 * 80;
+static const uint16_t chunk_size = 480;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
 
@@ -32,7 +33,7 @@ void init_dma()
         false);
     dma_channel_set_irq1_enabled(dma_channel, true);
     irq_set_exclusive_handler(DMA_IRQ_1, dma_buffer_irq_handler);
-    irq_set_enabled(DMA_IRQ_1, true);
+    irq_set_enabled(DMA_IRQ_1, false);
     channel_config_set_read_increment(&config, true);
     channel_config_set_write_increment(&config, false);
 }
@@ -78,6 +79,7 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
     uint32_t line_adr = (x * HEIGHT_DOUBLED) + (y * 2);
     buffer[line_adr] = (color >> 8) & 0xff;
     buffer[line_adr + 1] = color & 0xff;
+    ;
 }
 
 void draw_image(uint8_t image_index)
@@ -112,26 +114,26 @@ void crt_disp_effect()
 {
     // barrel distortion
     uint8_t *framebuffer = (uint8_t *)malloc(sizeof(uint8_t) * BUFFER_SIZE);
-    for (uint32_t i = 0; i < BUFFER_SIZE_HALF; i++)
-    {
-        uint32_t index = get_effect_table_element(0, i);
-        framebuffer[i * 2] = buffer[index * 2];
-        framebuffer[i * 2 + 1] = buffer[index * 2 + 1];
-    }
-    memcpy(buffer, framebuffer, BUFFER_SIZE);
+    // for (uint32_t i = 0; i < BUFFER_SIZE_HALF; i++)
+    // {
+    //     uint32_t index = get_effect_table_element(0, i);
+    //     framebuffer[i * 2] = buffer[index * 2];
+    //     framebuffer[i * 2 + 1] = buffer[index * 2 + 1];
+    // }
+    // memcpy(buffer, framebuffer, BUFFER_SIZE);
     // chromatic aberration
-    for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    for (uint16_t y = 0; y < DISPLAY_WIDTH; y++)
     {
-        uint32_t ydw = y * DISPLAY_WIDTH;
-        for (int x = 0; x < DISPLAY_WIDTH; x++)
+        uint ydh = y * DISPLAY_HEIGHT;
+        for (uint16_t x = 0; x < DISPLAY_HEIGHT; x++)
         {
-            uint32_t i = ydw + x;
+            uint i = ydh + x;
 
-            uint16_t xr = (x > 0) ? x - 2 : x;
-            uint16_t xg = (x < DISPLAY_WIDTH - 1) ? x + 2 : x;
+            uint xr = (x > 1) ? x - 2 : x;
+            uint xg = (x < DISPLAY_HEIGHT) ? x + 2 : x;
 
-            uint16_t ir = ydw + xr;
-            uint16_t ig = ydw + xg;
+            uint ir = ydh + xr;
+            uint ig = ydh + xg;
 
             uint16_t c_r = buffer[ir * 2] | (buffer[ir * 2 + 1] << 8);
             uint16_t c_g = buffer[ig * 2] | (buffer[ig * 2 + 1] << 8);
@@ -177,14 +179,14 @@ void crt_disp_effect()
     memcpy(buffer, framebuffer, BUFFER_SIZE);
     free(framebuffer);
     // scanline
-    for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
-    {
-        for (uint16_t x = scanline_offset; x < DISPLAY_WIDTH; x += 2)
-        {
-            draw_pixel(x, y, 0);
-        }
-    }
-    scanline_offset = !scanline_offset;
+    // for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
+    // {
+    //     for (uint16_t x = scanline_offset; x < DISPLAY_WIDTH; x += 4)
+    //     {
+    //         draw_pixel(x, y, 0);
+    //     }
+    // }
+    // scanline_offset = !scanline_offset;
 }
 
 void apply_post_process_effect(uint8_t effect_index)
@@ -199,26 +201,100 @@ void apply_post_process_effect(uint8_t effect_index)
     }
 }
 
-void draw_sprite(uint8_t sprite_index, int16_t pos_x, int16_t pos_y)
+void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-    Sprite *sprite = get_sprite(sprite_index);
-    for (uint16_t y = 0; y < sprite->size; y++)
+    *x = x1 + ((x2 - x1) >> 1);
+    *y = y1 + ((y2 - y1) >> 1);
+}
+
+void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t angle)
+{
+    if (angle != 0 && sprite->canRotate)
     {
-        int16_t new_y = y + pos_y;
-        if (new_y >= 0 || new_y < DISPLAY_WIDTH)
+        int16_t cos = fast_cos(angle);
+        int16_t sin = fast_sin(angle);
+        int8_t middle = sprite->size >> 1;
+        for (uint16_t y = 0; y < sprite->size; y++)
         {
-            uint32_t ydw = y * sprite->size;
-            for (uint16_t x = 0; x < sprite->size; x++)
+            int16_t new_y = y + pos_y;
+            if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
             {
-                uint16_t pixel = sprite->pixels[ydw + x];
-                if (pixel != 63519)
+                for (uint16_t x = 0; x < sprite->size; x++)
                 {
                     int16_t new_x = x + pos_x;
-                    if (new_x >= 0 || new_x < DISPLAY_HEIGHT)
-                        draw_pixel(new_x, new_y, pixel);
+                    int16_t xr = (((x - middle) * cos - (y - middle) * sin) >> SHIFT_FACTOR) + middle;
+                    int16_t yr = (((x - middle) * sin + (y - middle) * cos) >> SHIFT_FACTOR) + middle;
+                    if ((uint16_t)xr < sprite->size && (uint16_t)yr < sprite->size)
+                    {
+                        uint16_t pixel = sprite->pixels[yr * sprite->size + xr];
+                        if (pixel != 63519)
+                        {
+                            if (new_x >= 0 && new_x < DISPLAY_WIDTH)
+                                draw_pixel(new_x, new_y, pixel);
+                        }
+                    }
                 }
             }
         }
+    }
+    else
+    {
+        for (uint16_t y = 0; y < sprite->size; y++)
+        {
+            int16_t new_y = y + pos_y;
+            if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
+            {
+                uint32_t ydh = y * sprite->size;
+                for (uint16_t x = 0; x < sprite->size; x++)
+                {
+                    uint16_t pixel = sprite->pixels[ydh + x];
+                    if (pixel != 63519)
+                    {
+                        int16_t new_x = x + pos_x;
+                        if (new_x >= 0 && new_x < DISPLAY_WIDTH)
+                            draw_pixel(new_x, new_y, pixel);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void draw_bone(Bone *bone, int *parentWorldMatrix)
+{
+    for (uint8_t i = 0; i < bone->childBonesNumLayer2; i++)
+    {
+        draw_bone(&bone->childBonesLayer2[i], bone->worldMatrix);
+    }
+    if (bone->sprite != NULL)
+    {
+        uint8_t spriteSizeHalved = bone->sprite->size >> 1;
+        int16_t startX = bone->worldMatrix[2] >> SHIFT_FACTOR;
+        int16_t startY = bone->worldMatrix[5] >> SHIFT_FACTOR;
+        int16_t parentX = parentWorldMatrix[2] >> SHIFT_FACTOR;
+        int16_t parentY = parentWorldMatrix[5] >> SHIFT_FACTOR;
+        int32_t angle = 0;
+        if(bone->sprite->canRotate)
+        {
+            angle = fast_atan2(startY - parentY, startX - parentX) + bone->baseSpriteAngle;
+            angle = radian_to_index(angle);
+        }
+        startX += ((parentX - startX) >> 1) - spriteSizeHalved;
+        startY += ((parentY - startY) >> 1) - spriteSizeHalved;
+        draw_sprite(bone->sprite, startX, startY, angle);
+    }
+    // draw_sprite(bone->sprite, x, y, 0.0f);
+    for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
+    {
+        draw_bone(&bone->childBonesLayer1[i], bone->worldMatrix);
+    }
+}
+
+void draw_puppet(Puppet *puppet)
+{
+    for (uint8_t i = 0; i < puppet->bonesNum; i++)
+    {
+        draw_bone(&puppet->bones[i], puppet->worldMatrix);
     }
 }
 
@@ -229,7 +305,8 @@ static IPainter painter = {
     .draw_pixel = draw_pixel,
     .draw_image = draw_image,
     .apply_post_process_effect = apply_post_process_effect,
-    .draw_sprite = draw_sprite};
+    .draw_sprite = draw_sprite,
+    .draw_puppet = draw_puppet};
 
 const IPainter *get_painter(void)
 {

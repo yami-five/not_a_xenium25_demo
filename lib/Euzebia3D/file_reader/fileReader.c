@@ -79,7 +79,7 @@ void play_wave_file(char *file_name)
 		printf("Loading file failed :(%d)\r\n", f_res);
 		return;
 	}
-	uint16_t samples_num = 150;
+	uint16_t samples_num = 240;
 	uint8_t buffer_size = 16;
 	int16_t buffer_audio[buffer_size * samples_num];
 	spin_lock_t *spi_spinlock = _hardware->get_spinlock();
@@ -87,6 +87,7 @@ void play_wave_file(char *file_name)
 	{
 		uint32_t flags = spin_lock_blocking(spi_spinlock);
 		f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
+	    // memset(buffer_audio, 0x1111, sizeof(buffer_audio));
 		spin_unlock(spi_spinlock, flags);
 		if (br == 0)
 			break;
@@ -97,8 +98,8 @@ void play_wave_file(char *file_name)
 			memcpy(audio_buf->buffer->bytes, buffer_audio + buffer_size * i, buffer_size);
 			audio_buf->sample_count = buffer_size;
 			give_audio_buffer(audio_buffer_pool, audio_buf);
-			if (br == 0)
-				break;
+			// if (br == 0)
+			// 	break;
 		}
 	}
 

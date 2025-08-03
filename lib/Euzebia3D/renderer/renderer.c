@@ -39,7 +39,7 @@ void triangle_center(Triangle3D *triangle, int32_t *center)
 
 void rotate(int *vertices, uint16_t verticesCounter, TransformVector *vector)
 {
-    int32_t qt_rad = fixed_mul(vector->w, PI2_FIXED);
+    int32_t qt_rad = fixed_mul(vector->w, PI2);
     int32_t c = fast_cos(qt_rad / 2);
     int32_t s = fast_sin(qt_rad / 2);
     Vector3 qVec = {
@@ -199,7 +199,7 @@ void calc_bar_coords(Triangle2D *triangle, int *Ba, int *Bb, int *Bc, int32_t di
 
 void clear_zbuffuer()
 {
-    memset(zBuffer, 36865, sizeof(zBuffer));
+    memset(zBuffer, 65535, sizeof(zBuffer));
 }
 
 void set_zbuffer(uint16_t addr, int z)
