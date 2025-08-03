@@ -15,7 +15,7 @@ typedef struct
     void (*draw_pixel)(uint16_t x, uint16_t y, uint16_t color);
     void (*draw_image)(uint8_t image_index);
     void (*apply_post_process_effect)(uint8_t effect_index);
-    void (*draw_sprite)(const Sprite* sprite, int16_t pos_x, int16_t pos_y, int16_t angle);
+    void (*draw_sprite)(const Sprite* sprite, int16_t pos_x, int16_t pos_y, int32_t angle);
     void (*draw_puppet)(Puppet *puppet);
 } IPainter;
 

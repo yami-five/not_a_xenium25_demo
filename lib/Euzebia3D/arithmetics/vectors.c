@@ -107,7 +107,7 @@ int *mul_matrices(int *matrix1, int *matrix2, uint8_t w, uint8_t h)
             int sum = 0;
             for (uint8_t k=0; k<w; k++)
             {
-                sum += fixed_mul(matrix2[i*w+k],matrix1[k*w+j]);
+                sum += fixed_mul(matrix1[i*w+k],matrix2[k*w+j]);
             }
             result[i*w+j]=sum;
         }

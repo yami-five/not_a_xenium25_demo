@@ -3,9 +3,9 @@
 
 void make_local_matrix(Bone *bone)
 {
-    int32_t fixedAngle = float_to_fixed(bone->angle);
-    int16_t sin = fast_sin(fixedAngle);
-    int16_t cos = fast_cos(fixedAngle);
+    int32_t angleIndex = radian_to_index(float_to_fixed(bone->angle));
+    int16_t sin = fast_sin(angleIndex);
+    int16_t cos = fast_cos(angleIndex);
     bone->localMatrix[0] = cos;
     bone->localMatrix[1] = -sin;
     bone->localMatrix[2] = bone->x * SCALE_FACTOR;
@@ -43,9 +43,9 @@ void update_bones_world_matrices(Bone *bone, int *parentWorldMatrix)
 
 void update_world_matrices(Puppet *puppet)
 {
-    int32_t angleFixed = float_to_fixed(puppet->angle);
-    int16_t sin = fast_sin(angleFixed);
-    int16_t cos = fast_cos(angleFixed);
+    int32_t angleIndex = radian_to_index(float_to_fixed(puppet->angle));
+    int16_t sin = fast_sin(angleIndex);
+    int16_t cos = fast_cos(angleIndex);
     puppet->localMatrix[0] = cos;
     puppet->localMatrix[1] = -sin;
     puppet->localMatrix[2] = puppet->x * SCALE_FACTOR;

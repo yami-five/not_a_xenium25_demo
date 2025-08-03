@@ -207,12 +207,12 @@ void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, in
     *y = y1 + ((y2 - y1) >> 1);
 }
 
-void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int16_t angle)
+void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t angle)
 {
-    int16_t cos = fast_cos(-angle);
-    int16_t sin = fast_sin(-angle);
     if (angle != 0 && sprite->canRotate)
     {
+        int16_t cos = fast_cos(angle);
+        int16_t sin = fast_sin(angle);
         int8_t middle = sprite->size >> 1;
         for (uint16_t y = 0; y < sprite->size; y++)
         {
@@ -273,9 +273,12 @@ void draw_bone(Bone *bone, int *parentWorldMatrix)
         int16_t startY = bone->worldMatrix[5] >> SHIFT_FACTOR;
         int16_t parentX = parentWorldMatrix[2] >> SHIFT_FACTOR;
         int16_t parentY = parentWorldMatrix[5] >> SHIFT_FACTOR;
-        int16_t angle = 0;
+        int32_t angle = 0;
         if(bone->sprite->canRotate)
+        {
             angle = fast_atan2(startY - parentY, startX - parentX) + bone->baseSpriteAngle;
+            angle = radian_to_index(angle);
+        }
         startX += ((parentX - startX) >> 1) - spriteSizeHalved;
         startY += ((parentY - startY) >> 1) - spriteSizeHalved;
         draw_sprite(bone->sprite, startX, startY, angle);

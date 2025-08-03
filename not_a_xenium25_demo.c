@@ -71,19 +71,23 @@ int main()
     puppetFactory = get_puppetFactory();
     Puppet *mascot = puppetFactory->create_puppet(0);
     move_puppet(mascot, 120, 330);
-    Bone *mascotSkull = get_bone_by_name(&mascot->bones[0], "mascotSkull");
-    Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArm1");
+    Bone *mascotSkull = get_bone_by_name(&mascot->bones[0], "mascotSkullParent");
+    Bone *mascotJaw = get_bone_by_name(&mascot->bones[0], "mascotSkullJawParent");
+    Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArmParent");
+    Bone *mascotElbow = get_bone_by_name(&mascot->bones[0], "mascotArmElbow");
     multicore_launch_core1(core1_main);
+    // transform_bone(mascotElbow,0,0,1.0f);
+    // update_world_matrices(mascot);
 
     while (1)
     {
         float qt = t * 0.2f;
         // renderer->draw_model(skybox, pointLight, camera);
-
-        modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
-        renderer->draw_model(cube, pointLight, camera);
-        // transform_bone(mascotSkull, 0, 0, 1.0f);
+        
+        // transform_bone(mascotElbow,0,0,1.0f);
         // update_world_matrices(mascot);
+        modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
+        // renderer->draw_model(cube, pointLight, camera);
         painter->draw_puppet(mascot);
         painter->apply_post_process_effect(0);
         // painter->draw_sprite(0,200,300,qt*2);
