@@ -79,13 +79,23 @@ int main()
     // transform_bone(mascotElbow,0,0,1.0f);
     // update_world_matrices(mascot);
 
+    BoneAnimation boneAnimations[2] = {
+        {
+            .bone = mascotJaw,
+            .animation = get_animation_by_label("jawAnimation"),
+        },
+        {
+            .bone = mascotSkull,
+            .animation = get_animation_by_label("skullAnimation"),
+        },
+    };
+
     while (1)
     {
         float qt = t * 0.2f;
         // renderer->draw_model(skybox, pointLight, camera);
-        
-        // transform_bone(mascotElbow,0,0,1.0f);
-        // update_world_matrices(mascot);
+        animate_bones(boneAnimations, 2, t);
+        update_world_matrices(mascot);
         modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
         // renderer->draw_model(cube, pointLight, camera);
         painter->draw_puppet(mascot);

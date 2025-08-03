@@ -97,3 +97,26 @@ void transform_bone(Bone *bone, int16_t x, int16_t y, float angle)
     bone->y += y;
     bone->angle += angle;
 }
+
+const Animation *get_animation_by_label(char *label)
+{
+    for (uint8_t i = 0; i < 2; i++)
+    {
+        const Animation *animation = get_animation_by_index(i);
+        if (strcmp(animation->label, label) == 0)
+            return animation;
+    }
+    return NULL;
+}
+
+void animate_bones(BoneAnimation *boneAnimations, uint8_t animationsNum, uint32_t frameNum)
+{
+    for (uint8_t i = 0; i < animationsNum; i++)
+    {
+        uint16_t animationFramesNum = boneAnimations[i].animation->framesNum;
+        while(frameNum>=animationFramesNum)
+            frameNum-=animationFramesNum;
+        const Frame *frame = &boneAnimations[i].animation->frames[frameNum];
+        transform_bone(boneAnimations[i].bone, frame->x, frame->y, frame->angle);
+    }
+}
