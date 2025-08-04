@@ -9,7 +9,7 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-static const uint16_t chunk_size = 480;
+static const uint16_t chunk_size = 1920;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
 

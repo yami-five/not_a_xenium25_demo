@@ -116,5 +116,5 @@ void core1_main()
     hardware_core->init_audio_i2s();
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware_core);
-    fileReader->play_wave_file("music.wav");
+    fileReader->play_wave_file("kostek_1.wav");
 }

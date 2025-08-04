@@ -9,6 +9,7 @@
 #include "pico/audio_i2s.h"
 #include "string.h"
 #include "hardware/sync/spin_lock.h"
+#include "pico/stdlib.h"
 
 static const IHardware *_hardware = NULL;
 static FRESULT f_res;
@@ -79,27 +80,46 @@ void play_wave_file(char *file_name)
 		printf("Loading file failed :(%d)\r\n", f_res);
 		return;
 	}
-	uint16_t samples_num = 240;
-	uint8_t buffer_size = 16;
-	int16_t buffer_audio[buffer_size * samples_num];
+	uint16_t num_channels = header[22] | (header[23] << 8);
+    uint16_t bits_per_sample = header[34] | (header[35] << 8);
+    uint32_t data_size = header[40] | (header[41] << 8) | (header[42] << 16) | (header[43] << 24);
+
+    uint32_t bytes_per_sample = bits_per_sample / 8;
+    uint32_t sample_count = data_size / (num_channels * bytes_per_sample);
+	// const int buffer_size = 16;
+    // int16_t buffer[buffer_size];
+	uint16_t samples_num = 250;
+	uint16_t buffer_size = 16;
+	int16_t buffer_audio[buffer_size*samples_num];
 	spin_lock_t *spi_spinlock = _hardware->get_spinlock();
+	int16_t temp_buffer[buffer_size];
 	while (1)
 	{
+		// uint32_t flags = spin_lock_blocking(spi_spinlock);
+		// f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
+		// spin_unlock(spi_spinlock, flags);
+        // if (br == 0) break;
+		// struct audio_buffer_pool *audio_buffer_pool = _hardware->get_audio_buffer_pool();
+        // struct audio_buffer *audio_buf = take_audio_buffer(audio_buffer_pool, true);
+        // memcpy(audio_buf->buffer->bytes, buffer_audio, br);
+        // audio_buf->sample_count = br/2;
+        // give_audio_buffer(audio_buffer_pool, audio_buf);
 		uint32_t flags = spin_lock_blocking(spi_spinlock);
 		f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
 	    // memset(buffer_audio, 0x1111, sizeof(buffer_audio));
 		spin_unlock(spi_spinlock, flags);
 		if (br == 0)
 			break;
-		for (uint8_t i = 0; i < samples_num; i++)
+		for (uint16_t i = 0; i < samples_num; i++)
 		{
 			struct audio_buffer_pool *audio_buffer_pool = _hardware->get_audio_buffer_pool();
 			struct audio_buffer *audio_buf = take_audio_buffer(audio_buffer_pool, true);
-			memcpy(audio_buf->buffer->bytes, buffer_audio + buffer_size * i, buffer_size);
-			audio_buf->sample_count = buffer_size;
+			memcpy(audio_buf->buffer->bytes, (buffer_audio + buffer_size*i), 32);
+			audio_buf->sample_count = 16;
 			give_audio_buffer(audio_buffer_pool, audio_buf);
-			// if (br == 0)
-			// 	break;
+			// sleep_us(100);
+			if (br == 0)
+				break;
 		}
 	}
 
