@@ -1,0 +1,61 @@
+vertices=[]
+faces=[]
+vt=[]
+uv=[]
+normals=[]
+vn=[]
+with open("assets/mug.obj") as f:
+    while line:=f.readline():
+        if line[0:2]=='v ':
+            vertex=line.split()
+            vertices.append(f'{round(float(vertex[1]),2)}f')
+            vertices.append(f'{round(float(vertex[2]),2)}f')
+            vertices.append(f'{round(float(vertex[3]),2)}f')
+        elif line[0]=='f':
+            face=line.split()
+            faces.append(int(face[1].split('/')[0])-1)
+            uv.append(int(face[1].split('/')[1])-1)
+            normals.append(int(face[1].split('/')[2])-1)
+            faces.append(int(face[2].split('/')[0])-1)
+            uv.append(int(face[2].split('/')[1])-1)
+            normals.append(int(face[2].split('/')[2])-1)
+            faces.append(int(face[3].split('/')[0])-1)
+            uv.append(int(face[3].split('/')[1])-1)
+            normals.append(int(face[3].split('/')[2])-1)
+        elif line[0:2]=='vn':
+            vn.append(f'{round(float(line.split()[1]),2)}f')
+            vn.append(f'{round(float(line.split()[2]),2)}f')
+            vn.append(f'{round(float(line.split()[3]),2)}f')
+        elif line[0:2]=='vt':
+            vt.append(f'{round(float(line.split()[1]),2)}f')
+            vt.append(f'{round(float(line.split()[2]),2)}f')
+modelName=f.name.replace('assets/','').replace('.obj','')
+print(modelName)
+text=""
+for x in vertices:
+    text+=f'{x},'
+print(f"const float {modelName}Vertices[{str(len(vertices))}]={{{str(text[:-1])}}};")
+print(f"vertices={str(len(vertices)//3)}")
+text=""
+for x in faces:
+    text+=f'{x},'
+print(f"const uint16_t {modelName}Faces[{str(len(faces))}] = {{{str(text[:-1])}}};")
+print(f"faces={str(len(faces)//3)}")
+text=""
+for x in vt:
+    text+=f'{x},'
+print(f"const float {modelName}TextureCoords[{str(len(vt))}] = {{{str(text[:-1])}}};")
+print(f"vtn={str(len(vt)//2)}")
+text=""
+for x in uv:
+    text+=f'{x},'
+print(f"const uint16_t {modelName}UV[{str(len(faces))}] = {{{str(text[:-1])}}};")
+text=""
+for x in vn:
+    text+=f'{x},'
+print(f"const float {modelName}VN[{str(len(vn))}] = {{{str(text[:-1])}}};")
+print(f'nn={str(len(vn)//3)}')
+text=""
+for x in normals:
+    text+=f'{x},'
+print(f"const uint16_t {modelName}Normals[{str(len(faces))}] = {{{str(text[:-1])}}};")

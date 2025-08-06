@@ -23,6 +23,8 @@
 #include "puppetFactory.h"
 #include "puppet.h"
 
+#define PICO_MODE 0
+
 static const IHardware *hardware_core;
 static const IDisplay *display;
 static const IPainter *painter;
@@ -44,6 +46,8 @@ int main()
 
     display = get_display();
     display->init_display(hardware_core);
+
+#if PICO_MODE==0
 
     painter = get_painter();
     painter->init_painter(display, hardware_core);
@@ -75,7 +79,6 @@ int main()
     Bone *mascotJaw = get_bone_by_name(&mascot->bones[0], "mascotSkullJawParent");
     Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArmParent");
     Bone *mascotElbow = get_bone_by_name(&mascot->bones[0], "mascotArmElbow");
-    multicore_launch_core1(core1_main);
     // transform_bone(mascotElbow,0,0,1.0f);
     // update_world_matrices(mascot);
 
@@ -93,6 +96,7 @@ int main()
     while (1)
     {
         float qt = t * 0.2f;
+        painter->print("dupa",0,0);
         // renderer->draw_model(skybox, pointLight, camera);
         animate_bones(boneAnimations, 2, t);
         update_world_matrices(mascot);
@@ -109,6 +113,9 @@ int main()
         renderer->clear_zbuffer();
         painter->clear_buffer(0x1100);
     }
+#else
+    multicore_launch_core1(core1_main);
+#endif
 }
 
 void core1_main()
@@ -116,5 +123,5 @@ void core1_main()
     hardware_core->init_audio_i2s();
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware_core);
-    fileReader->play_wave_file("music.wav");
+    fileReader->play_wave_file("kostek_5.wav");
 }

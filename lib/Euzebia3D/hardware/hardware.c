@@ -18,15 +18,15 @@ static const uint32_t cs_bit[] = {1 << LCD_CS_PIN};
 void init_audio_i2s()
 {
     static struct audio_format format = {
-        .sample_freq = 44100,
+        .sample_freq = 96000,
         .format = AUDIO_BUFFER_FORMAT_PCM_S16,
         .channel_count = 2};
 
     static struct audio_buffer_format producer_format = {
         .format = &format,
-        .sample_stride = 2};
+        .sample_stride = 16};
 
-    struct audio_buffer_pool *producer_pool = audio_new_producer_pool(&producer_format, 3,
+    struct audio_buffer_pool *producer_pool = audio_new_producer_pool(&producer_format, 16,
                                                                       SAMPLES_PER_BUFFER);
     bool __unused ok;
     const struct audio_format *output_format;
@@ -117,8 +117,8 @@ static void init_hardware(void)
     stdio_init_all();
 
     // SPI Config
-    spi_init(spi0, 62500 * 1000);
-    spi_init(spi1, 62500 * 1000);
+    spi_init(spi0, 75000 * 1000);
+    spi_init(spi1, 75000 * 1000);
     gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MISO_PIN, GPIO_FUNC_SPI);
