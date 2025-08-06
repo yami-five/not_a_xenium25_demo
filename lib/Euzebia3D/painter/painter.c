@@ -1,5 +1,6 @@
 #include "IPainter.h"
 #include "painter.h"
+#include "../shared/fonts.h"
 #include "../shared/gfx.h"
 #include "../shared/post_processing.h"
 #include "../shared/sprites.h"
@@ -274,7 +275,7 @@ void draw_bone(Bone *bone, int *parentWorldMatrix)
         int16_t parentX = parentWorldMatrix[2] >> SHIFT_FACTOR;
         int16_t parentY = parentWorldMatrix[5] >> SHIFT_FACTOR;
         int32_t angle = 0;
-        if(bone->sprite->canRotate)
+        if (bone->sprite->canRotate)
         {
             angle = fast_atan2(startY - parentY, startX - parentX) + bone->baseSpriteAngle;
             angle = radian_to_index(angle);
@@ -298,6 +299,22 @@ void draw_puppet(Puppet *puppet)
     }
 }
 
+void print(const char *text, int16_t x, int16_t y)
+{
+    uint8_t offset = 0;
+    for (int i = 0; text[i] != '\0'; i++)
+    {
+        if(text[i]==32)
+        {
+            offset+=8;
+            continue;
+        }
+        const Font* font = get_font_by_index(text[i]-33);
+        draw_sprite(font->sprite,x+offset-((font->sprite->size-font->width)>>1),y,0);
+        offset+=font->width;
+    }
+};
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -306,7 +323,9 @@ static IPainter painter = {
     .draw_image = draw_image,
     .apply_post_process_effect = apply_post_process_effect,
     .draw_sprite = draw_sprite,
-    .draw_puppet = draw_puppet};
+    .draw_puppet = draw_puppet,
+    .print = print,
+};
 
 const IPainter *get_painter(void)
 {

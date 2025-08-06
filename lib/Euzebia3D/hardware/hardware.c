@@ -11,14 +11,14 @@ static uint8_t sio_dma_channel_high;
 static uint8_t sio_dma_channel_low;
 static const uint32_t cs_bit[] = {1 << LCD_CS_PIN};
 
-#define SAMPLES_PER_BUFFER 512
+#define SAMPLES_PER_BUFFER 256
 #define LCD_CS_MASK (1u << LCD_CS_PIN)
 #define SD_CS_MASK (1u << SD_CS_PIN)
 
 void init_audio_i2s()
 {
     static struct audio_format format = {
-        .sample_freq = 44100,
+        .sample_freq = 96000,
         .format = AUDIO_BUFFER_FORMAT_PCM_S16,
         .channel_count = 2};
 
