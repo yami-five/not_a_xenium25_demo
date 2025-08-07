@@ -1,16 +1,16 @@
 from PIL import Image
 from pathlib import Path
-image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/yamifive.bmp")
+image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/letters.bmp")
 
 def rgb_to_rgb565(r, g, b):
     return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
 
-(img_x,img_y)=image.size
+(img_y,img_x)=image.size
 print(img_x*img_y)
 converted_img=""
-for y in range (img_y):
-    for x in range (img_x):
-        (r,g,b)=image.getpixel((y, x))
+for y in range (img_x):
+    for x in range (img_y):
+        (r,g,b)=image.getpixel((x, y))
         # r = max(0, min(255, r))
         # g = max(0, min(255, g))
         # b = max(0, min(255, b))
