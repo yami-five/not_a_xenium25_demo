@@ -258,7 +258,7 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t ang
                         if (new_x >= 0 && new_x < DISPLAY_WIDTH)
                             for (uint8_t i = 0; i < scale; i++)
                                 for (uint8_t j = 0; j < scale; j++)
-                                    draw_pixel((new_x * scale) + i, (new_y * scale) + j, pixel);
+                                    draw_pixel((new_x << (scale - 1)) + i, (new_y << (scale - 1)) + j, pixel);
                     }
                 }
             }

@@ -8,10 +8,10 @@ void make_local_matrix(Bone *bone)
     int16_t cos = fast_cos(angleIndex);
     bone->localMatrix[0] = cos;
     bone->localMatrix[1] = -sin;
-    bone->localMatrix[2] = bone->x * SCALE_FACTOR;
+    bone->localMatrix[2] = bone->x<<SHIFT_FACTOR;
     bone->localMatrix[3] = sin;
     bone->localMatrix[4] = cos;
-    bone->localMatrix[5] = bone->y * SCALE_FACTOR;
+    bone->localMatrix[5] = bone->y<<SHIFT_FACTOR;
     bone->localMatrix[6] = 0;
     bone->localMatrix[7] = 0;
     bone->localMatrix[8] = SCALE_FACTOR;
@@ -48,10 +48,10 @@ void update_world_matrices(Puppet *puppet)
     int16_t cos = fast_cos(angleIndex);
     puppet->localMatrix[0] = cos;
     puppet->localMatrix[1] = -sin;
-    puppet->localMatrix[2] = puppet->x * SCALE_FACTOR;
+    puppet->localMatrix[2] = puppet->x<<SHIFT_FACTOR;
     puppet->localMatrix[3] = sin;
     puppet->localMatrix[4] = cos;
-    puppet->localMatrix[5] = puppet->y * SCALE_FACTOR;
+    puppet->localMatrix[5] = puppet->y<<SHIFT_FACTOR;
     puppet->localMatrix[6] = puppet->localMatrix[7] = 0;
     puppet->localMatrix[8] = SCALE_FACTOR;
     memcpy(puppet->worldMatrix, puppet->localMatrix, sizeof(puppet->localMatrix));

@@ -99,22 +99,22 @@ int main()
 
     while (1)
     {
-        if (t <= 16)
+        if (t <= 62)
         {
             painter->draw_sprite(brcr_logo, 0, 40, 0, 2);
         }
-        else if (t > 16 && t <= 32)
-        {
-            painter->draw_sprite(arcadnis, 0, 40, 0, 2);
-        }
-        else if (t > 32 && t <= 48)
+        else if (t > 62 && t <= 126)
         {
             painter->draw_sprite(yamifive, 0, 40, 0, 2);
+        }
+        else if (t > 126 && t <= 200 )
+        {
+            painter->draw_sprite(arcadnis, 0, 40, 0, 2);
         }
         else
         {
             float qt = t * 0.2f;
-            // painter->print("dupa",0,0,1);
+            painter->print("dupa",0,0,1);
             // renderer->draw_model(skybox, pointLight, camera);
             animate_bones(boneAnimations, 2, t);
             update_world_matrices(mascot);

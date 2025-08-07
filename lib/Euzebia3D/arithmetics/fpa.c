@@ -10,7 +10,7 @@ int32_t float_to_fixed(float value)
 
 int32_t fixed_to_float(int32_t value)
 {
-    return (float)value / SCALE_FACTOR;
+    return (float)(value>>SHIFT_FACTOR);
 }
 
 int32_t fixed_add(int32_t a, int32_t b)
@@ -31,12 +31,12 @@ int32_t fixed_sub(int32_t a, int32_t b)
 int64_t fixed_mul(int32_t a, int32_t b)
 {
     int64_t result = (int64_t)a * b;
-    return (int64_t)(result / SCALE_FACTOR);
+    return (int64_t)(result>>SHIFT_FACTOR);
 }
 
 int32_t fixed_div(int32_t a, int32_t b)
 {
-    int64_t result = ((int64_t)a * SCALE_FACTOR) / b;
+    int64_t result = ((int64_t)a<<SHIFT_FACTOR) / b;
     return (int32_t)result;
 }
 

@@ -6,16 +6,16 @@ static volatile const IPainter *_painter = NULL;
 
 static const uint8_t SCALE = 2;
 static const uint8_t FOCAL_LENGTH = 90;
-static const uint16_t WIDTH_DISPLAY = 320 / SCALE;
-static const uint16_t HEIGHT_DISPLAY = 240 / SCALE;
-static const uint16_t WIDTH_DOUBLED = 640 / SCALE;
-static const uint16_t HEIGHT_DOUBLED = 480 / SCALE;
+static const uint16_t WIDTH_DISPLAY = 320>>(SCALE-1);
+static const uint16_t HEIGHT_DISPLAY = 240>>(SCALE-1);
+static const uint16_t WIDTH_DOUBLED = 640>>(SCALE-1);
+static const uint16_t HEIGHT_DOUBLED = 480>>(SCALE-1);
 static const uint32_t ARRAY_SIZE = 153600;
-static const uint16_t WIDTH_HALF = 160 / SCALE;
-static const uint16_t HEIGHT_HALF = 120 / SCALE;
+static const uint16_t WIDTH_HALF = 160>>(SCALE-1);
+static const uint16_t HEIGHT_HALF = 120>>(SCALE-1);
 static const uint32_t FIRE_FLOOR_ADR = 76480;
-static const uint32_t FIXED_FOCAL_LENGTH = 90 * SCALE_FACTOR;
-static const uint32_t TRIANGLE_CENTER_DIVIDER = 3 * SCALE_FACTOR;
+static const uint32_t FIXED_FOCAL_LENGTH = 90<<SHIFT_FACTOR;
+static const uint32_t TRIANGLE_CENTER_DIVIDER = 3<<SHIFT_FACTOR;
 static const uint16_t ZBUFFERSIZE = 19200; // 160*120
 static uint16_t zBuffer[19200];
 #define SHADING_ENABLED 1
@@ -142,9 +142,9 @@ void shading(uint16_t *color, int32_t lightDistances[], PointLight *light, int B
     uint8_t g = (gMesh * gLight) / 63;
     uint8_t b = (bMesh * bLight) / 31;
 
-    uint32_t fixedR = r * SCALE_FACTOR;
-    uint32_t fixedG = g * SCALE_FACTOR;
-    uint32_t fixedB = b * SCALE_FACTOR;
+    uint32_t fixedR = r<<SHIFT_FACTOR;
+    uint32_t fixedG = g<<SHIFT_FACTOR;
+    uint32_t fixedB = b<<SHIFT_FACTOR;
 
     int32_t lightDistance = (fixed_mul(Ba, lightDistances[0]) + fixed_mul(Bb, lightDistances[1]) + fixed_mul(Bc, lightDistances[2]));
     if (lightDistance < 0)
@@ -154,9 +154,9 @@ void shading(uint16_t *color, int32_t lightDistances[], PointLight *light, int B
     fixedG = fixed_mul(fixedG, lightDistance);
     fixedB = fixed_mul(fixedB, lightDistance);
 
-    r = (uint8_t)(fixed_mul(fixedR, light->intensity) / SCALE_FACTOR);
-    g = (uint8_t)(fixed_mul(fixedG, light->intensity) / SCALE_FACTOR);
-    b = (uint8_t)(fixed_mul(fixedB, light->intensity) / SCALE_FACTOR);
+    r = (uint8_t)(fixed_mul(fixedR, light->intensity)>>SHIFT_FACTOR);
+    g = (uint8_t)(fixed_mul(fixedG, light->intensity)>>SHIFT_FACTOR);
+    b = (uint8_t)(fixed_mul(fixedB, light->intensity)>>SHIFT_FACTOR);
 
     *color = (r << 11) | (g << 5) | b;
 }
@@ -165,8 +165,8 @@ uint16_t texturing(Triangle2D *triangle, Material *mat, int Ba, int Bb, int Bc)
 {
     int uv_x = (fixed_mul(Ba, triangle->uvA.x) + fixed_mul(Bb, triangle->uvB.x) + fixed_mul(Bc, triangle->uvC.x)) * mat->textureSize;
     int uv_y = (fixed_mul(Ba, triangle->uvA.y) + fixed_mul(Bb, triangle->uvB.y) + fixed_mul(Bc, triangle->uvC.y)) * mat->textureSize;
-    uv_x = uv_x / SCALE_FACTOR;
-    uv_y = uv_y / SCALE_FACTOR;
+    uv_x = uv_x>>SHIFT_FACTOR;
+    uv_y = uv_y>>SHIFT_FACTOR;
     if (uv_x < 0)
         uv_x = 0;
     if (uv_x > mat->textureSize)
@@ -181,14 +181,14 @@ uint16_t texturing(Triangle2D *triangle, Material *mat, int Ba, int Bb, int Bc)
 int calc_pixel_depth(int Ba, int Bb, int Bc, int z1, int z2, int z3)
 {
     int z = fixed_mul(Ba, fixed_div(SCALE_FACTOR, z1)) + fixed_mul(Bb, fixed_div(SCALE_FACTOR, z2)) + fixed_mul(Bc, fixed_div(SCALE_FACTOR, z3));
-    return fixed_div(SCALE_FACTOR, z) / SCALE_FACTOR;
+    return fixed_div(SCALE_FACTOR, z)>>SHIFT_FACTOR;
 }
 
 void calc_bar_coords(Triangle2D *triangle, int *Ba, int *Bb, int *Bc, int32_t divider, int x, int y)
 {
     int tempBa, tempBb, tempBc;
-    tempBa = ((triangle->b.y - triangle->c.y) * (x - triangle->c.x) + (triangle->c.x - triangle->b.x) * (y - triangle->c.y)) * SCALE_FACTOR;
-    tempBb = ((triangle->c.y - triangle->a.y) * (x - triangle->c.x) + (triangle->a.x - triangle->c.x) * (y - triangle->c.y)) * SCALE_FACTOR;
+    tempBa = ((triangle->b.y - triangle->c.y) * (x - triangle->c.x) + (triangle->c.x - triangle->b.x) * (y - triangle->c.y))<<SHIFT_FACTOR;
+    tempBb = ((triangle->c.y - triangle->a.y) * (x - triangle->c.x) + (triangle->a.x - triangle->c.x) * (y - triangle->c.y))<<SHIFT_FACTOR;
     tempBa = fixed_div(tempBa, divider);
     tempBb = fixed_div(tempBb, divider);
     tempBc = SCALE_FACTOR - tempBa - tempBb;
