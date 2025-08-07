@@ -96,18 +96,8 @@ void play_wave_file(char *file_name)
 	while (1)
 	{
 		// uint32_t flags = spin_lock_blocking(spi_spinlock);
-		// f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
-		// spin_unlock(spi_spinlock, flags);
-        // if (br == 0) break;
-		// struct audio_buffer_pool *audio_buffer_pool = _hardware->get_audio_buffer_pool();
-        // struct audio_buffer *audio_buf = take_audio_buffer(audio_buffer_pool, true);
-        // memcpy(audio_buf->buffer->bytes, buffer_audio, br);
-        // audio_buf->sample_count = br/2;
-        // give_audio_buffer(audio_buffer_pool, audio_buf);
-		uint32_t flags = spin_lock_blocking(spi_spinlock);
 		f_read(&file, buffer_audio, sizeof(buffer_audio), &br);
-	    // memset(buffer_audio, 0x1111, sizeof(buffer_audio));
-		spin_unlock(spi_spinlock, flags);
+		// spin_unlock(spi_spinlock, flags);
 		if (br == 0)
 			break;
 		for (uint16_t i = 0; i < samples_num; i++)

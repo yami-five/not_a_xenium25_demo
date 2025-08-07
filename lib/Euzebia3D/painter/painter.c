@@ -10,7 +10,7 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
-static const uint16_t chunk_size = 1920;
+static const uint32_t chunk_size = 15360;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
 
@@ -44,6 +44,8 @@ void init_painter(const IDisplay *display, const IHardware *hardware)
     _hardware = hardware;
     _display = display;
     init_dma();
+    _hardware->write(SD_CS_PIN, 1);
+    _hardware->write(LCD_CS_PIN, 0);
     // lcd_spinlock=spin_lock_init(spin_lock_claim_unused(true));
 }
 
@@ -51,22 +53,22 @@ void draw_buffer()
 {
     uint32_t current_offset = 0;
     spin_lock_t *spi_spinlock = _hardware->get_spinlock();
-    uint32_t flags = spin_lock_blocking(spi_spinlock);
-    _hardware->write(SD_CS_PIN, 1);
-    _hardware->write(LCD_CS_PIN, 0);
+    // uint32_t flags = spin_lock_blocking(spi_spinlock);
+    // _hardware->write(SD_CS_PIN, 1);
+    // _hardware->write(LCD_CS_PIN, 0);
     _hardware->write(LCD_DC_PIN, 0);
     _hardware->spi_write_byte(0x2C);
     _hardware->write(LCD_DC_PIN, 1);
-    spin_unlock(spi_spinlock, flags);
+    // spin_unlock(spi_spinlock, flags);
     while (current_offset < BUFFER_SIZE)
     {
-        flags = spin_lock_blocking(spi_spinlock);
-        _hardware->write(SD_CS_PIN, 1);
-        _hardware->write(LCD_CS_PIN, 0);
+        // flags = spin_lock_blocking(spi_spinlock);
+        // _hardware->write(SD_CS_PIN, 1);
+        // _hardware->write(LCD_CS_PIN, 0);
         dma_channel_set_read_addr(dma_channel, buffer + current_offset, true);
         dma_channel_wait_for_finish_blocking(dma_channel);
         current_offset += chunk_size;
-        spin_unlock(spi_spinlock, flags);
+        // spin_unlock(spi_spinlock, flags);
     }
 }
 
@@ -80,7 +82,6 @@ void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
     uint32_t line_adr = (x * HEIGHT_DOUBLED) + (y * 2);
     buffer[line_adr] = (color >> 8) & 0xff;
     buffer[line_adr + 1] = color & 0xff;
-    ;
 }
 
 void draw_image(uint8_t image_index)
@@ -208,7 +209,7 @@ void middle_point(int16_t *x, int16_t *y, int16_t x1, int16_t y1, int16_t x2, in
     *y = y1 + ((y2 - y1) >> 1);
 }
 
-void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t angle)
+void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t angle, uint8_t scale)
 {
     if (angle != 0 && sprite->canRotate)
     {
@@ -217,12 +218,12 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t ang
         int8_t middle = sprite->size >> 1;
         for (uint16_t y = 0; y < sprite->size; y++)
         {
-            int16_t new_y = y + pos_y;
+            int16_t new_y = y + (pos_y >> (scale - 1));
             if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
             {
                 for (uint16_t x = 0; x < sprite->size; x++)
                 {
-                    int16_t new_x = x + pos_x;
+                    int16_t new_x = x + (pos_x >> (scale - 1));
                     int16_t xr = (((x - middle) * cos - (y - middle) * sin) >> SHIFT_FACTOR) + middle;
                     int16_t yr = (((x - middle) * sin + (y - middle) * cos) >> SHIFT_FACTOR) + middle;
                     if ((uint16_t)xr < sprite->size && (uint16_t)yr < sprite->size)
@@ -231,7 +232,9 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t ang
                         if (pixel != 63519)
                         {
                             if (new_x >= 0 && new_x < DISPLAY_WIDTH)
-                                draw_pixel(new_x, new_y, pixel);
+                                for (uint8_t i = 0; i < scale; i++)
+                                    for (uint8_t j = 0; j < scale; j++)
+                                        draw_pixel((new_x * scale) + i, (new_y * scale) + j, pixel);
                         }
                     }
                 }
@@ -242,7 +245,7 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t ang
     {
         for (uint16_t y = 0; y < sprite->size; y++)
         {
-            int16_t new_y = y + pos_y;
+            int16_t new_y = y + (pos_y >> (scale - 1));
             if (new_y >= 0 && new_y < DISPLAY_HEIGHT)
             {
                 uint32_t ydh = y * sprite->size;
@@ -251,9 +254,11 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t ang
                     uint16_t pixel = sprite->pixels[ydh + x];
                     if (pixel != 63519)
                     {
-                        int16_t new_x = x + pos_x;
+                        int16_t new_x = x + (pos_x >> (scale - 1)) ;
                         if (new_x >= 0 && new_x < DISPLAY_WIDTH)
-                            draw_pixel(new_x, new_y, pixel);
+                            for (uint8_t i = 0; i < scale; i++)
+                                for (uint8_t j = 0; j < scale; j++)
+                                    draw_pixel((new_x * scale) + i, (new_y * scale) + j, pixel);
                     }
                 }
             }
@@ -282,7 +287,7 @@ void draw_bone(Bone *bone, int *parentWorldMatrix)
         }
         startX += ((parentX - startX) >> 1) - spriteSizeHalved;
         startY += ((parentY - startY) >> 1) - spriteSizeHalved;
-        draw_sprite(bone->sprite, startX, startY, angle);
+        draw_sprite(bone->sprite, startX, startY, angle, 1);
     }
     // draw_sprite(bone->sprite, x, y, 0.0f);
     for (uint8_t i = 0; i < bone->childBonesNumLayer1; i++)
@@ -299,19 +304,19 @@ void draw_puppet(Puppet *puppet)
     }
 }
 
-void print(const char *text, int16_t x, int16_t y)
+void print(const char *text, int16_t x, int16_t y, uint8_t scale)
 {
     uint8_t offset = 0;
     for (int i = 0; text[i] != '\0'; i++)
     {
-        if(text[i]==32)
+        if (text[i] == 32)
         {
-            offset+=8;
+            offset += 8;
             continue;
         }
-        const Font* font = get_font_by_index(text[i]-33);
-        draw_sprite(font->sprite,x+offset-((font->sprite->size-font->width)>>1),y,0);
-        offset+=font->width;
+        const Font *font = get_font_by_index(text[i] - 33);
+        draw_sprite(font->sprite, x + offset - ((font->sprite->size - font->width) >> 1), y, 0, scale);
+        offset += font->width;
     }
 };
 

@@ -47,7 +47,7 @@ int main()
     display = get_display();
     display->init_display(hardware_core);
 
-#if PICO_MODE==0
+#if PICO_MODE == 0
 
     painter = get_painter();
     painter->init_painter(display, hardware_core);
@@ -93,25 +93,42 @@ int main()
         },
     };
 
+    const Sprite *brcr_logo = get_sprite(11);
+    const Sprite *arcadnis = get_sprite(12);
+    const Sprite *yamifive = get_sprite(13);
+
     while (1)
     {
-        float qt = t * 0.2f;
-        painter->print("dupa",0,0);
-        // renderer->draw_model(skybox, pointLight, camera);
-        animate_bones(boneAnimations, 2, t);
-        update_world_matrices(mascot);
-        modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
-        // renderer->draw_model(cube, pointLight, camera);
-        painter->draw_puppet(mascot);
-        painter->apply_post_process_effect(0);
-        // painter->draw_sprite(0,200,300,qt*2);
-        // painter->draw_sprite(0,5,30,-qt);
-        // painter->draw_sprite(0,15,5,qt);
+        if (t <= 16)
+        {
+            painter->draw_sprite(brcr_logo, 0, 40, 0, 2);
+        }
+        else if (t > 16 && t <= 32)
+        {
+            painter->draw_sprite(arcadnis, 0, 40, 0, 2);
+        }
+        else if (t > 32 && t <= 48)
+        {
+            painter->draw_sprite(yamifive, 0, 40, 0, 2);
+        }
+        else
+        {
+            float qt = t * 0.2f;
+            // painter->print("dupa",0,0,1);
+            // renderer->draw_model(skybox, pointLight, camera);
+            animate_bones(boneAnimations, 2, t);
+            update_world_matrices(mascot);
+            modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
+            // renderer->draw_model(cube, pointLight, camera);
+            painter->draw_puppet(mascot);
+        }
 
+        painter->apply_post_process_effect(0);
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();
-        painter->clear_buffer(0x1100);
+        painter->clear_buffer(0);
+        //painter->clear_buffer(0x11);
     }
 #else
     multicore_launch_core1(core1_main);

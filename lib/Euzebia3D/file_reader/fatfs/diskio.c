@@ -59,8 +59,8 @@ DRESULT disk_read(
 	switch (drv)
 	{
 	case SD_CARD:
-        hardware->write(SD_CS_PIN, 0);
-        hardware->write(LCD_CS_PIN, 1);
+        // hardware->write(SD_CS_PIN, 0);
+        // hardware->write(LCD_CS_PIN, 1);
 		res = SD_ReadDisk(buff, sector, count);
 		if (res)
 			SD_SPI_ReadWriteByte(0xff);
@@ -111,14 +111,14 @@ DRESULT disk_ioctl(
 		switch (ctrl)
 		{
 		case CTRL_SYNC:
-			hardware->write(SD_CS_PIN, 0);
-			hardware->write(LCD_CS_PIN, 1);
+			// hardware->write(SD_CS_PIN, 0);
+			// hardware->write(LCD_CS_PIN, 1);
 			if (SD_WaitReady() == 0)
 				res = RES_OK;
 			else
 				res = RES_ERROR;
-				hardware->write(SD_CS_PIN, 1);
-				hardware->write(LCD_CS_PIN, 0);
+				// hardware->write(SD_CS_PIN, 1);
+				// hardware->write(LCD_CS_PIN, 0);
 			break;
 			// hardware->write(LCD_CS_PIN, 0);
 		case GET_SECTOR_SIZE:
