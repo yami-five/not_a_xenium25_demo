@@ -13,6 +13,7 @@ static uint8_t buffer[BUFFER_SIZE];
 static const uint32_t chunk_size = 15360;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
+static const uint8_t DEFAULT_FONT_SIZE = 16;
 
 void dma_buffer_irq_handler()
 {
@@ -254,7 +255,7 @@ void draw_sprite(const Sprite *sprite, int16_t pos_y, int16_t pos_x, int32_t ang
                     uint16_t pixel = sprite->pixels[ydh + x];
                     if (pixel != 63519)
                     {
-                        int16_t new_x = x + (pos_x >> (scale - 1)) ;
+                        int16_t new_x = x + (pos_x >> (scale - 1));
                         if (new_x >= 0 && new_x < DISPLAY_WIDTH)
                             for (uint8_t i = 0; i < scale; i++)
                                 for (uint8_t j = 0; j < scale; j++)
@@ -306,17 +307,29 @@ void draw_puppet(Puppet *puppet)
 
 void print(const char *text, int16_t x, int16_t y, uint8_t scale)
 {
-    uint8_t offset = 0;
+    uint16_t offset = 0;
+    uint16_t yFactor = 0;
     for (int i = 0; text[i] != '\0'; i++)
     {
         if (text[i] == 32)
         {
-            offset += 8;
+            offset += (DEFAULT_FONT_SIZE >> (scale - 1));
+            continue;
+        }
+        else if (text[i] == 10)
+        {
+            yFactor += DEFAULT_FONT_SIZE << (scale - 1);
+            offset = 0;
+            continue;
+        }
+        else if (text[i] == 9)
+        {
+            offset += DEFAULT_FONT_SIZE << (scale - 1);
             continue;
         }
         const Font *font = get_font_by_index(text[i] - 33);
-        draw_sprite(font->sprite, x + offset - ((font->sprite->size - font->width) >> 1), y, 0, scale);
-        offset += font->width;
+        draw_sprite(font->sprite, x + offset - (((font->sprite->size - font->width) << (scale - 1)) >> 1), y + yFactor, 0, scale);
+        offset += (font->width << (scale - 1));
     }
 };
 

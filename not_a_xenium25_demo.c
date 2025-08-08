@@ -107,14 +107,24 @@ int main()
         {
             painter->draw_sprite(yamifive, 0, 40, 0, 2);
         }
-        else if (t > 126 && t <= 200 )
+        else if (t > 126 && t <= 200)
         {
             painter->draw_sprite(arcadnis, 0, 40, 0, 2);
+        }
+        else if (t > 126 && t <= 200)
+        {
+            painter->draw_sprite(arcadnis, 0, 40, 0, 2);
+        }
+        else if (t > 200 && t <= 280)
+        {
+            painter->print("First presented", 3, 112, 2);
+            painter->print("at", 108, 144, 2);
+            painter->print("Xenium 2025", 36, 176, 2);
         }
         else
         {
             float qt = t * 0.2f;
-            painter->print("dupa",0,0,1);
+            painter->print("dupa. 123\ndupa. 123 ", 0, 0, 2);
             // renderer->draw_model(skybox, pointLight, camera);
             animate_bones(boneAnimations, 2, t);
             update_world_matrices(mascot);
@@ -128,7 +138,7 @@ int main()
         t++;
         renderer->clear_zbuffer();
         painter->clear_buffer(0);
-        //painter->clear_buffer(0x11);
+        // painter->clear_buffer(0x11);
     }
 #else
     multicore_launch_core1(core1_main);
