@@ -536,11 +536,11 @@ static const Font fonts[93] = {
         .sprite = &spritesFonts[15],//0
     },
     {
-        .width = 10,
+        .width = 6,
         .sprite = &spritesFonts[16],//1
     },
     {
-        .width = 6,
+        .width = 8,
         .sprite = &spritesFonts[17],//2
     },
     {

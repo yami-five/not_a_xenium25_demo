@@ -117,9 +117,9 @@ int main()
         }
         else if (t > 200 && t <= 280)
         {
-            painter->print("First presented", 3, 112, 2);
+            painter->print("First presented", 8, 112, 2);
             painter->print("at", 108, 144, 2);
-            painter->print("Xenium 2025", 36, 176, 2);
+            painter->print("Xenium 2025", 28, 176, 2);
         }
         else
         {
