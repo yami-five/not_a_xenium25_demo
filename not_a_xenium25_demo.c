@@ -97,6 +97,8 @@ int main()
     const Sprite *arcadnis = get_sprite(12);
     const Sprite *yamifive = get_sprite(13);
 
+    Gradient *sunrise = get_gradient_by_index(0);
+
     while (1)
     {
         if (t <= 62)
@@ -121,10 +123,15 @@ int main()
             painter->print("at", 108, 144, 2);
             painter->print("Xenium 2025", 28, 176, 2);
         }
+        else if (t>280 && t<=960)
+        {
+            if(t<376)
+                move_gradient(sunrise,3);
+            painter->draw_gradient(sunrise);
+        }
         else
         {
             float qt = t * 0.2f;
-            painter->print("dupa. 123\ndupa. 123 ", 0, 0, 2);
             // renderer->draw_model(skybox, pointLight, camera);
             animate_bones(boneAnimations, 2, t);
             update_world_matrices(mascot);

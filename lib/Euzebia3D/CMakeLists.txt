@@ -18,6 +18,7 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/mesh.c
     ${CMAKE_CURRENT_SOURCE_DIR}/meshFactory/meshFactory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/painter/painter.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/painter/gradient.c
     ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory/animation.c
     ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory/puppet.c
     ${CMAKE_CURRENT_SOURCE_DIR}/puppetFactory/puppetFactory.c

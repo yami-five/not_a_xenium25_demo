@@ -333,6 +333,46 @@ void print(const char *text, int16_t x, int16_t y, uint8_t scale)
     }
 };
 
+static inline uint16_t rgb888_to_rgb565(uint8_t r, uint8_t g, uint8_t b)
+{
+    return ((r >> 3 << 11) | (g >> 2 << 5) | (b >> 3));
+}
+
+void draw_gradient(Gradient *gradient)
+{
+    GradientColor *calculatedGradient = (GradientColor *)malloc(sizeof(GradientColor) * 320);
+    for (uint8_t i = 1; i < gradient->colorsNum; i++)
+    {
+        GradientColor *color1 = gradient->colors[i - 1];
+        if (color1->pos >= 320)
+            break;
+        GradientColor *color2 = gradient->colors[i];
+        uint16_t dist = color2->pos - color1->pos;
+        if (dist == 0)
+            continue;
+        int16_t rDiff = color2->r - color1->r;
+        int16_t gDiff = color2->g - color1->g;
+        int16_t bDiff = color2->b - color1->b;
+        for (uint16_t j = 0; j < dist; j++)
+        {
+            if (j + color1->pos >= 320)
+                break;
+            calculatedGradient[j + color1->pos].r = color1->r + rDiff * j / dist;
+            calculatedGradient[j + color1->pos].g = color1->g + gDiff * j / dist;
+            calculatedGradient[j + color1->pos].b = color1->b + bDiff * j / dist;
+        }
+    }
+    for (uint16_t i = 0; i < 320; i++)
+    {
+        uint16_t color = rgb888_to_rgb565(calculatedGradient[i].r, calculatedGradient[i].g, calculatedGradient[i].b);
+        for (uint16_t j = 0; j < 240; j++)
+        {
+            draw_pixel(i, j, color);
+        }
+    }
+    free(calculatedGradient);
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -343,6 +383,7 @@ static IPainter painter = {
     .draw_sprite = draw_sprite,
     .draw_puppet = draw_puppet,
     .print = print,
+    .draw_gradient = draw_gradient,
 };
 
 const IPainter *get_painter(void)
