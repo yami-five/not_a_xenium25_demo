@@ -98,7 +98,12 @@ int main()
     const Sprite *yamifive = get_sprite(13);
 
     Gradient *sunrise = get_gradient_by_index(0);
-
+    uint16_t sunHeight = 334;
+    const Sprite *sun = get_sprite(14);
+    const Sprite *sunFace = get_sprite(15);
+    int16_t burningEarthX = 304;
+    int16_t burningEarthY = 0;
+    const Sprite *burningEarth[3] = {get_sprite(21), get_sprite(22), get_sprite(23)};
     while (1)
     {
         if (t <= 62)
@@ -123,11 +128,38 @@ int main()
             painter->print("at", 108, 144, 2);
             painter->print("Xenium 2025", 28, 176, 2);
         }
-        else if (t>280 && t<=960)
+        else if (t > 280 && t <= 565)
         {
-            if(t<376)
-                move_gradient(sunrise,3);
-            painter->draw_gradient(sunrise);
+            float qt = t * 0.2f;
+            if (t < 376)
+            {
+                move_gradient(sunrise, 3);
+                sunHeight--;
+            }
+            if (t == 400)
+                sunFace = get_sprite(16);
+            else if (t == 420)
+                sunFace = get_sprite(17);
+            else if (t == 450)
+                sunFace = get_sprite(18);
+            else if (t == 530)
+                sunFace = get_sprite(19);
+            else if (t == 550)
+                sunFace = get_sprite(20);
+            if(t>450 && t <530)
+            {
+                burningEarthX-=5;
+                burningEarthY++;
+            }
+            if(t<550)
+                painter->draw_gradient(sunrise);
+            else
+                painter->clear_buffer(0xe0);
+            painter->draw_sprite(sun, 48, sunHeight, radian_to_index(float_to_fixed(qt)), 1);
+            painter->draw_sprite(sunFace, 88, sunHeight + 32, 0, 1);
+            painter->draw_sprite(burningEarth[t%3],burningEarthX,burningEarthY,0,1);
+            if(t>562)
+                painter->clear_buffer(0xff);
         }
         else
         {
