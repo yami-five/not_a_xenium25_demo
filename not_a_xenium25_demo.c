@@ -104,6 +104,11 @@ int main()
     int16_t burningEarthX = 304;
     int16_t burningEarthY = 0;
     const Sprite *burningEarth[3] = {get_sprite(21), get_sprite(22), get_sprite(23)};
+
+    Mesh *earth = meshFactory->create_textured_mesh(4, 4);
+    earth->transformations = add_transformation(earth->transformations, &earth->transformationsNum, 1.57f, 0.0f, 0.0f, 10.0f, 0);
+    earth->transformations = add_transformation(earth->transformations, &earth->transformationsNum, 0, 0.0f, 0.0f, 10.0f, 0);
+
     while (1)
     {
         if (t <= 62)
@@ -160,6 +165,12 @@ int main()
             painter->draw_sprite(burningEarth[t%3],burningEarthX,burningEarthY,0,1);
             if(t>562)
                 painter->clear_buffer(0xff);
+        }
+        else if(t > 565 && t <= 960)
+        {
+            float qt = t * 0.2f;
+            modify_transformation(earth->transformations, qt, 10.0f, 0.0f, 0.0f, 1);
+            renderer->draw_model(earth, pointLight, camera);            
         }
         else
         {

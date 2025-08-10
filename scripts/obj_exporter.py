@@ -4,7 +4,7 @@ vt=[]
 uv=[]
 normals=[]
 vn=[]
-with open("assets/mug.obj") as f:
+with open("assets/earth.obj") as f:
     while line:=f.readline():
         if line[0:2]=='v ':
             vertex=line.split()
