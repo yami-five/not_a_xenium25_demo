@@ -255,7 +255,82 @@ static const RawBone mascotBodyBone[1] = {
      .childBonesNumLayer2 = 1},
 };
 
-static const RawPuppet rawPuppets[1] = {
+static const RawBone moonBone[1] = {
+    {.label = "moonBone",
+     .x = 0,
+     .y = -65,
+     .angle = 0.0f,
+     .spriteIndex = 26,
+     .baseSpriteAngle = 0.96f,
+     .childBonesLayer1 = NULL,
+     .childBonesNumLayer1 = 0,
+     .childBonesLayer2 = NULL,
+     .childBonesNumLayer2 = 0},
+};
+
+static const RawBone rocketBone[1] = {
+    {.label = "rocketBone",
+     .x = 0,
+     .y = 65,
+     .angle = 0.0f,
+     .spriteIndex = 27,
+     .baseSpriteAngle = 4.10f,
+     .childBonesLayer1 = NULL,
+     .childBonesNumLayer1 = 0,
+     .childBonesLayer2 = NULL,
+     .childBonesNumLayer2 = 0},
+};
+
+static const RawBone logoChildrenLayer1[2] = {
+    {.label = "moonParent",
+     .x = -75,
+     .y = 0,
+     .angle = 0.0f,
+     .spriteIndex = 255,
+     .baseSpriteAngle = 0.0f,
+     .childBonesLayer1 = moonBone,
+     .childBonesNumLayer1 = 1,
+     .childBonesLayer2 = NULL,
+     .childBonesNumLayer2 = 0},
+    {.label = "rocketParent",
+     .x = 75,
+     .y = 0,
+     .angle = 0.0f,
+     .spriteIndex = 255,
+     .baseSpriteAngle = 0.0f,
+     .childBonesLayer1 = rocketBone,
+     .childBonesNumLayer1 = 1,
+     .childBonesLayer2 = NULL,
+     .childBonesNumLayer2 = 0},
+};
+
+static const RawBone logoCenter[1] = {
+    {.label = "logoCenter",
+     .x = 0,
+     .y = 65,
+     .angle = -25.9f,
+     .spriteIndex = 255,
+     .baseSpriteAngle = 0.0f,
+     .childBonesLayer1 = logoChildrenLayer1,
+     .childBonesNumLayer1 = 2,
+     .childBonesLayer2 = NULL,
+     .childBonesNumLayer2 = 0},
+};
+
+static const RawBone logoBone[1] = {
+    {.label = "logoBone",
+     .x = 0,
+     .y = -130,
+     .angle = 0.0f,
+     .spriteIndex = 25,
+     .baseSpriteAngle = 0.0f,
+     .childBonesLayer1 = logoCenter,
+     .childBonesNumLayer1 = 1,
+     .childBonesLayer2 = NULL,
+     .childBonesNumLayer2 = 0},
+};
+
+static const RawPuppet rawPuppets[2] = {
     {
         .label = "mascotRoot",
         .x = 0,
@@ -263,6 +338,14 @@ static const RawPuppet rawPuppets[1] = {
         .angle = 0.0f,
         .bonesNum = 1,
         .bones = mascotBodyBone,
+    },
+    {
+        .label = "logoRoot",
+        .x = 120,
+        .y = 225,
+        .angle = 0.0f,
+        .bonesNum = 1,
+        .bones = logoBone,
     },
 };
 

@@ -81,6 +81,8 @@ int main()
     Bone *mascotElbow = get_bone_by_name(&mascot->bones[0], "mascotArmElbow");
     // transform_bone(mascotElbow,0,0,1.0f);
     // update_world_matrices(mascot);
+    Puppet *logoSkull = puppetFactory->create_puppet(1);
+    Bone *logoSkullCenter = get_bone_by_name(&logoSkull->bones[0], "logoCenter");
 
     BoneAnimation boneAnimations[2] = {
         {
@@ -98,7 +100,7 @@ int main()
     const Sprite *yamifive = get_sprite(13);
 
     Gradient *sunrise = get_gradient_by_index(0);
-    uint16_t sunHeight = 334;
+    uint16_t spriteHeight = 334;
     const Sprite *sun = get_sprite(14);
     const Sprite *sunFace = get_sprite(15);
     int16_t burningEarthX = 304;
@@ -109,6 +111,9 @@ int main()
     earth->transformations = add_transformation(earth->transformations, &earth->transformationsNum, 1.57f, 0.0f, 0.0f, 10.0f, 0);
     earth->transformations = add_transformation(earth->transformations, &earth->transformationsNum, 0, 0.0f, 0.0f, 10.0f, 0);
 
+    const Sprite *skull_logo_white = get_sprite(24);
+
+    int16_t textHeight=256;
     while (1)
     {
         if (t <= 62)
@@ -139,7 +144,7 @@ int main()
             if (t < 376)
             {
                 move_gradient(sunrise, 3);
-                sunHeight--;
+                spriteHeight--;
             }
             if (t == 400)
                 sunFace = get_sprite(16);
@@ -160,17 +165,49 @@ int main()
                 painter->draw_gradient(sunrise);
             else
                 painter->clear_buffer(0xe0);
-            painter->draw_sprite(sun, 48, sunHeight, radian_to_index(float_to_fixed(qt)), 1);
-            painter->draw_sprite(sunFace, 88, sunHeight + 32, 0, 1);
+            painter->draw_sprite(sun, 48, spriteHeight, radian_to_index(float_to_fixed(qt)), 1);
+            painter->draw_sprite(sunFace, 88, spriteHeight + 32, 0, 1);
             painter->draw_sprite(burningEarth[t%3],burningEarthX,burningEarthY,0,1);
+            if(t==565)
+            {
+                painter->clear_buffer(0);
+                painter->draw_sprite(skull_logo_white,55,95,0,1);
+                painter->override_buffer(1,340);
+                spriteHeight=0;
+            }
             if(t>562)
                 painter->clear_buffer(0xff);
         }
         else if(t > 565 && t <= 960)
         {
-            float qt = t * 0.2f;
-            modify_transformation(earth->transformations, qt, 10.0f, 0.0f, 0.0f, 1);
-            renderer->draw_model(earth, pointLight, camera);            
+            if(spriteHeight<320)
+            {
+                float qt = t * 0.2f;
+                modify_transformation(earth->transformations, -qt, 10.0f, 0.0f, 0.0f, 1);
+                renderer->draw_model(earth, pointLight, camera);
+            }
+            if(t>600 && spriteHeight<320)
+            {
+                spriteHeight+=15;
+                painter->override_buffer(0,spriteHeight);
+            }
+            else if(spriteHeight>=320 && t<630)
+            {
+                painter->draw_sprite(skull_logo_white,55,95,0,1);
+            }
+            else if(t>=630 && t<640)
+            {
+                painter->clear_buffer(0xff);
+            }
+            else if(t>=640)
+            {
+                transform_bone(logoSkullCenter,0,0,0.05f);
+                update_world_matrices(logoSkull);
+                painter->draw_puppet(logoSkull);
+                painter->print("CorpseTravel",24,textHeight,2);
+                painter->print("We take you to places",37,textHeight+32,1);
+                painter->print("not ALIVE anymore!",47,textHeight+48,1);               
+            }
         }
         else
         {
@@ -183,7 +220,7 @@ int main()
             painter->draw_puppet(mascot);
         }
 
-        painter->apply_post_process_effect(0);
+        // painter->apply_post_process_effect(0);
         painter->draw_buffer();
         t++;
         renderer->clear_zbuffer();

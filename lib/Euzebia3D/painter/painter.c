@@ -10,10 +10,11 @@
 static const IHardware *_hardware = NULL;
 static const IDisplay *_display = NULL;
 static uint8_t buffer[BUFFER_SIZE];
+static uint8_t temp_buffer[BUFFER_SIZE];
 static const uint32_t chunk_size = 15360;
 static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
-static const uint8_t DEFAULT_FONT_SIZE = 16;
+static const uint8_t DEFAULT_FONT_SIZE = 8;
 
 void dma_buffer_irq_handler()
 {
@@ -313,18 +314,18 @@ void print(const char *text, int16_t x, int16_t y, uint8_t scale)
     {
         if (text[i] == 32)
         {
-            offset += (DEFAULT_FONT_SIZE >> (scale - 1));
+            offset += (DEFAULT_FONT_SIZE << (scale - 1));
             continue;
         }
         else if (text[i] == 10)
         {
-            yFactor += DEFAULT_FONT_SIZE << (scale - 1);
+            yFactor += DEFAULT_FONT_SIZE << (scale);
             offset = 0;
             continue;
         }
         else if (text[i] == 9)
         {
-            offset += DEFAULT_FONT_SIZE << (scale - 1);
+            offset += DEFAULT_FONT_SIZE << (scale);
             continue;
         }
         const Font *font = get_font_by_index(text[i] - 33);
@@ -373,6 +374,16 @@ void draw_gradient(Gradient *gradient)
     free(calculatedGradient);
 }
 
+void override_buffer(uint8_t mode, uint16_t lines)
+{
+    if(lines>320)
+        lines=320;
+    if(mode==0)
+        memcpy(buffer,temp_buffer,lines*480);
+    else if(mode==1)
+        memcpy(temp_buffer,buffer,lines*480);
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -384,6 +395,7 @@ static IPainter painter = {
     .draw_puppet = draw_puppet,
     .print = print,
     .draw_gradient = draw_gradient,
+    .override_buffer = override_buffer,
 };
 
 const IPainter *get_painter(void)

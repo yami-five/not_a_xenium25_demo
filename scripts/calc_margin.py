@@ -1,7 +1,8 @@
 width=240
 scale=2
-text="Xenium 2025"
+text="CorpseTravel"
 characters={
+    " ":8,
     "!":8,
     "\"":8,
     "#":14,

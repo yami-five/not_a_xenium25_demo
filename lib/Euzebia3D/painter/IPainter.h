@@ -20,6 +20,7 @@ typedef struct
     void (*draw_puppet)(Puppet *puppet);
     void (*print)(const char *text, int16_t x, int16_t y, uint8_t scale);
     void (*draw_gradient)(Gradient *gradient);
+    void (*override_buffer)(uint8_t mode, uint16_t lines);
 } IPainter;
 
 #endif
