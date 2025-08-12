@@ -112,8 +112,8 @@ int main()
     earth->transformations = add_transformation(earth->transformations, &earth->transformationsNum, 0, 0.0f, 0.0f, 10.0f, 0);
 
     const Sprite *skull_logo_white = get_sprite(24);
-
-    int16_t textHeight=256;
+    uint8_t glowRange = 10;
+    int16_t textHeight = 256;
     while (1)
     {
         if (t <= 62)
@@ -156,57 +156,75 @@ int main()
                 sunFace = get_sprite(19);
             else if (t == 550)
                 sunFace = get_sprite(20);
-            if(t>450 && t <530)
+            if (t > 450 && t < 530)
             {
-                burningEarthX-=5;
+                burningEarthX -= 5;
                 burningEarthY++;
             }
-            if(t<550)
+            if (t < 550)
                 painter->draw_gradient(sunrise);
             else
                 painter->clear_buffer(0xe0);
             painter->draw_sprite(sun, 48, spriteHeight, radian_to_index(float_to_fixed(qt)), 1);
             painter->draw_sprite(sunFace, 88, spriteHeight + 32, 0, 1);
-            painter->draw_sprite(burningEarth[t%3],burningEarthX,burningEarthY,0,1);
-            if(t==565)
+            painter->draw_sprite(burningEarth[t % 3], burningEarthX, burningEarthY, 0, 1);
+            if (t == 565)
             {
                 painter->clear_buffer(0);
-                painter->draw_sprite(skull_logo_white,55,95,0,1);
-                painter->override_buffer(1,340);
-                spriteHeight=0;
+                painter->draw_sprite(skull_logo_white, 55, 95, 0, 1);
+                uint16_t glowParams[2] = {glowRange, 0xffff};
+                painter->apply_post_process_effect(1, glowParams);
+                painter->apply_post_process_effect(2, NULL);
+                painter->override_buffer(1, 320);
+                spriteHeight = 0;
             }
-            if(t>562)
+            if (t > 562)
+            {
                 painter->clear_buffer(0xff);
+            }
         }
-        else if(t > 565 && t <= 960)
+        else if (t > 565 && t <= 960)
         {
-            if(spriteHeight<320)
+            if (spriteHeight < 320)
             {
                 float qt = t * 0.2f;
                 modify_transformation(earth->transformations, -qt, 10.0f, 0.0f, 0.0f, 1);
                 renderer->draw_model(earth, pointLight, camera);
             }
-            if(t>600 && spriteHeight<320)
+            if (t > 600 && spriteHeight < 320)
             {
-                spriteHeight+=15;
-                painter->override_buffer(0,spriteHeight);
+                spriteHeight += 15;
+                painter->override_buffer(0, spriteHeight);
             }
-            else if(spriteHeight>=320 && t<630)
+            else if (spriteHeight >= 320 && t < 620)
             {
-                painter->draw_sprite(skull_logo_white,55,95,0,1);
+                painter->draw_sprite(skull_logo_white, 55, 95, 0, 1);
+                uint16_t glowParams[2] = {glowRange, 0xffff};
+                painter->apply_post_process_effect(1, glowParams);
+                painter->apply_post_process_effect(2, NULL);
+                painter->override_buffer(1, 320);
             }
-            else if(t>=630 && t<640)
+            // strange, but interesting
+            else if (t >= 620 && t < 630)
             {
-                painter->clear_buffer(0xff);
+                painter->override_buffer(0, 320);
+                painter->apply_post_process_effect(3, NULL);
             }
-            else if(t>=640)
+            else if (t >= 630)
             {
-                transform_bone(logoSkullCenter,0,0,0.05f);
+                int16_t textsCoords[6] = {24, textHeight, 37, textHeight, 47, textHeight};
+                if (t < 650)
+                    textsCoords[1] = 456 - (t - 630) * 10; // 256 630..640 256-t640 456-t630
+                if (t <= 665)
+                    textsCoords[2] = 527 - (t - 630) * 14; // 37 630..645 37-t645 347-t630
+                if (t <= 670)
+                    textsCoords[4] = 607 - (t - 630) * 14; // 47 630..650 47-t650 427-t630
+                transform_bone(logoSkullCenter, 0, 0, 0.05f);
                 update_world_matrices(logoSkull);
                 painter->draw_puppet(logoSkull);
-                painter->print("CorpseTravel",24,textHeight,2);
-                painter->print("We take you to places",37,textHeight+32,1);
-                painter->print("not ALIVE anymore!",47,textHeight+48,1);               
+                painter->print("CorpseTravel", textsCoords[0], textsCoords[1], 2);
+                painter->print("We take you to places", textsCoords[2], textsCoords[3] + 32, 1);
+                painter->print("not ALIVE anymore!", textsCoords[4], textsCoords[5] + 48, 1);
             }
         }
         else

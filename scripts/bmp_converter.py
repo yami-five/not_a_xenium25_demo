@@ -1,6 +1,6 @@
 from PIL import Image
 from pathlib import Path
-sprite_name="logo_skull"
+sprite_name="logo_skull_white"
 image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/logo/{sprite_name}.bmp")
 
 def rgb_to_rgb565(r, g, b):

@@ -82,6 +82,8 @@ void clear_buffer(uint16_t color)
 void draw_pixel(uint16_t x, uint16_t y, uint16_t color)
 {
     uint32_t line_adr = (x * HEIGHT_DOUBLED) + (y * 2);
+    if (line_adr >= BUFFER_SIZE || line_adr < 0)
+        return;
     buffer[line_adr] = (color >> 8) & 0xff;
     buffer[line_adr + 1] = color & 0xff;
 }
@@ -152,34 +154,6 @@ void crt_disp_effect()
             framebuffer[i * 2 + 1] = result >> 8;
         }
     }
-    // broken chromatic abberration - looks interesting
-    //  for (int y = 0; y < DISPLAY_HEIGHT; y++)
-    //  {
-    //      uint16_t yr = (y > 0) ? y - 2 : y;
-    //      uint16_t yg = (y < DISPLAY_HEIGHT - 1) ? y + 2 : y;
-    //      for (int x = 0; x < DISPLAY_WIDTH; x++)
-    //      {
-    //          uint32_t i = y * DISPLAY_WIDTH + x;
-
-    //         uint16_t xr = (x > 0) ? x - 2 : x;
-    //         uint16_t xg = (x < DISPLAY_WIDTH - 1) ? x + 2 : x;
-
-    //         uint16_t ir = yr * DISPLAY_WIDTH + xr;
-    //         uint16_t ig = yg * DISPLAY_WIDTH + xg;
-
-    //         uint16_t c_r = buffer[ir * 2] | (buffer[ir * 2 + 1] << 8);
-    //         uint16_t c_g = buffer[ig * 2] | (buffer[ig * 2 + 1] << 8);
-    //         uint16_t c_b = buffer[i * 2] | (buffer[i * 2 + 1] << 8);
-
-    //         uint8_t r = get_r(c_r);
-    //         uint8_t g = get_g(c_g);
-    //         uint8_t b = get_b(c_b);
-    //         uint16_t result = make_rgb565(r, g, b);
-
-    //         framebuffer[i * 2] = result & 0xFF;
-    //         framebuffer[i * 2 + 1] = result >> 8;
-    //     }
-    // }
     memcpy(buffer, framebuffer, BUFFER_SIZE);
     free(framebuffer);
     // scanline
@@ -193,12 +167,117 @@ void crt_disp_effect()
     // scanline_offset = !scanline_offset;
 }
 
-void apply_post_process_effect(uint8_t effect_index)
+void fake_glow_effect(uint16_t *params)
+{
+    uint16_t r = params[0];
+    uint16_t mainColor = params[1];
+    uint16_t maxOffsets = ((r << 1) + 1);
+    maxOffsets *= maxOffsets;
+    int offsets[maxOffsets << 1];
+    uint16_t offsetsNum = 0;
+    uint16_t r2 = r * r;
+    for (int16_t dy = -r; dy <= r; dy++)
+    {
+        for (int16_t dx = -r; dx <= r; dx++)
+        {
+            uint16_t dist = dx * dx + dy * dy;
+            if (dist <= r2)
+            {
+                offsets[offsetsNum] = dy * HEIGHT_DOUBLED + dx * 2;
+                offsetsNum++;
+                offsets[offsetsNum] = dist;
+                offsetsNum++;
+            }
+        }
+    }
+    for (int i = 0; i < BUFFER_SIZE; i += 2)
+    {
+        uint16_t color = ((uint16_t)buffer[i] << 8) | buffer[i + 1];
+        if (color != mainColor)
+            continue;
+        else
+        {
+            for (uint16_t j = 0; j < offsetsNum; j += 2)
+            {
+                int addr = i + offsets[j];
+                if (addr < 0 || addr >= BUFFER_SIZE)
+                    continue;
+                uint16_t r5 = ((r2 - offsets[j + 1]) * 31 + (r2 >> 1)) / r2;
+                uint16_t g6 = ((r2 - offsets[j + 1]) * 63 + (r2 >> 1)) / r2;
+                r5 = (r5 * 200 + 127) / 255;
+                g6 = (g6 * 200 + 127) / 255;
+                uint16_t new_color = (r5 << 11) | (g6 << 5) | r5;
+                if (new_color > (((uint16_t)buffer[addr] << 8) | buffer[addr + 1]))
+                {
+                    buffer[addr] = (new_color >> 8) & 0xff;
+                    buffer[addr + 1] = new_color & 0xff;
+                }
+            }
+        }
+    }
+}
+
+void blue_only()
+{
+    for (uint32_t i = 0; i < BUFFER_SIZE; i += 2)
+    {
+        uint16_t color = ((uint16_t)buffer[i] << 8) | buffer[i + 1];
+        if (color == 0)
+            continue;
+        uint8_t b = get_b(color);
+        color = make_rgb565(3, 5, b);
+        buffer[i] = (color >> 8) & 0xff;
+        buffer[i + 1] = color & 0xff;
+    }
+}
+
+void broken_chromatic_abberration()
+{
+    for (int y = 0; y < DISPLAY_HEIGHT; y++)
+    {
+        uint16_t yr = (y > 0) ? y - 2 : y;
+        uint16_t yg = (y < DISPLAY_HEIGHT - 1) ? y + 2 : y;
+        for (int x = 0; x < DISPLAY_WIDTH; x++)
+        {
+            uint32_t i = y * DISPLAY_WIDTH + x;
+
+            uint16_t xr = (x > 0) ? x - 5 : x;
+            uint16_t xg = (x < DISPLAY_WIDTH - 1) ? x + 5 : x;
+
+            uint16_t ir = yr * DISPLAY_WIDTH + xr;
+            uint16_t ig = yg * DISPLAY_WIDTH + xg;
+
+            uint16_t c_r = buffer[ir * 2] | (buffer[ir * 2 + 1] << 8);
+            uint16_t c_g = buffer[ig * 2] | (buffer[ig * 2 + 1] << 8);
+            uint16_t c_b = buffer[i * 2] | (buffer[i * 2 + 1] << 8);
+
+            uint8_t r = get_r(c_r);
+            uint8_t g = get_g(c_g);
+            uint8_t b = get_b(c_b);
+            uint16_t result = make_rgb565(r, g, b);
+
+            temp_buffer[i * 2] = result & 0xFF;
+            temp_buffer[i * 2 + 1] = result >> 8;
+        }
+    }
+    memcpy(buffer, temp_buffer, BUFFER_SIZE);
+}
+
+void apply_post_process_effect(uint8_t effect_index, uint16_t *params)
 {
     switch (effect_index)
     {
     case 0:
         crt_disp_effect();
+        break;
+    case 1:
+        fake_glow_effect(params);
+        break;
+    case 2:
+        blue_only();
+        break;
+    case 3:
+        broken_chromatic_abberration();
         break;
     default:
         return;
@@ -376,12 +455,12 @@ void draw_gradient(Gradient *gradient)
 
 void override_buffer(uint8_t mode, uint16_t lines)
 {
-    if(lines>320)
-        lines=320;
-    if(mode==0)
-        memcpy(buffer,temp_buffer,lines*480);
-    else if(mode==1)
-        memcpy(temp_buffer,buffer,lines*480);
+    if (lines > 320)
+        lines = 320;
+    if (mode == 0)
+        memcpy(buffer, temp_buffer, lines * 480);
+    else if (mode == 1)
+        memcpy(temp_buffer, buffer, lines * 480);
 }
 
 static IPainter painter = {
