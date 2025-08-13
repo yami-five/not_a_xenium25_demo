@@ -24,6 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
+#define TEST 1
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -57,11 +58,15 @@ int main()
 
     meshFactory = get_meshFactory();
     // Mesh *cube = meshFactory->create_colored_mesh(0xff00, 0);
+#if TEST == 0
     Mesh *cube = meshFactory->create_textured_mesh(3, 3);
     cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
-
+#else
+    Mesh *cube = meshFactory->create_textured_mesh(5, 5);
+    cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
+#endif
     lightFactory = get_lightFactory();
-    PointLight *pointLight = lightFactory->create_point_light(0.0f, 0.0f, 50.0f, 1.5f, 0xffff);
+    PointLight *pointLight = lightFactory->create_point_light(50.0f, 50.0f, 50.0f, 1.5f, 0xffff);
 
     cameraFactory = get_cameraFactory();
     Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -116,6 +121,7 @@ int main()
     int16_t textHeight = 256;
     while (1)
     {
+#if TEST == 0
         if (t <= 62)
         {
             painter->draw_sprite(brcr_logo, 0, 40, 0, 2);
@@ -237,7 +243,11 @@ int main()
             // renderer->draw_model(cube, pointLight, camera);
             painter->draw_puppet(mascot);
         }
-
+#else
+        float qt = t * 0.2f;
+        modify_transformation(cube->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+        renderer->draw_model(cube, pointLight, camera);
+#endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();
         t++;
