@@ -21,6 +21,7 @@ typedef struct
     const float *textureCoords;
     const uint16_t *uv;
     const float *vn;
+    const uint16_t vnCounter;
     const uint16_t *normals;
     const uint16_t nn;
 } Model;

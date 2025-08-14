@@ -11,11 +11,12 @@ Mesh *createMesh(Material *mat, uint8_t meshIndex)
     Mesh *mesh = (Mesh *)malloc(sizeof(Mesh));
     mesh->verticesCounter = obj->verticesCounter;
     mesh->facesCounter = obj->facesCounter;
+    mesh->vnCounter = obj->vnCounter;
     mesh->vertices = (int32_t *)malloc(sizeof(int32_t) * obj->verticesCounter * 3);
     mesh->faces = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter * 3);
     mesh->textureCoords = (int32_t *)malloc(sizeof(int32_t) * obj->textureCoordsCounter * 2);
     mesh->uv = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter * 3);
-    mesh->vn = (int32_t *)malloc(sizeof(int32_t) * obj->verticesCounter * 3);
+    mesh->vn = (int32_t *)malloc(sizeof(int32_t) * obj->vnCounter * 3);
     mesh->normals = (uint16_t *)malloc(sizeof(uint16_t) * obj->facesCounter * 3);
     mesh->mat = mat;
     mesh->transformations = NULL;
@@ -31,6 +32,10 @@ Mesh *createMesh(Material *mat, uint8_t meshIndex)
     for (uint16_t i = 0; i < obj->verticesCounter * 3; i++)
     {
         mesh->vertices[i] = float_to_fixed(obj->vertices[i]);
+    }
+
+    for (uint16_t i = 0; i < obj->vnCounter * 3; i++)
+    {
         mesh->vn[i] = float_to_fixed(obj->vn[i]);
     }
 

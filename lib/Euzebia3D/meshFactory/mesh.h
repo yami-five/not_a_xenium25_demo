@@ -40,6 +40,7 @@ typedef struct
     uint16_t normalsCounter;
     uint16_t *normals;
     int32_t *vn;
+    uint16_t vnCounter;
     Material *mat;
     TransformInfo *transformations;
     uint32_t transformationsNum;
