@@ -66,7 +66,7 @@ int main()
     cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
 #endif
     lightFactory = get_lightFactory();
-    PointLight *pointLight = lightFactory->create_point_light(50.0f, 50.0f, 50.0f, 1.5f, 0xffff);
+    PointLight *pointLight = lightFactory->create_point_light(10.0f, 10.0f, 10.0f, 1.0f, 0xffff);
 
     cameraFactory = get_cameraFactory();
     Camera *camera = cameraFactory->create_camera(0.0f, 0.0f, 25.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);

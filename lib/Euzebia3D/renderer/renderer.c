@@ -40,8 +40,8 @@ void triangle_center(Triangle3D *triangle, int32_t *center)
 void rotate(int *vertices, uint16_t verticesCounter, TransformVector *vector)
 {
     int32_t qt_rad = fixed_mul(vector->w, PI2);
-    int32_t c = fast_cos(qt_rad / 2);
-    int32_t s = fast_sin(qt_rad / 2);
+    int32_t c = fast_cos(qt_rad >> 1);
+    int32_t s = fast_sin(qt_rad >> 1);
     Vector3 qVec = {
         .x = vector->x,
         .y = vector->y,
@@ -223,7 +223,7 @@ void rasterize(int y, int x0, int x1, Triangle2D *triangle, Material *mat, int32
 {
     if (y < 0 || y >= HEIGHT_DISPLAY)
         return;
-    int n = (y % 2) / 2;
+    int n = (y & 1) >> 1;
     x0 += n;
     x1 += n;
     int q;
