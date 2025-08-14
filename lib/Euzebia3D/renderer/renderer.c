@@ -127,17 +127,16 @@ int check_if_triangle_visible(Triangle2D *triangle)
     return (e1x * e2y - e1y * e2x) >= 0;
 }
 
-static inline
-
-    void
-    shading(uint16_t *color, int32_t lightDistances[], PointLight *light, int Ba, int Bb, int Bc)
+void shading(uint16_t *color, int32_t lightDistances[], PointLight *light, int Ba, int Bb, int Bc)
 {
     int32_t lightDistance = (fixed_mul(Ba, lightDistances[0]) + fixed_mul(Bb, lightDistances[1]) + fixed_mul(Bc, lightDistances[2]));
-    if (lightDistance <= 0)
-    {
-        *color = 0;
-        return;
-    }
+    // if (lightDistance <= 0)
+    // {
+    //     *color = 0;
+    //     return;
+    // }
+    if (lightDistance < 50)
+        lightDistance = 50;
     if (lightDistance > SCALE_FACTOR)
         lightDistance = SCALE_FACTOR;
 
@@ -452,7 +451,7 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
     int normalsModified[verticesCounter * 3];
 
     memcpy(verticesModified, mesh->vertices, verticesCounter * 3 * sizeof(int));
-    memcpy(normalsModified, mesh->vn, verticesCounter * 3 * sizeof(int));
+    memcpy(normalsModified, mesh->vn, vnCounter * 3 * sizeof(int));
     for (int i = 0; i < mesh->transformationsNum; i++)
     {
         transform(verticesModified, verticesCounter, &mesh->transformations[i]);
@@ -486,8 +485,8 @@ void draw_model(Mesh *mesh, PointLight *pLight, Camera *camera)
         uint16_t uvB = mesh->uv[i + 1];
         uint16_t uvC = mesh->uv[i + 2];
         uint16_t normalA = mesh->normals[i];
-        uint16_t normalB = mesh->normals[i+1];
-        uint16_t normalC = mesh->normals[i+2];
+        uint16_t normalB = mesh->normals[i + 1];
+        uint16_t normalC = mesh->normals[i + 2];
         Triangle2D triangle =
             {
                 {verticesOnScreen[a * 3],
