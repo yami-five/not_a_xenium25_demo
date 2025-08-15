@@ -24,7 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
-#define TEST 1
+#define TEST 0
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -99,7 +99,6 @@ int main()
             .animation = get_animation_by_label("skullAnimation"),
         },
     };
-
     BoneAnimation raisingArm[2] = {
         {
             .bone = mascotArm,
@@ -108,6 +107,12 @@ int main()
         {
             .bone = mascotElbow,
             .animation = get_animation_by_label("raisingElbow"),
+        },
+    };
+    BoneAnimation waving[1] = {
+        {
+            .bone = mascotElbow,
+            .animation = get_animation_by_label("waving"),
         },
     };
 
@@ -204,7 +209,7 @@ int main()
                 painter->clear_buffer(0xff);
             }
         }
-        else if (t > 290 && t <= 685)
+        else if (t > 290 && t <= 470)
         {
             if (spriteHeight < 320)
             {
@@ -249,6 +254,8 @@ int main()
                 painter->print("not ALIVE anymore!", textsCoords[4], textsCoords[5] + 48, 1);
             }
         }
+        else if (t > 470 && t <= 650)
+            painter->clear_buffer(0);
         else
         {
             float qt = t * 0.2f;
@@ -265,6 +272,8 @@ int main()
         animate_bones(talking, 2, t);
         if (t < 15)
             animate_bones(raisingArm, 2, t);
+        else
+            animate_bones(waving, 1, t - 15);
         update_world_matrices(mascot);
         painter->draw_puppet(mascot);
 #endif

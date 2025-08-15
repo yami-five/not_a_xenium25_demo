@@ -175,8 +175,8 @@ static const RawBone mascotArmForearm[1] = {
 static const RawBone mascotArmElbow[1] = {
     {
         .label = "mascotArmElbow",
-        .x = 9,
-        .y = 3,
+        .x = 12,
+        .y = 5,
         .angle = 0.0f,
         .spriteIndex = 255,
         .baseSpriteAngle = 0.0f,

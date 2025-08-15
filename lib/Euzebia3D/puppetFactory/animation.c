@@ -62,7 +62,30 @@ static const Frame raisingElbowFrames[15] = {
     {.x = 0, .y = 0, .angle = -0.1333f},
 };
 
-static const Animation animations[4] = {
+const Frame wavingFrames[20] = {
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = 0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+    {.x = 0, .y = 0, .angle = -0.1f},
+};
+
+static const Animation animations[5] = {
     {
         .label = "jawAnimation",
         .frames = jawAnimationFrames,
@@ -82,6 +105,11 @@ static const Animation animations[4] = {
         .label = "raisingElbow",
         .frames = raisingElbowFrames,
         .framesNum = 15,
+    },
+    {
+        .label = "waving",
+        .frames = wavingFrames,
+        .framesNum = 20,
     },
 };
 

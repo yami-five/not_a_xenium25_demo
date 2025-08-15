@@ -100,7 +100,7 @@ void transform_bone(Bone *bone, int16_t x, int16_t y, float angle)
 
 const Animation *get_animation_by_label(char *label)
 {
-    for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t i = 0; i < 5; i++)
     {
         const Animation *animation = get_animation_by_index(i);
         if (strcmp(animation->label, label) == 0)
