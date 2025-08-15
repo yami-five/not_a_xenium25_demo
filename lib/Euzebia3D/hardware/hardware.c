@@ -117,8 +117,8 @@ static void init_hardware(void)
     stdio_init_all();
 
     // SPI Config
-    spi_init(spi0, 75000 * 1000);
-    spi_init(spi1, 75000 * 1000);
+    spi_init(spi0, 100000 * 1000);
+    spi_init(spi1, 100000 * 1000);
     gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
     gpio_set_function(LCD_MISO_PIN, GPIO_FUNC_SPI);

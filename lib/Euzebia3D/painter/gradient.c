@@ -11,42 +11,42 @@ static GradientColor sunrise2 = {
     .r = 66,
     .g = 5,
     .b = 45,
-    .pos = 320,
+    .pos = 330,
 };
 
 static GradientColor sunrise3 = {
     .r = 107,
     .g = 8,
     .b = 72,
-    .pos = 400,
+    .pos = 410,
 };
 
 static GradientColor sunrise4 = {
     .r = 163,
     .g = 10,
     .b = 59,
-    .pos = 470,
+    .pos = 480,
 };
 
 static GradientColor sunrise5 = {
     .r = 236,
     .g = 97,
     .b = 10,
-    .pos = 530,
+    .pos = 540,
 };
 
 static GradientColor sunrise6 = {
     .r = 255,
     .g = 193,
     .b = 0,
-    .pos = 580,
+    .pos = 590,
 };
 
 static GradientColor sunrise7 = {
     .r = 255,
     .g = 255,
     .b = 255,
-    .pos = 610,
+    .pos = 620,
 };
 
 static GradientColor *sunriseColors[7] = {
