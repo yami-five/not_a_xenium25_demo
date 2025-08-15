@@ -100,6 +100,19 @@ int main()
         },
     };
 
+    BoneAnimation raisingArm[2] = {
+        {
+            .bone = mascotArm,
+            .animation = get_animation_by_label("raisingArmParent"),
+        },
+        {
+            .bone = mascotElbow,
+            .animation = get_animation_by_label("raisingElbow"),
+        },
+    };
+
+    const Bone *mascotHand = get_bone_by_name(&mascot->bones[0], "mascotArmHand");
+
     const Sprite *brcr_logo = get_sprite(11);
     const Sprite *arcadnis = get_sprite(12);
     const Sprite *yamifive = get_sprite(13);
@@ -144,9 +157,9 @@ int main()
             painter->print("at", 108, 144, 2);
             painter->print("Xenium 2025", 28, 176, 2);
         }
-        else if (t<5)
+        else if (t < 5)
             sleep_ms(5015);
-        else if (t >= 5 && t <= 290) //275
+        else if (t >= 5 && t <= 290) // 275
         {
             float qt = t * 0.2f;
             if (t < 110)
@@ -220,13 +233,13 @@ int main()
             }
             else if (t >= 375)
             {
-                uint16_t startFrame=375;
+                uint16_t startFrame = 375;
                 int16_t textsCoords[6] = {24, textHeight, 37, textHeight, 47, textHeight};
-                if (t < startFrame+20)
+                if (t < startFrame + 20)
                     textsCoords[1] = 456 - (t - startFrame) * 10; // 256 630..640 256-t640 456-t630
-                if (t <= startFrame+35)
+                if (t <= startFrame + 35)
                     textsCoords[2] = 527 - (t - startFrame) * 14; // 37 630..645 37-t645 347-t630
-                if (t <= startFrame+40)
+                if (t <= startFrame + 40)
                     textsCoords[4] = 607 - (t - startFrame) * 14; // 47 630..650 47-t650 427-t630
                 transform_bone(logoSkullCenter, 0, 0, 0.05f);
                 update_world_matrices(logoSkull);
@@ -247,8 +260,11 @@ int main()
             painter->draw_puppet(mascot);
         }
 #else
-        float qt = t * 0.2f;
+        if (t == 0)
+            change_sprite(mascotHand, get_sprite(29));
         animate_bones(talking, 2, t);
+        if (t < 15)
+            animate_bones(raisingArm, 2, t);
         update_world_matrices(mascot);
         painter->draw_puppet(mascot);
 #endif

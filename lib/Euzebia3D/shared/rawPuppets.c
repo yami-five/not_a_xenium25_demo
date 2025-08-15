@@ -130,7 +130,7 @@ static const RawBone mascotReflection[1] = {
 static const RawBone mascotArmHand[1] = {
     {
         .label = "mascotArmHand",
-        .x = 32,
+        .x = 34,
         .y = 0,
         .angle = 0.0f,
         .spriteIndex = 3,
@@ -145,7 +145,7 @@ static const RawBone mascotArmHand[1] = {
 static const RawBone mascotWrist[1] = {
     {
         .label = "mascotArmWrist",
-        .x = -3,
+        .x = 0,
         .y = 3,
         .angle = 0.0f,
         .spriteIndex = 255,

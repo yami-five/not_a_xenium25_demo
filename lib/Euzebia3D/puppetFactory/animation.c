@@ -1,6 +1,6 @@
 #include "animation.h"
 
-const Frame jawAnimationFrames[10] = {
+static const Frame jawAnimationFrames[10] = {
     {.x = -1, .y = 0, .angle = 0.08f},
     {.x = -1, .y = 0, .angle = 0.08f},
     {.x = -1, .y = 1, .angle = 0.08f},
@@ -13,7 +13,7 @@ const Frame jawAnimationFrames[10] = {
     {.x = 1, .y = 0, .angle = -0.08f},
 };
 
-const Frame skullAnimationFrames[10] = {
+static const Frame skullAnimationFrames[10] = {
     {.x = 0, .y = 0, .angle = 0.0f},
     {.x = 0, .y = 0, .angle = 0.0f},
     {.x = 0, .y = -1, .angle = 0.0f},
@@ -26,7 +26,43 @@ const Frame skullAnimationFrames[10] = {
     {.x = 0, .y = 0, .angle = 0.0f},
 };
 
-static const Animation animations[2] = {
+const Frame raisingArmParentFrames[15] = {
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+    {.x = 0, .y = 0, .angle = -0.076f},
+};
+
+static const Frame raisingElbowFrames[15] = {
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+    {.x = 0, .y = 0, .angle = -0.1333f},
+};
+
+static const Animation animations[4] = {
     {
         .label = "jawAnimation",
         .frames = jawAnimationFrames,
@@ -36,6 +72,16 @@ static const Animation animations[2] = {
         .label = "skullAnimation",
         .frames = skullAnimationFrames,
         .framesNum = 10,
+    },
+    {
+        .label = "raisingArmParent",
+        .frames = raisingArmParentFrames,
+        .framesNum = 15,
+    },
+    {
+        .label = "raisingElbow",
+        .frames = raisingElbowFrames,
+        .framesNum = 15,
     },
 };
 

@@ -52,7 +52,8 @@ void update_world_matrices(Puppet *puppet);
 void move_puppet(Puppet *puppet, int16_t newX, int16_t newY);
 Bone *get_bone_by_name(Bone *bone, const char *boneLabel);
 void transform_bone(Bone *bone, int16_t x, int16_t y, float angle);
-const Animation *get_animation_by_label(char* label);
-void animate_bones(BoneAnimation* boneAnimations, uint8_t animationsNum, uint32_t frame);
+const Animation *get_animation_by_label(char *label);
+void animate_bones(BoneAnimation *boneAnimations, uint8_t animationsNum, uint32_t frame);
+void change_sprite(Bone *bone, const Sprite *newSprite);
 
 #endif
