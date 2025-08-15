@@ -16,6 +16,30 @@ static spin_lock_t *lcd_spinlock;
 static uint8_t scanline_offset = 0;
 static const uint8_t DEFAULT_FONT_SIZE = 8;
 
+static const uint8_t fadeInPatterns[9][16] = {
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+    {1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0},
+    {1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0},
+    {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+    {1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1},
+    {1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1},
+    {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+};
+
+static const uint8_t fadeOutPatterns[9][16] = {
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1},
+    {1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1},
+    {1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1},
+    {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+    {1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0},
+    {1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
 void dma_buffer_irq_handler()
 {
     dma_hw->ints1 = 1u << dma_channel;
@@ -463,6 +487,43 @@ void override_buffer(uint8_t mode, uint16_t lines)
         memcpy(temp_buffer, buffer, lines * 480);
 }
 
+void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
+{
+    uint8_t patternIndex = currentFrame - startFrame;
+    if ((patternIndex == 0 && mode == 1) || (patternIndex == 8 && mode == 0))
+        return;
+    else if ((patternIndex == 0 && mode == 0) || (patternIndex == 8 && mode == 1))
+    {
+        clear_buffer(0);
+        return;
+    }
+    uint8_t pattern[16];
+    if (mode == 0) // fade out
+    {
+        memcpy(pattern, fadeOutPatterns[patternIndex], 16);
+    }
+    else // fade in
+    {
+        memcpy(pattern, fadeInPatterns[patternIndex], 16);
+    }
+
+    for (uint16_t x = 0; x < DISPLAY_WIDTH; x++)
+    {
+        uint32_t lineAddr = x * HEIGHT_DOUBLED;
+        uint8_t patternAddr = (x & 3)<<2;
+        for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
+        {
+            uint32_t currentLineAddr = lineAddr + (y << 1);
+            uint8_t yMod4 = y & 3;
+            if (pattern[patternAddr + yMod4] == 1)
+            {
+                buffer[currentLineAddr] = 0;
+                buffer[currentLineAddr + 1] = 0;
+            }
+        }
+    }
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -475,6 +536,7 @@ static IPainter painter = {
     .print = print,
     .draw_gradient = draw_gradient,
     .override_buffer = override_buffer,
+    .fade = fade,
 };
 
 const IPainter *get_painter(void)

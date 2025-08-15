@@ -24,7 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
-#define TEST 0
+#define TEST 1
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -276,6 +276,10 @@ int main()
             animate_bones(waving, 1, t - 15);
         update_world_matrices(mascot);
         painter->draw_puppet(mascot);
+        if(t<9)
+            painter->fade(0,0,t);
+        else if(t>=9 && t<18)
+            painter->fade(1,9,t);
 #endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();
