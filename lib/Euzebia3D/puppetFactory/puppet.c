@@ -8,10 +8,10 @@ void make_local_matrix(Bone *bone)
     int16_t cos = fast_cos(angleIndex);
     bone->localMatrix[0] = cos;
     bone->localMatrix[1] = -sin;
-    bone->localMatrix[2] = bone->x<<SHIFT_FACTOR;
+    bone->localMatrix[2] = bone->x << SHIFT_FACTOR;
     bone->localMatrix[3] = sin;
     bone->localMatrix[4] = cos;
-    bone->localMatrix[5] = bone->y<<SHIFT_FACTOR;
+    bone->localMatrix[5] = bone->y << SHIFT_FACTOR;
     bone->localMatrix[6] = 0;
     bone->localMatrix[7] = 0;
     bone->localMatrix[8] = SCALE_FACTOR;
@@ -48,10 +48,10 @@ void update_world_matrices(Puppet *puppet)
     int16_t cos = fast_cos(angleIndex);
     puppet->localMatrix[0] = cos;
     puppet->localMatrix[1] = -sin;
-    puppet->localMatrix[2] = puppet->x<<SHIFT_FACTOR;
+    puppet->localMatrix[2] = puppet->x << SHIFT_FACTOR;
     puppet->localMatrix[3] = sin;
     puppet->localMatrix[4] = cos;
-    puppet->localMatrix[5] = puppet->y<<SHIFT_FACTOR;
+    puppet->localMatrix[5] = puppet->y << SHIFT_FACTOR;
     puppet->localMatrix[6] = puppet->localMatrix[7] = 0;
     puppet->localMatrix[8] = SCALE_FACTOR;
     memcpy(puppet->worldMatrix, puppet->localMatrix, sizeof(puppet->localMatrix));
@@ -109,18 +109,22 @@ const Animation *get_animation_by_label(char *label)
     return NULL;
 }
 
-void animate_bones(BoneAnimation *boneAnimations, uint8_t animationsNum, uint32_t frameNum)
+void animate_bones(BoneAnimation *boneAnimations, uint8_t animationsNum, uint32_t frameNum, bool invert)
 {
     for (uint8_t i = 0; i < animationsNum; i++)
     {
         uint16_t animationFramesNum = boneAnimations[i].animation->framesNum;
-        while(frameNum>=animationFramesNum)
-            frameNum-=animationFramesNum;
+        while (frameNum >= animationFramesNum)
+            frameNum -= animationFramesNum;
+        if (invert)
+            frameNum = animationFramesNum - 1 - frameNum;
         const Frame *frame = &boneAnimations[i].animation->frames[frameNum];
-        transform_bone(boneAnimations[i].bone, frame->x, frame->y, frame->angle);
+        if (invert)
+            transform_bone(boneAnimations[i].bone, -frame->x, -frame->y, -frame->angle);
+        else
+            transform_bone(boneAnimations[i].bone, frame->x, frame->y, frame->angle);
     }
 }
-
 
 void change_sprite(Bone *bone, const Sprite *newSprite)
 {

@@ -24,7 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
-#define TEST 1
+#define TEST 0
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -79,7 +79,7 @@ int main()
 
     puppetFactory = get_puppetFactory();
     Puppet *mascot = puppetFactory->create_puppet(0);
-    move_puppet(mascot, 120, 330);
+    move_puppet(mascot, 60, 550);
     Bone *mascotSkull = get_bone_by_name(&mascot->bones[0], "mascotSkullParent");
     Bone *mascotJaw = get_bone_by_name(&mascot->bones[0], "mascotSkullJawParent");
     Bone *mascotArm = get_bone_by_name(&mascot->bones[0], "mascotArmParent");
@@ -116,7 +116,7 @@ int main()
         },
     };
 
-    const Bone *mascotHand = get_bone_by_name(&mascot->bones[0], "mascotArmHand");
+    Bone *mascotHand = get_bone_by_name(&mascot->bones[0], "mascotArmHand");
 
     const Sprite *brcr_logo = get_sprite(11);
     const Sprite *arcadnis = get_sprite(12);
@@ -137,6 +137,8 @@ int main()
     const Sprite *skull_logo_white = get_sprite(24);
     uint8_t glowRange = 10;
     int16_t textHeight = 256;
+
+    const Sprite *logo_dark = get_sprite(30);
     while (1)
     {
 #if TEST == 0
@@ -209,7 +211,7 @@ int main()
                 painter->clear_buffer(0xff);
             }
         }
-        else if (t > 290 && t <= 470)
+        else if (t > 290 && t <= 478)
         {
             if (spriteHeight < 320)
             {
@@ -252,34 +254,62 @@ int main()
                 painter->print("CorpseTravel", textsCoords[0], textsCoords[1], 2);
                 painter->print("We take you to places", textsCoords[2], textsCoords[3] + 32, 1);
                 painter->print("not ALIVE anymore!", textsCoords[4], textsCoords[5] + 48, 1);
+                painter->fade(1, 470, t);
             }
         }
-        else if (t > 470 && t <= 650)
+        else if (t > 478 && t < 510)
+        {
             painter->clear_buffer(0);
+            if (t == 480)
+            {
+                painter->draw_sprite(logo_dark, 12, 52, 0, 2);
+                painter->override_buffer(1, 320);
+                painter->clear_buffer(0);
+            }
+        }
+        else if (t >= 510)
+        {
+            uint16_t startFrame = 510;
+            if (t == startFrame)
+                change_sprite(mascotHand, get_sprite(29));
+            else if (t==(startFrame + 186))
+                change_sprite(mascotHand, get_sprite(3)); 
+            painter->override_buffer(0, 320);
+            painter->draw_puppet(mascot);
+            if (t > (startFrame + 15) && t <= (startFrame + 70))
+                move_puppet(mascot, 0, -4);
+            if (t > (startFrame + 75) && t <= (startFrame + 90))
+            {
+                animate_bones(raisingArm, 2, t, false);
+                update_world_matrices(mascot);
+            }
+            else if (t > (startFrame + 90) && t <= (startFrame + 170))
+            {
+                animate_bones(waving, 1, t, false);
+                update_world_matrices(mascot);
+            }
+            else if (t > (startFrame + 170) && t <= (startFrame + 185))
+            {
+                animate_bones(raisingArm, 2, t, true);
+                update_world_matrices(mascot);
+            }
+            if (t < (startFrame + 8))
+                painter->fade(0, startFrame, t);
+        }
         else
         {
             float qt = t * 0.2f;
             // renderer->draw_model(skybox, pointLight, camera);
-            animate_bones(talking, 2, t);
+            animate_bones(talking, 2, t, false);
             update_world_matrices(mascot);
             modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
             // renderer->draw_model(cube, pointLight, camera);
             painter->draw_puppet(mascot);
         }
 #else
-        if (t == 0)
-            change_sprite(mascotHand, get_sprite(29));
-        animate_bones(talking, 2, t);
-        if (t < 15)
-            animate_bones(raisingArm, 2, t);
-        else
-            animate_bones(waving, 1, t - 15);
-        update_world_matrices(mascot);
+        if (t < 55)
+            move_puppet(mascot, 0, -4);
         painter->draw_puppet(mascot);
-        if(t<9)
-            painter->fade(0,0,t);
-        else if(t>=9 && t<18)
-            painter->fade(1,9,t);
 #endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();

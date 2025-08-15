@@ -1,7 +1,7 @@
 from PIL import Image
 from pathlib import Path
-sprite_name="hand_3"
-image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/mascot/{sprite_name}.bmp")
+sprite_name="logo_dark"
+image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/logo/{sprite_name}.bmp")
 
 def rgb_to_rgb565(r, g, b):
     return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
@@ -9,7 +9,7 @@ def rgb_to_rgb565(r, g, b):
 (img_y,img_x)=image.size
 print(img_x*img_y)
 converted_img=""
-for y in range (img_x-1,-1,-1):
+for y in range (img_x):
     for x in range (img_y):
         (r,g,b)=image.getpixel((y, x))
         # r = max(0, min(255, r))

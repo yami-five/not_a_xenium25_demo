@@ -489,6 +489,8 @@ void override_buffer(uint8_t mode, uint16_t lines)
 
 void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
 {
+    if (currentFrame < startFrame)
+        return;
     uint8_t patternIndex = currentFrame - startFrame;
     if ((patternIndex == 0 && mode == 1) || (patternIndex == 8 && mode == 0))
         return;
@@ -510,7 +512,7 @@ void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
     for (uint16_t x = 0; x < DISPLAY_WIDTH; x++)
     {
         uint32_t lineAddr = x * HEIGHT_DOUBLED;
-        uint8_t patternAddr = (x & 3)<<2;
+        uint8_t patternAddr = (x & 3) << 2;
         for (uint16_t y = 0; y < DISPLAY_HEIGHT; y++)
         {
             uint32_t currentLineAddr = lineAddr + (y << 1);
