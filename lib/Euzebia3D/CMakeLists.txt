@@ -26,6 +26,7 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/fonts.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gfx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/post_processing.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/scrollers.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/sprites.c
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/rawPuppets.c
 )

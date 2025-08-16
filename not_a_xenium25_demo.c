@@ -24,7 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
-#define TEST 0
+#define TEST 1
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -139,6 +139,8 @@ int main()
     int16_t textHeight = 256;
 
     const Sprite *logo_dark = get_sprite(30);
+
+    const Scroller *broken_earth = get_scroller_by_index(0);
     while (1)
     {
 #if TEST == 0
@@ -254,7 +256,7 @@ int main()
                 painter->print("CorpseTravel", textsCoords[0], textsCoords[1], 2);
                 painter->print("We take you to places", textsCoords[2], textsCoords[3] + 32, 1);
                 painter->print("not ALIVE anymore!", textsCoords[4], textsCoords[5] + 48, 1);
-                painter->fade(1, 470, t);
+                painter->fade_fullscreen(1, 470, t);
             }
         }
         else if (t > 478 && t < 510)
@@ -272,8 +274,8 @@ int main()
             uint16_t startFrame = 510;
             if (t == startFrame)
                 change_sprite(mascotHand, get_sprite(29));
-            else if (t==(startFrame + 186))
-                change_sprite(mascotHand, get_sprite(3)); 
+            else if (t == (startFrame + 186))
+                change_sprite(mascotHand, get_sprite(3));
             painter->override_buffer(0, 320);
             painter->draw_puppet(mascot);
             if (t > (startFrame + 15) && t <= (startFrame + 70))
@@ -294,7 +296,7 @@ int main()
                 update_world_matrices(mascot);
             }
             if (t < (startFrame + 8))
-                painter->fade(0, startFrame, t);
+                painter->fade_fullscreen(0, startFrame, t);
         }
         else
         {
@@ -307,9 +309,17 @@ int main()
             painter->draw_puppet(mascot);
         }
 #else
-        if (t < 55)
-            move_puppet(mascot, 0, -4);
-        painter->draw_puppet(mascot);
+    if(t==0)
+    {
+        painter->draw_sprite(logo_dark, 12, 52, 0, 2);
+        painter->override_buffer(1, 320);
+        painter->clear_buffer(0);
+    }
+    painter->override_buffer(0, 320);
+    if(t>=5 && t<80)
+        painter->draw_scroller(broken_earth,70,110,15,t);
+    painter->fade(1,5,t,70,110,100,100);
+    painter->fade(0,75,t,70,110,100,100);
 #endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();

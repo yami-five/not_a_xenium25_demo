@@ -487,7 +487,7 @@ void override_buffer(uint8_t mode, uint16_t lines)
         memcpy(temp_buffer, buffer, lines * 480);
 }
 
-void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
+void fade_fullscreen(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
 {
     if (currentFrame < startFrame)
         return;
@@ -526,6 +526,79 @@ void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
     }
 }
 
+void draw_scroller(const Scroller *scroller, uint16_t x, uint16_t y, uint32_t startFrame, uint32_t currentFrame)
+{
+    uint16_t square[2500];
+    uint8_t squareWidth = 50;
+    uint8_t squareHeight = 50;
+    uint8_t line = currentFrame - startFrame;
+    if (startFrame > currentFrame)
+        line = 0;
+    else if (line > squareHeight)
+        line = squareHeight;
+    memcpy(square, scroller->bitmap + line * scroller->width, sizeof(square));
+    uint16_t lineBuffer[scroller->width << 1];
+    for (uint8_t i = 0; i < squareHeight; i++)
+    {
+        for (uint8_t j = 0; j < squareWidth; j++)
+        {
+            lineBuffer[j * 2] = __builtin_bswap16(square[i * squareWidth + j]);
+            lineBuffer[j * 2 + 1] = __builtin_bswap16(square[i * squareWidth + j]);
+        }
+        uint32_t lineAddr1 = (y + i * 2) * HEIGHT_DOUBLED + x * 2;
+        uint32_t lineAddr2 = (y + i * 2 + 1) * HEIGHT_DOUBLED + x * 2;
+        memcpy(buffer + lineAddr1, lineBuffer, sizeof(lineBuffer));
+        memcpy(buffer + lineAddr2, lineBuffer, sizeof(lineBuffer));
+    }
+}
+
+void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame, uint16_t y, uint16_t x, uint16_t width, uint16_t height)
+{
+    if (currentFrame < startFrame)
+        return;
+    uint8_t patternIndex = currentFrame - startFrame;
+    if(patternIndex>8)
+        return;
+    if ((patternIndex == 8 && mode == 0))
+        return;
+    uint8_t pattern[16];
+    uint16_t square[width * height];
+
+    if (mode == 0) // fade out
+    {
+        memcpy(pattern, fadeOutPatterns[patternIndex], 16);
+    }
+    else // fade in
+    {
+        memcpy(pattern, fadeInPatterns[patternIndex], 16);
+    }
+
+    uint8_t lineBuffer[width << 1];
+
+    for (uint8_t i = 0; i < height; i += 1)
+    {
+        uint32_t lineAddr = (i + x) * HEIGHT_DOUBLED;
+        uint8_t patternAddr = (i & 3) << 2;
+        for (uint8_t j = 0; j < width; j += 1)
+        {
+            uint32_t currentLineAddr = lineAddr + ((y + j) << 1);
+            uint8_t yMod4 = j & 3;
+            if (pattern[patternAddr + yMod4] == 1)
+            {
+                lineBuffer[(j<<1)] = buffer[currentLineAddr];
+                lineBuffer[(j<<1) + 1] = buffer[currentLineAddr + 1];
+            }
+            else
+            {
+                lineBuffer[(j<<1)] = temp_buffer[currentLineAddr];
+                lineBuffer[(j<<1) + 1] = temp_buffer[currentLineAddr + 1];
+            }
+        }
+        lineAddr += (y << 1);
+        memcpy(buffer + lineAddr, lineBuffer, sizeof(lineBuffer));
+    }
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -538,6 +611,8 @@ static IPainter painter = {
     .print = print,
     .draw_gradient = draw_gradient,
     .override_buffer = override_buffer,
+    .fade_fullscreen = fade_fullscreen,
+    .draw_scroller = draw_scroller,
     .fade = fade,
 };
 
