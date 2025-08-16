@@ -24,7 +24,7 @@ typedef struct
     void (*override_buffer)(uint8_t mode, uint16_t lines);
     void (*fade_fullscreen)(uint8_t mode, uint32_t startFrame, uint32_t currentFrame);
     void (*draw_scroller)(const Scroller* scroller, uint16_t x, uint16_t y, uint32_t startFrame, uint32_t currentFrame);
-
+    void (*fade)(uint8_t mode, uint32_t startFrame, uint32_t currentFrame, uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 } IPainter;
 
 #endif

@@ -309,7 +309,17 @@ int main()
             painter->draw_puppet(mascot);
         }
 #else
-        painter->draw_scroller(broken_earth,0,0,0,t);
+    if(t==0)
+    {
+        painter->draw_sprite(logo_dark, 12, 52, 0, 2);
+        painter->override_buffer(1, 320);
+        painter->clear_buffer(0);
+    }
+    painter->override_buffer(0, 320);
+    if(t>=5 && t<80)
+        painter->draw_scroller(broken_earth,70,110,15,t);
+    painter->fade(1,5,t,70,110,100,100);
+    painter->fade(0,75,t,70,110,100,100);
 #endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();
