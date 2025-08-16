@@ -487,7 +487,7 @@ void override_buffer(uint8_t mode, uint16_t lines)
         memcpy(temp_buffer, buffer, lines * 480);
 }
 
-void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
+void fade_fullscreen(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
 {
     if (currentFrame < startFrame)
         return;
@@ -526,6 +526,32 @@ void fade(uint8_t mode, uint32_t startFrame, uint32_t currentFrame)
     }
 }
 
+void draw_scroller(const Scroller *scroller, uint16_t x, uint16_t y, uint32_t startFrame, uint32_t currentFrame)
+{
+    uint16_t square[2500];
+    uint8_t squareWidth = 50;
+    uint8_t squareHeight = 50;
+    uint8_t line = currentFrame - startFrame;
+    if (startFrame > currentFrame)
+        line = 0;
+    else if(line>squareHeight)
+        line=squareHeight;
+    memcpy(square, scroller->bitmap + line * scroller->width, sizeof(square));
+    uint16_t lineBuffer[scroller->width << 1];
+    for (uint8_t i = 0; i < squareHeight; i++)
+    {
+        for (uint8_t j = 0; j < squareWidth; j++)
+        {
+            lineBuffer[j * 2] = __builtin_bswap16(square[i * squareWidth + j]);
+            lineBuffer[j * 2 + 1] = __builtin_bswap16(square[i * squareWidth + j]);
+        }
+        uint32_t lineAddr1 = ((y + i) * 2) * HEIGHT_DOUBLED + x * 2;
+        uint32_t lineAddr2 = ((y + i) * 2 + 1) * HEIGHT_DOUBLED + x * 2;
+        memcpy(buffer + lineAddr1, lineBuffer, sizeof(lineBuffer));
+        memcpy(buffer + lineAddr2, lineBuffer, sizeof(lineBuffer));
+    }
+}
+
 static IPainter painter = {
     .init_painter = init_painter,
     .draw_buffer = draw_buffer,
@@ -538,7 +564,8 @@ static IPainter painter = {
     .print = print,
     .draw_gradient = draw_gradient,
     .override_buffer = override_buffer,
-    .fade = fade,
+    .fade_fullscreen = fade_fullscreen,
+    .draw_scroller = draw_scroller,
 };
 
 const IPainter *get_painter(void)

@@ -7,6 +7,7 @@
 #include "puppet.h"
 #include "../shared/sprites.h"
 #include "gradient.h"
+#include "../shared/scrollers.h"
 
 typedef struct
 {
@@ -21,7 +22,9 @@ typedef struct
     void (*print)(const char *text, int16_t x, int16_t y, uint8_t scale);
     void (*draw_gradient)(Gradient *gradient);
     void (*override_buffer)(uint8_t mode, uint16_t lines);
-    void (*fade)(uint8_t mode, uint32_t startFrame, uint32_t currentFrame);
+    void (*fade_fullscreen)(uint8_t mode, uint32_t startFrame, uint32_t currentFrame);
+    void (*draw_scroller)(const Scroller* scroller, uint16_t x, uint16_t y, uint32_t startFrame, uint32_t currentFrame);
+
 } IPainter;
 
 #endif
