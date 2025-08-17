@@ -141,6 +141,13 @@ int main()
     const Sprite *logo_dark = get_sprite(30);
 
     const Scroller *broken_earth = get_scroller_by_index(0);
+    const Scroller *room = get_scroller_by_index(1);
+    const Scroller *beach = get_scroller_by_index(2);
+    const Scroller *vault = get_scroller_by_index(3);
+    const Scroller *park = get_scroller_by_index(4);
+    const Scroller *froggy = get_scroller_by_index(5);
+    const Scroller *duck = get_scroller_by_index(0);
+
     while (1)
     {
 #if TEST == 0
@@ -335,77 +342,107 @@ int main()
             }
             else if (t > (textStartFrame + textFactor * 6) && t <= (textStartFrame + textFactor * 7))
             {
+                painter->draw_scroller(broken_earth, 120, 110, textStartFrame + textFactor * 6+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 6 + 1, t, 120, 110, 100, 100);
                 painter->print("Visit places where", 49, textHeight + 32, 1);
                 painter->print("HUMANS once lived!", 45, textHeight + 48, 1); // 7
             }
             else if (t > (textStartFrame + textFactor * 7) && t <= (textStartFrame + textFactor * 8))
             {
+                painter->draw_scroller(broken_earth, 120, 110, textStartFrame + textFactor * 6+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 8 - 7, t, 120, 110, 100, 100);
                 painter->print("Yes, HUMANS!", 66, textHeight + 32, 1);
                 painter->print("Those legendary meat jellies!", 6, textHeight + 48, 1); // 8
             }
             else if (t > (textStartFrame + textFactor * 8) && t <= (textStartFrame + textFactor * 9))
             {
+                painter->draw_scroller(room, 120, 110, textStartFrame + textFactor * 8+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 8 + 1, t, 120, 110, 100, 100);
                 painter->print("Luxury Human Interior!", 34, textHeight + 32, 1); // 9
             }
             else if (t > (textStartFrame + textFactor * 9) && t <= (textStartFrame + textFactor * 10))
             {
+                painter->draw_scroller(room, 120, 110, textStartFrame + textFactor * 8+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 10 - 7, t, 120, 110, 100, 100);
                 painter->print("Because nothing says comfort", 9, textHeight + 32, 1);
                 painter->print("like concrete and broken glass", 4, textHeight + 48, 1); // 10
             }
             else if (t > (textStartFrame + textFactor * 10) && t <= (textStartFrame + textFactor * 11))
             {
+                painter->draw_scroller(beach, 120, 110, textStartFrame + textFactor * 10+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 10 + 1, t, 120, 110, 100, 100);
                 painter->print("Behold the Human Arks!", 31, textHeight + 32, 1); // 11
             }
             else if (t > (textStartFrame + textFactor * 11) && t <= (textStartFrame + textFactor * 12))
             {
+                painter->draw_scroller(beach, 120, 110, textStartFrame + textFactor * 10+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 12 - 7, t, 120, 110, 100, 100);
                 painter->print("Built to save millions...", 26, textHeight + 32, 1);
                 painter->print("...sank before saving one", 21, textHeight + 48, 1); // 12
             }
             else if (t > (textStartFrame + textFactor * 12) && t <= (textStartFrame + textFactor * 13))
             {
+                painter->draw_scroller(vault, 120, 110, textStartFrame + textFactor * 12+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 12 + 1, t, 120, 110, 100, 100);
                 painter->print("The Ultimate Vault!", 45, textHeight + 32, 1);
                 painter->print("Now permanently open", 37, textHeight + 48, 1); // 13
             }
             else if (t > (textStartFrame + textFactor * 13) && t <= (textStartFrame + textFactor * 14))
             {
+                painter->draw_scroller(vault, 120, 110, textStartFrame + textFactor * 12+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 14 - 7, t, 120, 110, 100, 100);
                 painter->print("Bloodstains are part", 44, textHeight + 32, 1);
                 painter->print("of the exhibition", 57, textHeight + 48, 1); // 14
             }
-            else if (t > (textStartFrame + textFactor * 15) && t <= (textStartFrame + textFactor * 15))
+            else if (t > (textStartFrame + textFactor * 14) && t <= (textStartFrame + textFactor * 15))
             {
+                painter->draw_scroller(park, 120, 110, textStartFrame + textFactor * 14+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 14 + 1, t, 120, 110, 100, 100);
                 painter->print("Funland Amusement Park", 27, textHeight + 32, 1);
                 painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); // 15
             }
-            else if (t > (textStartFrame + textFactor * 16) && t <= (textStartFrame + textFactor * 16))
+            else if (t > (textStartFrame + textFactor * 15) && t <= (textStartFrame + textFactor * 16))
             {
+                painter->draw_scroller(park, 120, 110, textStartFrame + textFactor * 14+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 16 - 7, t, 120, 110, 100, 100);
                 painter->print("Rides no longer operational", 16, textHeight + 32, 1);
                 painter->print("Screams simulated", 51, textHeight + 48, 1); // 16
             }
-            else if (t > (textStartFrame + textFactor * 17) && t <= (textStartFrame + textFactor * 17))
+            else if (t > (textStartFrame + textFactor * 16) && t <= (textStartFrame + textFactor * 17))
             {
+                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 14 + 1, t, 120, 110, 100, 100);
                 painter->print("Froggy", 95, textHeight + 32, 1);
                 painter->print("Convenience Store", 54, textHeight + 48, 1); // 17
             }
-            else if (t > (textStartFrame + textFactor * 18) && t <= (textStartFrame + textFactor * 18))
+            else if (t > (textStartFrame + textFactor * 17) && t <= (textStartFrame + textFactor * 18))
             {
+                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16+ 5, t);
                 painter->print("Shop, restaurant,", 54, textHeight + 32, 1);
                 painter->print("pharmacy, post office...", 24, textHeight + 48, 1); // 18
             }
-            else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 19))
+            else if (t > (textStartFrame + textFactor * 18) && t <= (textStartFrame + textFactor * 19))
             {
+                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 19 - 7, t, 120, 110, 100, 100);
                 painter->print("...and maybe a gas station", 17, textHeight + 32, 1); // 19
             }
-            else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 20))
+            else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 20))
             {
+                painter->draw_scroller(duck, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->fade(1, textStartFrame + textFactor * 19 + 1, t, 120, 110, 100, 100);
                 painter->print("Relax like a Human", 48, textHeight + 32, 1); // 20
             }
-            else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 21))
+            else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 21))
             {
+                painter->draw_scroller(duck, 120, 110, textStartFrame + textFactor * 19+ 5, t);
                 painter->print("The bath is gone...", 45, textHeight + 32, 1);
                 painter->print("but the duck remains", 41, textHeight + 48, 1); // 21
             }
-            else if (t > (textStartFrame + textFactor * 22) && t <= (textStartFrame + textFactor * 22))
+            else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 22))
             {
+                painter->draw_scroller(duck, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->fade(0, textStartFrame + textFactor * 22 - 7, t, 120, 110, 100, 100);
                 painter->print("Water not included", 50, textHeight + 32, 1); // 22
             }
         }
