@@ -1,16 +1,16 @@
 #include "animation.h"
 
 static const Frame jawAnimationFrames[10] = {
-    {.x = -1, .y = 0, .angle = 0.08f},
-    {.x = -1, .y = 0, .angle = 0.08f},
-    {.x = -1, .y = 1, .angle = 0.08f},
-    {.x = -1, .y = 0, .angle = 0.08f},
-    {.x = -1, .y = 1, .angle = 0.08f},
+    {.x = 1, .y = 0, .angle = -0.08f},
+    {.x = 1, .y = 0, .angle = -0.08f},
     {.x = 1, .y = -1, .angle = -0.08f},
     {.x = 1, .y = 0, .angle = -0.08f},
     {.x = 1, .y = -1, .angle = -0.08f},
-    {.x = 1, .y = 0, .angle = -0.08f},
-    {.x = 1, .y = 0, .angle = -0.08f},
+    {.x = -1, .y = 1, .angle = 0.08f},
+    {.x = -1, .y = 0, .angle = 0.08f},
+    {.x = -1, .y = 1, .angle = 0.08f},
+    {.x = -1, .y = 0, .angle = 0.08f},
+    {.x = -1, .y = 0, .angle = 0.08f},
 };
 
 static const Frame skullAnimationFrames[10] = {

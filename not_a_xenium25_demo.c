@@ -24,7 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
-#define TEST 1
+#define TEST 0
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -272,6 +272,8 @@ int main()
         else if (t >= 510)
         {
             uint16_t startFrame = 510;
+            uint16_t textStartFrame = startFrame + 215;
+            uint16_t textFactor = 35;
             if (t == startFrame)
                 change_sprite(mascotHand, get_sprite(29));
             else if (t == (startFrame + 186))
@@ -295,8 +297,122 @@ int main()
                 animate_bones(raisingArm, 2, t, true);
                 update_world_matrices(mascot);
             }
+            else if (t > (startFrame + 215))
+            {
+                animate_bones(talking, 2, t, true);
+                update_world_matrices(mascot);
+            }
             if (t < (startFrame + 8))
                 painter->fade_fullscreen(0, startFrame, t);
+            if (t > (textStartFrame + textFactor * 0) && t <= (textStartFrame + textFactor * 1))
+            {
+                painter->print("Are you bored of", 55, textHeight + 32, 1);
+                painter->print("shifting bits all day?", 38, textHeight + 48, 1); // 1
+            }
+            else if (t > (textStartFrame + textFactor * 1) && t <= (textStartFrame + textFactor * 2))
+            {
+                painter->print("Do you need", 76, textHeight + 32, 1);
+                painter->print("an update and reboot?", 37, textHeight + 48, 1); // 2
+            }
+            else if (t > (textStartFrame + textFactor * 2) && t <= (textStartFrame + textFactor * 3))
+            {
+                painter->print("Defragment your circuits", 26, textHeight + 32, 1);
+                painter->print("with us!", 88, textHeight + 48, 1); // 3
+            }
+            else if (t > (textStartFrame + textFactor * 3) && t <= (textStartFrame + textFactor * 4))
+            {
+                painter->print("CorpseTravel-the number zero", 7, textHeight + 32, 1);
+                painter->print("travel agency for machines", 17, textHeight + 48, 1); // 4
+            }
+            else if (t > (textStartFrame + textFactor * 4) && t <= (textStartFrame + textFactor * 5))
+            {
+                painter->print("just like you", 71, textHeight + 32, 1); // 5
+            }
+            else if (t > (textStartFrame + textFactor * 5) && t <= (textStartFrame + textFactor * 6))
+            {
+                painter->print("offers trips like you", 40, textHeight + 32, 1);
+                painter->print("have never seen before!", 28, textHeight + 48, 1); // 6
+            }
+            else if (t > (textStartFrame + textFactor * 6) && t <= (textStartFrame + textFactor * 7))
+            {
+                painter->print("Visit places where", 49, textHeight + 32, 1);
+                painter->print("HUMANS once lived!", 45, textHeight + 48, 1); // 7
+            }
+            else if (t > (textStartFrame + textFactor * 7) && t <= (textStartFrame + textFactor * 8))
+            {
+                painter->print("Yes, HUMANS!", 66, textHeight + 32, 1);
+                painter->print("Those legendary meat jellies!", 6, textHeight + 48, 1); // 8
+            }
+            else if (t > (textStartFrame + textFactor * 8) && t <= (textStartFrame + textFactor * 9))
+            {
+                painter->print("Luxury Human Interior!", 34, textHeight + 32, 1); // 9
+            }
+            else if (t > (textStartFrame + textFactor * 9) && t <= (textStartFrame + textFactor * 10))
+            {
+                painter->print("Because nothing says comfort", 9, textHeight + 32, 1);
+                painter->print("like concrete and broken glass", 4, textHeight + 48, 1); // 10
+            }
+            else if (t > (textStartFrame + textFactor * 10) && t <= (textStartFrame + textFactor * 11))
+            {
+                painter->print("Behold the Human Arks!", 31, textHeight + 32, 1); // 11
+            }
+            else if (t > (textStartFrame + textFactor * 11) && t <= (textStartFrame + textFactor * 12))
+            {
+                painter->print("Built to save millions...", 26, textHeight + 32, 1);
+                painter->print("...sank before saving one", 21, textHeight + 48, 1); // 12
+            }
+            else if (t > (textStartFrame + textFactor * 12) && t <= (textStartFrame + textFactor * 13))
+            {
+                painter->print("The Ultimate Vault!", 45, textHeight + 32, 1);
+                painter->print("Now permanently open", 37, textHeight + 48, 1); // 13
+            }
+            else if (t > (textStartFrame + textFactor * 13) && t <= (textStartFrame + textFactor * 14))
+            {
+                painter->print("Bloodstains are part", 44, textHeight + 32, 1);
+                painter->print("of the exhibition", 57, textHeight + 48, 1); // 14
+            }
+            else if (t > (textStartFrame + textFactor * 14) && t <= (textStartFrame + textFactor * 15))
+            {
+                painter->print("Bloodstains are part", 44, textHeight + 32, 1);
+                painter->print("of the exhibition", 57, textHeight + 48, 1); // 15
+            }
+            else if (t > (textStartFrame + textFactor * 15) && t <= (textStartFrame + textFactor * 16))
+            {
+                painter->print("Funland Amusement Park", 27, textHeight + 32, 1);
+                painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); // 16
+            }
+            else if (t > (textStartFrame + textFactor * 16) && t <= (textStartFrame + textFactor * 17))
+            {
+                painter->print("Rides no longer operational", 16, textHeight + 32, 1);
+                painter->print("Screams simulated", 51, textHeight + 48, 1); // 17
+            }
+            else if (t > (textStartFrame + textFactor * 17) && t <= (textStartFrame + textFactor * 18))
+            {
+                painter->print("Froggy", 95, textHeight + 32, 1);
+                painter->print("Convenience Store", 54, textHeight + 48, 1); // 18
+            }
+            else if (t > (textStartFrame + textFactor * 18) && t <= (textStartFrame + textFactor * 19))
+            {
+                painter->print("Shop, restaurant,", 54, textHeight + 32, 1);
+                painter->print("pharmacy, post office...", 24, textHeight + 48, 1); // 19
+            }
+            else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 20))
+            {
+                painter->print("...and maybe a gas station", 17, textHeight + 32, 1); // 20
+            }
+            else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 21))
+            {
+                painter->print("Relax like a Human", 48, textHeight + 32, 1); // 21
+            }
+            else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 22))
+            {
+                painter->print("The bath is gone...", 45, textHeight + 32, 1);
+                painter->print("but the duck remains", 41, textHeight + 48, 1); // 22
+            }
+            else if (t > (textStartFrame + textFactor * 22) && t <= (textStartFrame + textFactor * 23))
+            {
+                painter->print("Water not included", 50, textHeight + 32, 1); // 23
+            }
         }
         else
         {
@@ -322,45 +438,45 @@ int main()
         // painter->fade(0,75,t,70,110,100,100);
 
         // painter->print("Are you bored of", 55, textHeight + 32, 1);
-        // painter->print("shifting bits all day?", 38, textHeight + 48, 1);
+        // painter->print("shifting bits all day?", 38, textHeight + 48, 1); //1
         // painter->print("Do you need", 76, textHeight + 32, 1);
-        // painter->print("an update and reboot?", 37, textHeight + 48, 1);
+        // painter->print("an update and reboot?", 37, textHeight + 48, 1); //2
         // painter->print("Defragment your circuits", 26, textHeight + 32, 1);
-        // painter->print("with us!", 88, textHeight + 48, 1);
+        // painter->print("with us!", 88, textHeight + 48, 1); //3
         // painter->print("CorpseTravel-the number zero", 7, textHeight + 32, 1);
-        // painter->print("travel agency for machines", 17, textHeight + 48, 1);
-        // painter->print("just like you", 71, textHeight + 32, 1);
+        // painter->print("travel agency for machines", 17, textHeight + 48, 1); //4
+        // painter->print("just like you", 71, textHeight + 32, 1); //5
         // painter->print("offers trips like you", 40, textHeight + 32, 1);
-        // painter->print("have never seen before!", 28, textHeight + 48, 1);
+        // painter->print("have never seen before!", 28, textHeight + 48, 1); //6
         // painter->print("Visit places where", 49, textHeight + 32, 1);
-        // painter->print("HUMANS once lived!", 45, textHeight + 48, 1);
+        // painter->print("HUMANS once lived!", 45, textHeight + 48, 1); //7
         // painter->print("Yes, HUMANS!", 66, textHeight + 32, 1);
-        // painter->print("Those legendary meat jellies!", 6, textHeight + 48, 1);
-        // painter->print("Luxury Human Interior!", 34, textHeight + 32, 1);
+        // painter->print("Those legendary meat jellies!", 6, textHeight + 48, 1); //8
+        // painter->print("Luxury Human Interior!", 34, textHeight + 32, 1); //9
         // painter->print("Because nothing says comfort", 9, textHeight + 32, 1);
-        // painter->print("like concrete and broken glass", 4, textHeight + 48, 1);
-        // painter->print("Behold the Human Arks!", 31, textHeight + 32, 1);
+        // painter->print("like concrete and broken glass", 4, textHeight + 48, 1); //10
+        // painter->print("Behold the Human Arks!", 31, textHeight + 32, 1); //11
         // painter->print("Built to save millions...", 26, textHeight + 32, 1);
-        // painter->print("...sank before saving one", 21, textHeight + 48, 1);
+        // painter->print("...sank before saving one", 21, textHeight + 48, 1); //12
         // painter->print("The Ultimate Vault!", 45, textHeight + 32, 1);
-        // painter->print("Now permanently open", 37, textHeight + 48, 1);
+        // painter->print("Now permanently open", 37, textHeight + 48, 1); //13
         // painter->print("Bloodstains are part", 44, textHeight + 32, 1);
-        // painter->print("of the exhibition", 57, textHeight + 48, 1);
+        // painter->print("of the exhibition", 57, textHeight + 48, 1); //14
         // painter->print("Bloodstains are part", 44, textHeight + 32, 1);
-        // painter->print("of the exhibition", 57, textHeight + 48, 1);
+        // painter->print("of the exhibition", 57, textHeight + 48, 1); //15
         // painter->print("Funland Amusement Park", 27, textHeight + 32, 1);
-        // painter->print("Where laughter rusts forever", 9, textHeight + 48, 1);
+        // painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); //16
         // painter->print("Rides no longer operational", 16, textHeight + 32, 1);
-        // painter->print("Screams simulated", 51, textHeight + 48, 1);
+        // painter->print("Screams simulated", 51, textHeight + 48, 1); //17
         // painter->print("Froggy", 95, textHeight + 32, 1);
-        // painter->print("Convenience Store", 54, textHeight + 48, 1);
+        // painter->print("Convenience Store", 54, textHeight + 48, 1); //18
         // painter->print("Shop, restaurant,", 54, textHeight + 32, 1);
-        // painter->print("pharmacy, post office...", 24, textHeight + 48, 1);
-        // painter->print("...and maybe a gas station", 17, textHeight + 32, 1);
-        // painter->print("Relax like a Human", 48, textHeight + 32, 1);
+        // painter->print("pharmacy, post office...", 24, textHeight + 48, 1); //19
+        // painter->print("...and maybe a gas station", 17, textHeight + 32, 1); //20
+        // painter->print("Relax like a Human", 48, textHeight + 32, 1); //21
         // painter->print("The bath is gone...", 45, textHeight + 32, 1);
-        // painter->print("but the duck remains", 41, textHeight + 48, 1);
-        // painter->print("Water not included", 50, textHeight + 32, 1);
+        // painter->print("but the duck remains", 41, textHeight + 48, 1); //22
+        // painter->print("Water not included", 50, textHeight + 32, 1); //23
         // painter->print("Authentic human trash", 37, textHeight + 32, 1);
         // painter->print("sorry, souvenirs!", 53, textHeight + 32, 1);
         // painter->print("Windows95", 81, textHeight + 32, 1);
@@ -380,8 +496,8 @@ int main()
         // painter->print("Purpose: unknown", 53, textHeight + 32, 1);
         // painter->print("Probably sacred", 60, textHeight + 48, 1);
         // painter->print("Rubber Duck", 75, textHeight + 32, 1);
-        painter->print("Humans debugged with this", 20, textHeight + 32, 1);
-        painter->print("No wonder they are extinct", 17, textHeight + 48, 1);
+        // painter->print("Humans debugged with this", 20, textHeight + 32, 1);
+        // painter->print("No wonder they are extinct", 17, textHeight + 48, 1);
 #endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();
