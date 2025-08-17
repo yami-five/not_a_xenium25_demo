@@ -1,6 +1,6 @@
 width=240
-scale=2
-text="CorpseTravel"
+scale=1
+text="No wonder they are extinct"
 characters={
     " ":8,
     "!":8,
