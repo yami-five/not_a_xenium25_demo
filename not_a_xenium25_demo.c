@@ -371,47 +371,42 @@ int main()
                 painter->print("Bloodstains are part", 44, textHeight + 32, 1);
                 painter->print("of the exhibition", 57, textHeight + 48, 1); // 14
             }
-            else if (t > (textStartFrame + textFactor * 14) && t <= (textStartFrame + textFactor * 15))
-            {
-                painter->print("Bloodstains are part", 44, textHeight + 32, 1);
-                painter->print("of the exhibition", 57, textHeight + 48, 1); // 15
-            }
-            else if (t > (textStartFrame + textFactor * 15) && t <= (textStartFrame + textFactor * 16))
+            else if (t > (textStartFrame + textFactor * 15) && t <= (textStartFrame + textFactor * 15))
             {
                 painter->print("Funland Amusement Park", 27, textHeight + 32, 1);
-                painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); // 16
+                painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); // 15
             }
-            else if (t > (textStartFrame + textFactor * 16) && t <= (textStartFrame + textFactor * 17))
+            else if (t > (textStartFrame + textFactor * 16) && t <= (textStartFrame + textFactor * 16))
             {
                 painter->print("Rides no longer operational", 16, textHeight + 32, 1);
-                painter->print("Screams simulated", 51, textHeight + 48, 1); // 17
+                painter->print("Screams simulated", 51, textHeight + 48, 1); // 16
             }
-            else if (t > (textStartFrame + textFactor * 17) && t <= (textStartFrame + textFactor * 18))
+            else if (t > (textStartFrame + textFactor * 17) && t <= (textStartFrame + textFactor * 17))
             {
                 painter->print("Froggy", 95, textHeight + 32, 1);
-                painter->print("Convenience Store", 54, textHeight + 48, 1); // 18
+                painter->print("Convenience Store", 54, textHeight + 48, 1); // 17
             }
-            else if (t > (textStartFrame + textFactor * 18) && t <= (textStartFrame + textFactor * 19))
+            else if (t > (textStartFrame + textFactor * 18) && t <= (textStartFrame + textFactor * 18))
             {
                 painter->print("Shop, restaurant,", 54, textHeight + 32, 1);
-                painter->print("pharmacy, post office...", 24, textHeight + 48, 1); // 19
+                painter->print("pharmacy, post office...", 24, textHeight + 48, 1); // 18
             }
-            else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 20))
+            else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 19))
             {
-                painter->print("...and maybe a gas station", 17, textHeight + 32, 1); // 20
+                painter->print("...and maybe a gas station", 17, textHeight + 32, 1); // 19
             }
-            else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 21))
+            else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 20))
             {
-                painter->print("Relax like a Human", 48, textHeight + 32, 1); // 21
+                painter->print("Relax like a Human", 48, textHeight + 32, 1); // 20
             }
-            else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 22))
+            else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 21))
             {
                 painter->print("The bath is gone...", 45, textHeight + 32, 1);
-                painter->print("but the duck remains", 41, textHeight + 48, 1); // 22
+                painter->print("but the duck remains", 41, textHeight + 48, 1); // 21
             }
-            else if (t > (textStartFrame + textFactor * 22) && t <= (textStartFrame + textFactor * 23))
+            else if (t > (textStartFrame + textFactor * 22) && t <= (textStartFrame + textFactor * 22))
             {
-                painter->print("Water not included", 50, textHeight + 32, 1); // 23
+                painter->print("Water not included", 50, textHeight + 32, 1); // 22
             }
         }
         else
@@ -462,21 +457,19 @@ int main()
         // painter->print("Now permanently open", 37, textHeight + 48, 1); //13
         // painter->print("Bloodstains are part", 44, textHeight + 32, 1);
         // painter->print("of the exhibition", 57, textHeight + 48, 1); //14
-        // painter->print("Bloodstains are part", 44, textHeight + 32, 1);
-        // painter->print("of the exhibition", 57, textHeight + 48, 1); //15
         // painter->print("Funland Amusement Park", 27, textHeight + 32, 1);
-        // painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); //16
+        // painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); //15
         // painter->print("Rides no longer operational", 16, textHeight + 32, 1);
-        // painter->print("Screams simulated", 51, textHeight + 48, 1); //17
+        // painter->print("Screams simulated", 51, textHeight + 48, 1); //16
         // painter->print("Froggy", 95, textHeight + 32, 1);
-        // painter->print("Convenience Store", 54, textHeight + 48, 1); //18
+        // painter->print("Convenience Store", 54, textHeight + 48, 1); //17
         // painter->print("Shop, restaurant,", 54, textHeight + 32, 1);
-        // painter->print("pharmacy, post office...", 24, textHeight + 48, 1); //19
-        // painter->print("...and maybe a gas station", 17, textHeight + 32, 1); //20
-        // painter->print("Relax like a Human", 48, textHeight + 32, 1); //21
+        // painter->print("pharmacy, post office...", 24, textHeight + 48, 1); //18
+        // painter->print("...and maybe a gas station", 17, textHeight + 32, 1); //19
+        // painter->print("Relax like a Human", 48, textHeight + 32, 1); //20
         // painter->print("The bath is gone...", 45, textHeight + 32, 1);
-        // painter->print("but the duck remains", 41, textHeight + 48, 1); //22
-        // painter->print("Water not included", 50, textHeight + 32, 1); //23
+        // painter->print("but the duck remains", 41, textHeight + 48, 1); //21
+        // painter->print("Water not included", 50, textHeight + 32, 1); //22
         // painter->print("Authentic human trash", 37, textHeight + 32, 1);
         // painter->print("sorry, souvenirs!", 53, textHeight + 32, 1);
         // painter->print("Windows95", 81, textHeight + 32, 1);
