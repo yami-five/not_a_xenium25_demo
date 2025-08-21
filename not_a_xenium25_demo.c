@@ -146,7 +146,7 @@ int main()
     const Scroller *vault = get_scroller_by_index(3);
     const Scroller *park = get_scroller_by_index(4);
     const Scroller *froggy = get_scroller_by_index(5);
-    const Scroller *duck = get_scroller_by_index(0);
+    const Scroller *bath = get_scroller_by_index(6);
 
     while (1)
     {
@@ -429,19 +429,19 @@ int main()
             }
             else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 20))
             {
-                painter->draw_scroller(duck, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19+ 5, t);
                 painter->fade(1, textStartFrame + textFactor * 19 + 1, t, 120, 110, 100, 100);
                 painter->print("Relax like a Human", 48, textHeight + 32, 1); // 20
             }
             else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 21))
             {
-                painter->draw_scroller(duck, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19+ 5, t);
                 painter->print("The bath is gone...", 45, textHeight + 32, 1);
-                painter->print("but the duck remains", 41, textHeight + 48, 1); // 21
+                painter->print("but the bath remains", 41, textHeight + 48, 1); // 21
             }
             else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 22))
             {
-                painter->draw_scroller(duck, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19+ 5, t);
                 painter->fade(0, textStartFrame + textFactor * 22 - 7, t, 120, 110, 100, 100);
                 painter->print("Water not included", 50, textHeight + 32, 1); // 22
             }
@@ -505,7 +505,7 @@ int main()
         // painter->print("...and maybe a gas station", 17, textHeight + 32, 1); //19
         // painter->print("Relax like a Human", 48, textHeight + 32, 1); //20
         // painter->print("The bath is gone...", 45, textHeight + 32, 1);
-        // painter->print("but the duck remains", 41, textHeight + 48, 1); //21
+        // painter->print("but the bath remains", 41, textHeight + 48, 1); //21
         // painter->print("Water not included", 50, textHeight + 32, 1); //22
         // painter->print("Authentic human trash", 37, textHeight + 32, 1);
         // painter->print("sorry, souvenirs!", 53, textHeight + 32, 1);
