@@ -1,7 +1,7 @@
 from PIL import Image
 from pathlib import Path
-file_name="cassette_texture"
-image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/{file_name}.bmp")
+file_name="atari_texture"
+image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/models/{file_name}.bmp")
 
 def rgb_to_rgb565(r, g, b):
     return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
@@ -28,6 +28,6 @@ for y in range (img_y):
         converted_img+=f"{str(rgb565)},"
         # converted_img=high_byte+","+low_byte+","+converted_img
 
-f = open(f"{Path(__file__).resolve().parent.name}/../assets/img_converted.txt", "w", encoding="utf-8")
+f = open(f"{Path(__file__).resolve().parent.name}/img_converted.txt", "w", encoding="utf-8")
 f.write(f"static const uint16_t {file_name}[{img_x*img_y}]={{{converted_img[:-1]}}};") 
 f.close()

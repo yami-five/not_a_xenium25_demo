@@ -4,7 +4,8 @@ vt=[]
 uv=[]
 normals=[]
 vn=[]
-with open("assets/cassette.obj") as f:
+fileName="atari"
+with open(f"assets/models/{fileName}.obj") as f:
     while line:=f.readline():
         if line[0:2]=='v ':
             vertex=line.split()
@@ -29,33 +30,33 @@ with open("assets/cassette.obj") as f:
         elif line[0:2]=='vt':
             vt.append(f'{round(float(line.split()[1]),2)}f')
             vt.append(f'{round(float(line.split()[2]),2)}f')
-modelName=f.name.replace('assets/','').replace('.obj','')
-print(modelName)
+print(fileName)
 text=""
 for x in vertices:
     text+=f'{x},'
-print(f"const float {modelName}Vertices[{str(len(vertices))}]={{{str(text[:-1])}}};")
-print(f"vertices={str(len(vertices)//3)}")
+print(f"const float {fileName}Vertices[{str(len(vertices))}]={{{str(text[:-1])}}};")
 text=""
 for x in faces:
     text+=f'{x},'
-print(f"const uint16_t {modelName}Faces[{str(len(faces))}] = {{{str(text[:-1])}}};")
-print(f"faces={str(len(faces)//3)}")
+print(f"const uint16_t {fileName}Faces[{str(len(faces))}] = {{{str(text[:-1])}}};")
 text=""
 for x in vt:
     text+=f'{x},'
-print(f"const float {modelName}TextureCoords[{str(len(vt))}] = {{{str(text[:-1])}}};")
-print(f"vtn={str(len(vt)//2)}")
+print(f"const float {fileName}TextureCoords[{str(len(vt))}] = {{{str(text[:-1])}}};")
 text=""
 for x in uv:
     text+=f'{x},'
-print(f"const uint16_t {modelName}UV[{str(len(faces))}] = {{{str(text[:-1])}}};")
+print(f"const uint16_t {fileName}UV[{str(len(faces))}] = {{{str(text[:-1])}}};")
 text=""
 for x in vn:
     text+=f'{x},'
-print(f"const float {modelName}VN[{str(len(vn))}] = {{{str(text[:-1])}}};")
-print(f'nn={str(len(vn)//3)}')
+print(f"const float {fileName}VN[{str(len(vn))}] = {{{str(text[:-1])}}};")
 text=""
 for x in normals:
     text+=f'{x},'
-print(f"const uint16_t {modelName}Normals[{str(len(faces))}] = {{{str(text[:-1])}}};")
+print(f"const uint16_t {fileName}Normals[{str(len(faces))}] = {{{str(text[:-1])}}};")
+
+print(f"vertices={str(len(vertices)//3)}")
+print(f"faces={str(len(faces)//3)}")
+print(f"vtn={str(len(vt)//2)}")
+print(f'nn={str(len(vn)//3)}')
