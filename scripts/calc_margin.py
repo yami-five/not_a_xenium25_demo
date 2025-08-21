@@ -1,6 +1,6 @@
 width=240
 scale=1
-text="No wonder they are extinct"
+text="number 0, never number 1!"
 characters={
     " ":8,
     "!":8,

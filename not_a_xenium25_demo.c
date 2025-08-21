@@ -462,10 +462,10 @@ int main()
                 painter->print("Water not included", 50, textHeight + 32, 1); // 22
             }
         }
-        else if (t > 1280)
+        else if (t > 1280 && t <= 2000)
         {
             uint32_t start_frame = 1280;
-            uint16_t textFactor = 35;
+            uint16_t textFactor = 60;
             painter->override_buffer(0, 320);
             float qt = t * 0.2f;
             if (t > start_frame && t <= (start_frame + textFactor * 1))
@@ -516,39 +516,39 @@ int main()
                 painter->print("When power failed,", 46, textHeight + 32, 1);
                 painter->print("they tried coal", 64, textHeight + 48, 1);
             }
-            else if (t > (start_frame + textFactor * 6) && t <= (start_frame + textFactor * 7))
+            else if (t > (start_frame + textFactor * 7) && t <= (start_frame + textFactor * 8))
             {
                 modify_transformation(pizza->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
                 renderer->draw_model(pizza, pointLight_pizza, camera);
                 painter->print("Pizza slice", 78, textHeight + 32, 1);
             }
-            else if (t > (start_frame + textFactor * 7) && t <= (start_frame + textFactor * 8))
+            else if (t > (start_frame + textFactor * 8) && t <= (start_frame + textFactor * 9))
             {
                 modify_transformation(pizza->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
                 renderer->draw_model(pizza, pointLight_pizza, camera);
                 painter->print("Humans called it 'gourmet'", 21, textHeight + 32, 1);
                 painter->print("We call it 'biohazard'", 39, textHeight + 48, 1);
             }
-            else if (t > (start_frame + textFactor * 8) && t <= (start_frame + textFactor * 9))
+            else if (t > (start_frame + textFactor * 9) && t <= (start_frame + textFactor * 10))
             {
                 modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
                 renderer->draw_model(mug, pointLight_pizza, camera);
                 painter->print("Mysterious Human Vessel", 26, textHeight + 32, 1);
             }
-            else if (t > (start_frame + textFactor * 9) && t <= (start_frame + textFactor * 10))
+            else if (t > (start_frame + textFactor * 10) && t <= (start_frame + textFactor * 11))
             {
                 modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
                 renderer->draw_model(mug, pointLight_pizza, camera);
                 painter->print("Purpose: unknown", 53, textHeight + 32, 1);
                 painter->print("Probably sacred", 60, textHeight + 48, 1);
             }
-            else if (t > (start_frame + textFactor * 10) && t <= (start_frame + textFactor * 11))
+            else if (t > (start_frame + textFactor * 11) && t <= (start_frame + textFactor * 12))
             {
                 modify_transformation(duck->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
                 renderer->draw_model(duck, pointLight_pizza, camera);
                 painter->print("Rubber Duck", 75, textHeight + 32, 1);
             }
-            else if (t > (start_frame + textFactor * 11) && t <= (start_frame + textFactor * 12))
+            else if (t > (start_frame + textFactor * 12) && t <= (start_frame + textFactor * 13))
             {
                 modify_transformation(duck->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
                 renderer->draw_model(duck, pointLight_pizza, camera);
@@ -556,15 +556,32 @@ int main()
                 painter->print("No wonder they are extinct", 17, textHeight + 48, 1);
             }
         }
-        else
+        else if (t > 2000 && t < 2200)
         {
             float qt = t * 0.2f;
-            // renderer->draw_model(skybox, pointLight_coal, camera);
+            uint32_t start_frame = 2000;
+            uint16_t textFactor = 60;
+            painter->override_buffer(0, 320);
             animate_bones(talking, 2, t, false);
-            update_world_matrices(mascot);
-            modify_transformation(mug->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
-            // renderer->draw_model(mug, pointLight_coal, camera);
             painter->draw_puppet(mascot);
+            if (t > (start_frame + textFactor * 0) && t <= (start_frame + textFactor * 1))
+            {
+                update_world_matrices(mascot);
+                painter->print("Super promo: three worlds", 18, textHeight + 32, 1);
+                painter->print("for the price of one!", 38, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 1) && t <= (start_frame + textFactor * 2))
+            {
+                update_world_matrices(mascot);
+                painter->print("Bring a fellow robot and get a free", 11, textHeight + 32, 1);
+                painter->print("a free Barbecue Hunt voucher!", 5, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 2) && t <= (start_frame + textFactor * 3))
+            {
+                update_world_matrices(mascot);
+                painter->print("CorspeTravel - always", 35, textHeight + 32, 1);
+                painter->print("number 0, never number 1!", 16, textHeight + 48, 1);
+            }
         }
 #else
         float qt = t * 0.2f;
@@ -592,5 +609,6 @@ void core1_main()
     hardware_core->init_audio_i2s();
     fileReader = get_fileReader();
     fileReader->init_fileReader(hardware_core);
-    fileReader->play_wave_file("kostek_5.wav");
+    fileReader->play_wave_file("kostek.wav");
+    fileReader->play_wave_file("kosteke.wav");
 }
