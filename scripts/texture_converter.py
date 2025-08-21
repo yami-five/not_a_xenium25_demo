@@ -1,6 +1,6 @@
 from PIL import Image
 from pathlib import Path
-file_name="atari_texture"
+file_name="win95_texture"
 image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/models/{file_name}.bmp")
 
 def rgb_to_rgb565(r, g, b):

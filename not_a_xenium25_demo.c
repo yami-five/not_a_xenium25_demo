@@ -24,7 +24,7 @@
 #include "puppet.h"
 
 #define PICO_MODE 0
-#define TEST 1
+#define TEST 0
 
 static const IHardware *hardware_core;
 static const IDisplay *display;
@@ -57,16 +57,27 @@ int main()
     renderer->init_renderer(hardware_core, painter);
 
     meshFactory = get_meshFactory();
-    // Mesh *cube = meshFactory->create_colored_mesh(0xff00, 0);
+    // Mesh *mug = meshFactory->create_colored_mesh(0xff00, 0);
 #if TEST == 0
-    Mesh *cube = meshFactory->create_textured_mesh(3, 3);
-    cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
+    Mesh *mug = meshFactory->create_textured_mesh(3, 3);
+    mug->transformations = add_transformation(mug->transformations, &mug->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
+
+    Mesh *casette = meshFactory->create_textured_mesh(5, 5);
+    Mesh *atari = meshFactory->create_textured_mesh(6, 6);
+    Mesh *pizza = meshFactory->create_textured_mesh(7, 7);
+    Mesh *win95 = meshFactory->create_textured_mesh(8, 8);
+    Mesh *duck = meshFactory->create_textured_mesh(9, 9);
 #else
-    Mesh *cube = meshFactory->create_textured_mesh(6, 6);
-    cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 0.0f, 5.0f, 0.0f, 0);
-    cube->transformations = add_transformation(cube->transformations, &cube->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
+    // Mesh *mug = meshFactory->create_textured_mesh(6, 6);
+    // mug->transformations = add_transformation(mug->transformations, &mug->transformationsNum, 0, 0.0f, 5.0f, 0.0f, 0);
+    // mug->transformations = add_transformation(mug->transformations, &mug->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
+
+    Mesh *mug = meshFactory->create_textured_mesh(9, 9);
+    mug->transformations = add_transformation(mug->transformations, &mug->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
 #endif
     lightFactory = get_lightFactory();
+    PointLight *pointLight = lightFactory->create_point_light(0.0f, 0.0f, 3.0f, 1.0f, 0xffff);
+    PointLight *pointLight_pizza = lightFactory->create_point_light(-12.0f, 0.0f, 10.0f, 1.2f, 0xffff);
     PointLight *pointLight_coal = lightFactory->create_point_light(12.0f, 0.0f, 10.0f, 1.2f, 0xffff);
 
     cameraFactory = get_cameraFactory();
@@ -227,7 +238,7 @@ int main()
             {
                 float qt = t * 0.2f;
                 modify_transformation(earth->transformations, -qt, 10.0f, 0.0f, 0.0f, 1);
-                renderer->draw_model(earth, pointLight_coal, camera);
+                renderer->draw_model(earth, pointLight, camera);
             }
             if (t > 325 && spriteHeight < 320)
             {
@@ -277,7 +288,7 @@ int main()
                 painter->clear_buffer(0);
             }
         }
-        else if (t >= 510)
+        else if (t >= 510 && t <= 16460)
         {
             uint16_t startFrame = 510;
             uint16_t textStartFrame = startFrame + 215;
@@ -343,108 +354,173 @@ int main()
             }
             else if (t > (textStartFrame + textFactor * 6) && t <= (textStartFrame + textFactor * 7))
             {
-                painter->draw_scroller(broken_earth, 120, 110, textStartFrame + textFactor * 6+ 5, t);
+                painter->draw_scroller(broken_earth, 120, 110, textStartFrame + textFactor * 6 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 6 + 1, t, 120, 110, 100, 100);
                 painter->print("Visit places where", 49, textHeight + 32, 1);
                 painter->print("HUMANS once lived!", 45, textHeight + 48, 1); // 7
             }
             else if (t > (textStartFrame + textFactor * 7) && t <= (textStartFrame + textFactor * 8))
             {
-                painter->draw_scroller(broken_earth, 120, 110, textStartFrame + textFactor * 6+ 5, t);
+                painter->draw_scroller(broken_earth, 120, 110, textStartFrame + textFactor * 6 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 8 - 7, t, 120, 110, 100, 100);
                 painter->print("Yes, HUMANS!", 66, textHeight + 32, 1);
                 painter->print("Those legendary meat jellies!", 6, textHeight + 48, 1); // 8
             }
             else if (t > (textStartFrame + textFactor * 8) && t <= (textStartFrame + textFactor * 9))
             {
-                painter->draw_scroller(room, 120, 110, textStartFrame + textFactor * 8+ 5, t);
+                painter->draw_scroller(room, 120, 110, textStartFrame + textFactor * 8 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 8 + 1, t, 120, 110, 100, 100);
                 painter->print("Luxury Human Interior!", 34, textHeight + 32, 1); // 9
             }
             else if (t > (textStartFrame + textFactor * 9) && t <= (textStartFrame + textFactor * 10))
             {
-                painter->draw_scroller(room, 120, 110, textStartFrame + textFactor * 8+ 5, t);
+                painter->draw_scroller(room, 120, 110, textStartFrame + textFactor * 8 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 10 - 7, t, 120, 110, 100, 100);
                 painter->print("Because nothing says comfort", 9, textHeight + 32, 1);
                 painter->print("like concrete and broken glass", 4, textHeight + 48, 1); // 10
             }
             else if (t > (textStartFrame + textFactor * 10) && t <= (textStartFrame + textFactor * 11))
             {
-                painter->draw_scroller(beach, 120, 110, textStartFrame + textFactor * 10+ 5, t);
+                painter->draw_scroller(beach, 120, 110, textStartFrame + textFactor * 10 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 10 + 1, t, 120, 110, 100, 100);
                 painter->print("Behold the Human Arks!", 31, textHeight + 32, 1); // 11
             }
             else if (t > (textStartFrame + textFactor * 11) && t <= (textStartFrame + textFactor * 12))
             {
-                painter->draw_scroller(beach, 120, 110, textStartFrame + textFactor * 10+ 5, t);
+                painter->draw_scroller(beach, 120, 110, textStartFrame + textFactor * 10 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 12 - 7, t, 120, 110, 100, 100);
                 painter->print("Built to save millions...", 26, textHeight + 32, 1);
                 painter->print("...sank before saving one", 21, textHeight + 48, 1); // 12
             }
             else if (t > (textStartFrame + textFactor * 12) && t <= (textStartFrame + textFactor * 13))
             {
-                painter->draw_scroller(vault, 120, 110, textStartFrame + textFactor * 12+ 5, t);
+                painter->draw_scroller(vault, 120, 110, textStartFrame + textFactor * 12 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 12 + 1, t, 120, 110, 100, 100);
                 painter->print("The Ultimate Vault!", 45, textHeight + 32, 1);
                 painter->print("Now permanently open", 37, textHeight + 48, 1); // 13
             }
             else if (t > (textStartFrame + textFactor * 13) && t <= (textStartFrame + textFactor * 14))
             {
-                painter->draw_scroller(vault, 120, 110, textStartFrame + textFactor * 12+ 5, t);
+                painter->draw_scroller(vault, 120, 110, textStartFrame + textFactor * 12 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 14 - 7, t, 120, 110, 100, 100);
                 painter->print("Bloodstains are part", 44, textHeight + 32, 1);
                 painter->print("of the exhibition", 57, textHeight + 48, 1); // 14
             }
             else if (t > (textStartFrame + textFactor * 14) && t <= (textStartFrame + textFactor * 15))
             {
-                painter->draw_scroller(park, 120, 110, textStartFrame + textFactor * 14+ 5, t);
+                painter->draw_scroller(park, 120, 110, textStartFrame + textFactor * 14 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 14 + 1, t, 120, 110, 100, 100);
                 painter->print("Funland Amusement Park", 27, textHeight + 32, 1);
                 painter->print("Where laughter rusts forever", 9, textHeight + 48, 1); // 15
             }
             else if (t > (textStartFrame + textFactor * 15) && t <= (textStartFrame + textFactor * 16))
             {
-                painter->draw_scroller(park, 120, 110, textStartFrame + textFactor * 14+ 5, t);
+                painter->draw_scroller(park, 120, 110, textStartFrame + textFactor * 14 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 16 - 7, t, 120, 110, 100, 100);
                 painter->print("Rides no longer operational", 16, textHeight + 32, 1);
                 painter->print("Screams simulated", 51, textHeight + 48, 1); // 16
             }
             else if (t > (textStartFrame + textFactor * 16) && t <= (textStartFrame + textFactor * 17))
             {
-                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16+ 5, t);
+                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 14 + 1, t, 120, 110, 100, 100);
                 painter->print("Froggy", 95, textHeight + 32, 1);
                 painter->print("Convenience Store", 54, textHeight + 48, 1); // 17
             }
             else if (t > (textStartFrame + textFactor * 17) && t <= (textStartFrame + textFactor * 18))
             {
-                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16+ 5, t);
+                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16 + 5, t);
                 painter->print("Shop, restaurant,", 54, textHeight + 32, 1);
                 painter->print("pharmacy, post office...", 24, textHeight + 48, 1); // 18
             }
             else if (t > (textStartFrame + textFactor * 18) && t <= (textStartFrame + textFactor * 19))
             {
-                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16+ 5, t);
+                painter->draw_scroller(froggy, 120, 110, textStartFrame + textFactor * 16 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 19 - 7, t, 120, 110, 100, 100);
                 painter->print("...and maybe a gas station", 17, textHeight + 32, 1); // 19
             }
             else if (t > (textStartFrame + textFactor * 19) && t <= (textStartFrame + textFactor * 20))
             {
-                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19 + 5, t);
                 painter->fade(1, textStartFrame + textFactor * 19 + 1, t, 120, 110, 100, 100);
                 painter->print("Relax like a Human", 48, textHeight + 32, 1); // 20
             }
             else if (t > (textStartFrame + textFactor * 20) && t <= (textStartFrame + textFactor * 21))
             {
-                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19 + 5, t);
                 painter->print("The bath is gone...", 45, textHeight + 32, 1);
                 painter->print("but the bath remains", 41, textHeight + 48, 1); // 21
             }
             else if (t > (textStartFrame + textFactor * 21) && t <= (textStartFrame + textFactor * 22))
             {
-                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19+ 5, t);
+                painter->draw_scroller(bath, 120, 110, textStartFrame + textFactor * 19 + 5, t);
                 painter->fade(0, textStartFrame + textFactor * 22 - 7, t, 120, 110, 100, 100);
                 painter->print("Water not included", 50, textHeight + 32, 1); // 22
+            }
+        }
+        else if (t > 16460)
+        {
+            uint32_t start_frame = 16460;
+            uint16_t textFactor = 35;
+            if (t > start_frame && t <= (start_frame + textFactor * 1))
+            {
+                painter->print("Authentic human trash", 37, textHeight + 32, 1);
+                painter->print("sorry, souvenirs!", 53, textHeight + 32, 1);
+            }
+            else if (t > (start_frame + textFactor * 1) && t <= (start_frame + textFactor * 2))
+            {
+                painter->print("Windows95", 81, textHeight + 32, 1);
+                painter->print("A veeery original edition", 25, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 2) && t <= (start_frame + textFactor * 3))
+            {
+                painter->print("Complete with", 68, textHeight + 32, 1);
+                painter->print("handwritten CD-KEY!", 43, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 3) && t <= (start_frame + textFactor * 4))
+            {
+                painter->print("Magnetic Tape", 67, textHeight + 32, 1);
+            }
+            else if (t > (start_frame + textFactor * 4) && t <= (start_frame + textFactor * 5))
+            {
+                painter->print("Storing data and fungi", 36, textHeight + 32, 1);
+                painter->print("since January 1st, 1970!", 27, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 5) && t <= (start_frame + textFactor * 6))
+            {
+                painter->print("Bag of coal", 77, textHeight + 32, 1);
+            }
+            else if (t > (start_frame + textFactor * 6) && t <= (start_frame + textFactor * 7))
+            {
+                painter->print("When power failed,", 46, textHeight + 32, 1);
+                painter->print("they tried coal", 64, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 6) && t <= (start_frame + textFactor * 7))
+            {
+                painter->print("Pizza slice", 78, textHeight + 32, 1);
+            }
+            else if (t > (start_frame + textFactor * 7) && t <= (start_frame + textFactor * 8))
+            {
+                painter->print("Humans called it 'gourmet'", 21, textHeight + 32, 1);
+                painter->print("We call it 'biohazard'", 39, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 8) && t <= (start_frame + textFactor * 9))
+            {
+                painter->print("Mysterious Human Vessel", 26, textHeight + 32, 1);
+            }
+            else if (t > (start_frame + textFactor * 9) && t <= (start_frame + textFactor * 10))
+            {
+                painter->print("Purpose: unknown", 53, textHeight + 32, 1);
+                painter->print("Probably sacred", 60, textHeight + 48, 1);
+            }
+            else if (t > (start_frame + textFactor * 10) && t <= (start_frame + textFactor * 11))
+            {
+                painter->print("Rubber Duck", 75, textHeight + 32, 1);
+            }
+            else if (t > (start_frame + textFactor * 11) && t <= (start_frame + textFactor * 12))
+            {
+                painter->print("Humans debugged with this", 20, textHeight + 32, 1);
+                painter->print("No wonder they are extinct", 17, textHeight + 48, 1);
             }
         }
         else
@@ -453,14 +529,18 @@ int main()
             // renderer->draw_model(skybox, pointLight_coal, camera);
             animate_bones(talking, 2, t, false);
             update_world_matrices(mascot);
-            modify_transformation(cube->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
-            // renderer->draw_model(cube, pointLight_coal, camera);
+            modify_transformation(mug->transformations, qt, 10.0f, 10.0f, 10.0f, 0);
+            // renderer->draw_model(mug, pointLight_coal, camera);
             painter->draw_puppet(mascot);
         }
 #else
         float qt = t * 0.2f;
-        modify_transformation(cube->transformations, -qt, 10.0f, 0.0f, 0.0f, 1);
-        renderer->draw_model(cube, pointLight_coal, camera);
+        modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+        renderer->draw_model(mug, pointLight_pizza, camera);
+
+        // coal
+        //  modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 1);
+        //  renderer->draw_model(mug, pointLight_coal, camera);
 #endif
         // painter->apply_post_process_effect(0);
         painter->draw_buffer();
