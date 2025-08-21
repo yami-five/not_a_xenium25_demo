@@ -4,7 +4,7 @@ vt=[]
 uv=[]
 normals=[]
 vn=[]
-fileName="duck"
+fileName="mug"
 with open(f"assets/models/{fileName}.obj") as f:
     while line:=f.readline():
         if line[0:2]=='v ':

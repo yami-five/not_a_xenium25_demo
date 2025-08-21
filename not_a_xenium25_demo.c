@@ -61,12 +61,16 @@ int main()
 #if TEST == 0
     Mesh *mug = meshFactory->create_textured_mesh(3, 3);
     mug->transformations = add_transformation(mug->transformations, &mug->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
-
     Mesh *casette = meshFactory->create_textured_mesh(5, 5);
+    casette->transformations = add_transformation(casette->transformations, &casette->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
     Mesh *atari = meshFactory->create_textured_mesh(6, 6);
+    atari->transformations = add_transformation(atari->transformations, &atari->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
     Mesh *pizza = meshFactory->create_textured_mesh(7, 7);
+    pizza->transformations = add_transformation(pizza->transformations, &pizza->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
     Mesh *win95 = meshFactory->create_textured_mesh(8, 8);
+    win95->transformations = add_transformation(win95->transformations, &win95->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
     Mesh *duck = meshFactory->create_textured_mesh(9, 9);
+    duck->transformations = add_transformation(duck->transformations, &duck->transformationsNum, 0, 10.0f, 10.0f, 10.0f, 0);
 #else
     // Mesh *mug = meshFactory->create_textured_mesh(6, 6);
     // mug->transformations = add_transformation(mug->transformations, &mug->transformationsNum, 0, 0.0f, 5.0f, 0.0f, 0);
@@ -288,7 +292,7 @@ int main()
                 painter->clear_buffer(0);
             }
         }
-        else if (t >= 510 && t <= 16460)
+        else if (t >= 510 && t <= 1280)
         {
             uint16_t startFrame = 510;
             uint16_t textStartFrame = startFrame + 215;
@@ -458,67 +462,96 @@ int main()
                 painter->print("Water not included", 50, textHeight + 32, 1); // 22
             }
         }
-        else if (t > 16460)
+        else if (t > 1280)
         {
-            uint32_t start_frame = 16460;
+            uint32_t start_frame = 1280;
             uint16_t textFactor = 35;
+            painter->override_buffer(0, 320);
+            float qt = t * 0.2f;
             if (t > start_frame && t <= (start_frame + textFactor * 1))
             {
+                animate_bones(talking, 2, t, true);
+                update_world_matrices(mascot);
+                painter->draw_puppet(mascot);
                 painter->print("Authentic human trash", 37, textHeight + 32, 1);
-                painter->print("sorry, souvenirs!", 53, textHeight + 32, 1);
+                painter->print("sorry, souvenirs!", 53, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 1) && t <= (start_frame + textFactor * 2))
             {
+                modify_transformation(win95->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(win95, pointLight_pizza, camera);
                 painter->print("Windows95", 81, textHeight + 32, 1);
                 painter->print("A veeery original edition", 25, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 2) && t <= (start_frame + textFactor * 3))
             {
+                modify_transformation(win95->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(win95, pointLight_pizza, camera);
                 painter->print("Complete with", 68, textHeight + 32, 1);
                 painter->print("handwritten CD-KEY!", 43, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 3) && t <= (start_frame + textFactor * 4))
             {
+                modify_transformation(casette->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(casette, pointLight_pizza, camera);
                 painter->print("Magnetic Tape", 67, textHeight + 32, 1);
             }
             else if (t > (start_frame + textFactor * 4) && t <= (start_frame + textFactor * 5))
             {
+                modify_transformation(casette->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(casette, pointLight_pizza, camera);
                 painter->print("Storing data and fungi", 36, textHeight + 32, 1);
                 painter->print("since January 1st, 1970!", 27, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 5) && t <= (start_frame + textFactor * 6))
             {
+                modify_transformation(atari->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(atari, pointLight_pizza, camera);
                 painter->print("Bag of coal", 77, textHeight + 32, 1);
             }
             else if (t > (start_frame + textFactor * 6) && t <= (start_frame + textFactor * 7))
             {
+                modify_transformation(atari->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(atari, pointLight_pizza, camera);
                 painter->print("When power failed,", 46, textHeight + 32, 1);
                 painter->print("they tried coal", 64, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 6) && t <= (start_frame + textFactor * 7))
             {
+                modify_transformation(pizza->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(pizza, pointLight_pizza, camera);
                 painter->print("Pizza slice", 78, textHeight + 32, 1);
             }
             else if (t > (start_frame + textFactor * 7) && t <= (start_frame + textFactor * 8))
             {
+                modify_transformation(pizza->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(pizza, pointLight_pizza, camera);
                 painter->print("Humans called it 'gourmet'", 21, textHeight + 32, 1);
                 painter->print("We call it 'biohazard'", 39, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 8) && t <= (start_frame + textFactor * 9))
             {
+                modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(mug, pointLight_pizza, camera);
                 painter->print("Mysterious Human Vessel", 26, textHeight + 32, 1);
             }
             else if (t > (start_frame + textFactor * 9) && t <= (start_frame + textFactor * 10))
             {
+                modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(mug, pointLight_pizza, camera);
                 painter->print("Purpose: unknown", 53, textHeight + 32, 1);
                 painter->print("Probably sacred", 60, textHeight + 48, 1);
             }
             else if (t > (start_frame + textFactor * 10) && t <= (start_frame + textFactor * 11))
             {
+                modify_transformation(duck->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(duck, pointLight_pizza, camera);
                 painter->print("Rubber Duck", 75, textHeight + 32, 1);
             }
             else if (t > (start_frame + textFactor * 11) && t <= (start_frame + textFactor * 12))
             {
+                modify_transformation(duck->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+                renderer->draw_model(duck, pointLight_pizza, camera);
                 painter->print("Humans debugged with this", 20, textHeight + 32, 1);
                 painter->print("No wonder they are extinct", 17, textHeight + 48, 1);
             }
