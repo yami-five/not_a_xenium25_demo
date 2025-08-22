@@ -164,6 +164,9 @@ int main()
     const Scroller *froggy = get_scroller_by_index(5);
     const Scroller *bath = get_scroller_by_index(6);
 
+    const Sprite *promo1 = get_sprite(31);
+    const Sprite *promo2 = get_sprite(32);
+
     while (1)
     {
 #if TEST == 0
@@ -564,17 +567,20 @@ int main()
             painter->override_buffer(0, 320);
             animate_bones(talking, 2, t, false);
             painter->draw_puppet(mascot);
+            int32_t spriteRotPattern[10] = {2140, 2140, 2140, 2140, 2140, 1075, 1075, 1075, 1075, 1075};
             if (t > (start_frame + textFactor * 0) && t <= (start_frame + textFactor * 1))
             {
                 update_world_matrices(mascot);
                 painter->print("Super promo: three worlds", 18, textHeight + 32, 1);
                 painter->print("for the price of one!", 38, textHeight + 48, 1);
+                painter->draw_sprite(promo1, 112, 30, spriteRotPattern[t % 10], 2);
             }
             else if (t > (start_frame + textFactor * 1) && t <= (start_frame + textFactor * 2))
             {
                 update_world_matrices(mascot);
                 painter->print("Bring a fellow robot and get a free", 11, textHeight + 32, 1);
                 painter->print("a free Barbecue Hunt voucher!", 5, textHeight + 48, 1);
+                painter->draw_sprite(promo2, 112, 30, spriteRotPattern[t % 10], 2);
             }
             else if (t > (start_frame + textFactor * 2) && t <= (start_frame + textFactor * 3))
             {
@@ -681,13 +687,15 @@ int main()
             painter->print("UMLAUT DESIGN", 63.0, textHeight + 1456, 1);
             painter->print("UNITED FORCE", 69.0, textHeight + 1472, 1);
             painter->print("WHELPZ", 92.0, textHeight + 1488, 1);
-            textHeight=textHeight-2;
+            textHeight = textHeight - 2;
         }
 #else
-        float qt = t * 0.2f;
-        modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
-        renderer->draw_model(mug, pointLight_pizza, camera);
+        // float qt = t * 0.2f;
+        // modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 0);
+        // renderer->draw_model(mug, pointLight_pizza, camera);
 
+        int32_t spriteRotPattern[10] = {2140, 2140, 2140, 2140, 2140, 1075, 1075, 1075, 1075, 1075};
+        painter->draw_sprite(promo1, 112, 30, spriteRotPattern[t % 10], 2);
         // coal
         //  modify_transformation(mug->transformations, -qt, 10.0f, 0.0f, 0.0f, 1);
         //  renderer->draw_model(mug, pointLight_coal, camera);

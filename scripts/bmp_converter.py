@@ -1,7 +1,7 @@
 from PIL import Image
 from pathlib import Path
-sprite_name="park2"
-image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/scrollers/{sprite_name}.bmp")
+sprite_name="promo1"
+image = Image.open(fr"{Path(__file__).resolve().parent.name}/../assets/{sprite_name}.bmp")
 
 def rgb_to_rgb565(r, g, b):
     return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
