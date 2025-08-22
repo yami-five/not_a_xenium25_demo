@@ -556,7 +556,7 @@ int main()
                 painter->print("No wonder they are extinct", 17, textHeight + 48, 1);
             }
         }
-        else if (t > 2000 && t < 2200)
+        else if (t > 2000 && t <= 2200)
         {
             float qt = t * 0.2f;
             uint32_t start_frame = 2000;
@@ -582,6 +582,106 @@ int main()
                 painter->print("CorspeTravel - always", 35, textHeight + 32, 1);
                 painter->print("number 0, never number 1!", 16, textHeight + 48, 1);
             }
+        }
+        else
+        {
+            if (t < 2210)
+                textHeight = 340;
+            painter->print("Thank you for watching!", 27.0, textHeight + 0, 1);
+            painter->print("That was the latest production", 4.0, textHeight + 16, 1);
+            painter->print("of Aberration Creations called", 5.0, textHeight + 32, 1);
+            painter->print("CorpseTravel", 72.0, textHeight + 48, 1);
+            painter->print("first presented at Xenium 25", 11.0, textHeight + 64, 1);
+            painter->print("", 120.0, textHeight + 80, 1);
+            painter->print("Code & GFX", 79.0, textHeight + 96, 1);
+            painter->print("YamiFive", 86.0, textHeight + 112, 1);
+            painter->print("Music", 99.0, textHeight + 128, 1);
+            painter->print("Arcadnis", 88.0, textHeight + 144, 1);
+            painter->print("Support", 93.0, textHeight + 160, 1);
+            painter->print("Mystix", 96.0, textHeight + 176, 1);
+            painter->print("", 120.0, textHeight + 192, 1);
+            painter->print("Thank you Yoshitaka", 44.0, textHeight + 208, 1);
+            painter->print("for soldering everything", 28.0, textHeight + 224, 1);
+            painter->print("together!", 86.0, textHeight + 240, 1);
+            painter->print("", 120.0, textHeight + 256, 1);
+            painter->print("Greetings", 86.0, textHeight + 272, 1);
+            painter->print("", 120.0, textHeight + 288, 1);
+            painter->print("ALTAIR", 94.0, textHeight + 304, 1);
+            painter->print("ABYSS CONNECTION", 52.0, textHeight + 320, 1);
+            painter->print("ADDICT", 96.0, textHeight + 336, 1);
+            painter->print("AGENDA", 93.0, textHeight + 352, 1);
+            painter->print("AMNESTY", 86.0, textHeight + 368, 1);
+            painter->print("ANADUNE", 87.0, textHeight + 384, 1);
+            painter->print("APPENDIX", 86.0, textHeight + 400, 1);
+            painter->print("ARISE", 100.0, textHeight + 416, 1);
+            painter->print("ARTWAY", 89.0, textHeight + 432, 1);
+            painter->print("ASD", 107.0, textHeight + 448, 1);
+            painter->print("ASTROIDEA", 82.0, textHeight + 464, 1);
+            painter->print("BONZAI", 95.0, textHeight + 480, 1);
+            painter->print("BRAINSTORM", 75.0, textHeight + 496, 1);
+            painter->print("CNCD", 103.0, textHeight + 512, 1);
+            painter->print("COCOON", 95.0, textHeight + 528, 1);
+            painter->print("CONSPIRACY", 77.0, textHeight + 544, 1);
+            painter->print("DAMAGE", 92.0, textHeight + 560, 1);
+            painter->print("DESIRE", 97.0, textHeight + 576, 1);
+            painter->print("DIGITAL DYNAMITE", 54.0, textHeight + 592, 1);
+            painter->print("DILEMMA", 89.0, textHeight + 608, 1);
+            painter->print("DLG CREW", 85.0, textHeight + 624, 1);
+            painter->print("DREAMWEB", 82.0, textHeight + 640, 1);
+            painter->print("ELUDE", 99.0, textHeight + 656, 1);
+            painter->print("ELYSIUM", 90.0, textHeight + 672, 1);
+            painter->print("EXCEED", 96.0, textHeight + 688, 1);
+            painter->print("FAIRLIGHT", 84.0, textHeight + 704, 1);
+            painter->print("FAITH DESIGN", 72.0, textHeight + 720, 1);
+            painter->print("FARBRAUSCH", 74.0, textHeight + 736, 1);
+            painter->print("FCI", 109.0, textHeight + 752, 1);
+            painter->print("FLOPPY", 92.0, textHeight + 768, 1);
+            painter->print("FUTURIS", 89.0, textHeight + 784, 1);
+            painter->print("GENESIS PROJECT", 58.0, textHeight + 800, 1);
+            painter->print("GHOSTOWN", 84.0, textHeight + 816, 1);
+            painter->print("HAUJOBB", 90.0, textHeight + 832, 1);
+            painter->print("JOKER", 98.0, textHeight + 848, 1);
+            painter->print("KVASIGEN", 86.0, textHeight + 864, 1);
+            painter->print("LAMERS", 92.0, textHeight + 880, 1);
+            painter->print("LEMON", 97.0, textHeight + 896, 1);
+            painter->print("LEPSI.DE", 89.0, textHeight + 912, 1);
+            painter->print("LETHARGY", 84.0, textHeight + 928, 1);
+            painter->print("LNX", 107.0, textHeight + 944, 1);
+            painter->print("LOGICOMA", 87.0, textHeight + 960, 1);
+            painter->print("MADWIZARDS", 74.0, textHeight + 976, 1);
+            painter->print("MELON", 97.0, textHeight + 992, 1);
+            painter->print("MFX", 105.0, textHeight + 1008, 1);
+            painter->print("NAH-KOLOR", 80.0, textHeight + 1024, 1);
+            painter->print("NETRO", 97.0, textHeight + 1040, 1);
+            painter->print("NG", 111.0, textHeight + 1056, 1);
+            painter->print("NUANCE", 92.0, textHeight + 1072, 1);
+            painter->print("OB5VR", 98.0, textHeight + 1088, 1);
+            painter->print("ODBYT DESIGN", 71.0, textHeight + 1104, 1);
+            painter->print("OFTENHIDE", 83.0, textHeight + 1120, 1);
+            painter->print("PADAWANS", 81.0, textHeight + 1136, 1);
+            painter->print("POO BRAIN", 82.0, textHeight + 1152, 1);
+            painter->print("PRISMBEINGS", 75.0, textHeight + 1168, 1);
+            painter->print("RADIANCE", 86.0, textHeight + 1184, 1);
+            painter->print("RAZOR 1911", 79.0, textHeight + 1200, 1);
+            painter->print("REBELS", 95.0, textHeight + 1216, 1);
+            painter->print("REVISION", 89.0, textHeight + 1232, 1);
+            painter->print("SAMAR PRODUCTIONS", 44.0, textHeight + 1248, 1);
+            painter->print("SATELLITE", 83.0, textHeight + 1264, 1);
+            painter->print("SATORI", 95.0, textHeight + 1280, 1);
+            painter->print("SPACEBALLS", 77.0, textHeight + 1296, 1);
+            painter->print("SPECCY.PL", 81.0, textHeight + 1312, 1);
+            painter->print("STILL", 101.0, textHeight + 1328, 1);
+            painter->print("SUNDIAL AEON", 69.0, textHeight + 1344, 1);
+            painter->print("SWEET16", 90.0, textHeight + 1360, 1);
+            painter->print("TBL", 107.0, textHeight + 1376, 1);
+            painter->print("TGD", 107.0, textHeight + 1392, 1);
+            painter->print("TIFECO", 96.0, textHeight + 1408, 1);
+            painter->print("TRISTESSE", 83.0, textHeight + 1424, 1);
+            painter->print("TRSI", 104.0, textHeight + 1440, 1);
+            painter->print("UMLAUT DESIGN", 63.0, textHeight + 1456, 1);
+            painter->print("UNITED FORCE", 69.0, textHeight + 1472, 1);
+            painter->print("WHELPZ", 92.0, textHeight + 1488, 1);
+            textHeight=textHeight-2;
         }
 #else
         float qt = t * 0.2f;

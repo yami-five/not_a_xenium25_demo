@@ -1,6 +1,7 @@
 width=240
 scale=1
-text="number 0, never number 1!"
+#text="Code & GFX"
+texts=["Thank you for watching!","That was the latest production","of Aberration Creations called","CorpseTravel","first presented at Xenium 25","","Code & GFX","YamiFive","Music","Arcadnis","Support","Mystix","","Thank you Yoshitaka","for soldering everything","together!","","Greetings","","ALTAIR","ABYSS CONNECTION","ADDICT","AGENDA","AMNESTY","ANADUNE","APPENDIX","ARISE","ARTWAY","ASD","ASTROIDEA","BONZAI","BRAINSTORM","CNCD","COCOON","CONSPIRACY","DAMAGE","DESIRE","DIGITAL DYNAMITE","DILEMMA","DLG CREW","DREAMWEB","ELUDE","ELYSIUM","EXCEED","FAIRLIGHT","FAITH DESIGN","FARBRAUSCH","FCI","FLOPPY","FUTURIS","GENESIS PROJECT","GHOSTOWN","HAUJOBB","JOKER","KVASIGEN","LAMERS","LEMON","LEPSI.DE","LETHARGY","LNX","LOGICOMA","MADWIZARDS","MELON","MFX","NAH-KOLOR","NETRO","NG","NUANCE","OB5VR","ODBYT DESIGN","OFTENHIDE","PADAWANS","POO BRAIN","PRISMBEINGS","RADIANCE","RAZOR 1911","REBELS","REVISION","SAMAR PRODUCTIONS","SATELLITE","SATORI","SPACEBALLS","SPECCY.PL","STILL","SUNDIAL AEON","SWEET16","TBL","TGD","TIFECO","TRISTESSE","TRSI","UMLAUT DESIGN","UNITED FORCE","WHELPZ"]
 characters={
     " ":8,
     "!":8,
@@ -97,10 +98,13 @@ characters={
     "|":4,
     "}":6
 }
-length=0
-for c in text:
-    if(c==" "):
-        length+=8
-        continue
-    length+=characters[c]
-print((width-length*scale)/2)
+index=0
+for text in texts:
+    length=0
+    for c in text:
+        if(c==" "):
+            length+=8
+            continue
+        length+=characters[c]
+    print(f"painter->print(\"{text}\",{(width-length*scale)/2}, textHeight + {index*16}, 1);")
+    index+=1
